@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_06_015853) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_06_015950) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -28,6 +28,32 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_06_015853) do
     t.index ["brand_id"], name: "index_brand_colour_schemes_on_brand_id", unique: true
   end
 
+  create_table "brand_languages", force: :cascade do |t|
+    t.bigint "brand_id", null: false
+    t.boolean "completed", default: false, null: false
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.text "example_copy"
+    t.jsonb "messaging_pillars", default: []
+    t.string "tagline"
+    t.jsonb "tone_of_voice", default: {}
+    t.datetime "updated_at", null: false
+    t.jsonb "vocabulary_guidelines", default: {}
+    t.text "writing_style_notes"
+    t.index ["brand_id"], name: "index_brand_languages_on_brand_id", unique: true
+  end
+
+  create_table "brand_logos", force: :cascade do |t|
+    t.bigint "brand_id", null: false
+    t.boolean "completed", default: false, null: false
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.text "logo_philosophy"
+    t.datetime "updated_at", null: false
+    t.jsonb "usage_guidelines", default: {}
+    t.index ["brand_id"], name: "index_brand_logos_on_brand_id", unique: true
+  end
+
   create_table "brand_memberships", force: :cascade do |t|
     t.bigint "brand_id", null: false
     t.datetime "created_at", null: false
@@ -39,6 +65,66 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_06_015853) do
     t.index ["brand_id"], name: "index_brand_memberships_on_brand_id"
     t.index ["invited_by_user_id"], name: "index_brand_memberships_on_invited_by_user_id"
     t.index ["user_id"], name: "index_brand_memberships_on_user_id"
+  end
+
+  create_table "brand_names", force: :cascade do |t|
+    t.bigint "brand_id", null: false
+    t.boolean "completed", default: false, null: false
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.jsonb "domain_alternatives", default: []
+    t.string "domain_primary"
+    t.string "name", null: false
+    t.jsonb "name_alternatives_considered", default: []
+    t.text "name_rationale"
+    t.datetime "updated_at", null: false
+    t.index ["brand_id"], name: "index_brand_names_on_brand_id"
+    t.index ["name"], name: "index_brand_names_on_name", unique: true
+  end
+
+  create_table "brand_typographies", force: :cascade do |t|
+    t.bigint "brand_id", null: false
+    t.boolean "completed", default: false, null: false
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.jsonb "line_heights", default: {}
+    t.jsonb "primary_typeface", default: {}
+    t.jsonb "secondary_typeface", default: {}
+    t.jsonb "type_scale", default: {}
+    t.datetime "updated_at", null: false
+    t.text "usage_guidelines"
+    t.jsonb "web_font_urls", default: []
+    t.index ["brand_id"], name: "index_brand_typographies_on_brand_id", unique: true
+  end
+
+  create_table "brand_uis", force: :cascade do |t|
+    t.bigint "brand_id", null: false
+    t.jsonb "button_styles", default: {}
+    t.boolean "completed", default: false, null: false
+    t.datetime "completed_at"
+    t.jsonb "component_patterns", default: {}
+    t.datetime "created_at", null: false
+    t.jsonb "form_elements", default: {}
+    t.jsonb "grid_system", default: {}
+    t.jsonb "iconography", default: {}
+    t.jsonb "spacing_system", default: {}
+    t.datetime "updated_at", null: false
+    t.index ["brand_id"], name: "index_brand_uis_on_brand_id", unique: true
+  end
+
+  create_table "brand_visions", force: :cascade do |t|
+    t.bigint "brand_id", null: false
+    t.jsonb "brand_personality", default: {}
+    t.text "brand_positioning"
+    t.boolean "completed", default: false, null: false
+    t.datetime "completed_at"
+    t.jsonb "core_values", default: []
+    t.datetime "created_at", null: false
+    t.text "mission_statement"
+    t.text "target_audience"
+    t.datetime "updated_at", null: false
+    t.text "vision_statement"
+    t.index ["brand_id"], name: "index_brand_visions_on_brand_id", unique: true
   end
 
   create_table "brands", force: :cascade do |t|
@@ -69,16 +155,16 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_06_015853) do
   end
 
   create_table "palette_shades", force: :cascade do |t|
-    t.bigint "brand_colour_scheme_id", null: false
     t.datetime "created_at", null: false
     t.string "hex", null: false
     t.string "hsl"
     t.string "name", null: false
+    t.bigint "palette_colour_id", null: false
     t.string "rgb"
     t.integer "stop", null: false
     t.datetime "updated_at", null: false
-    t.index ["brand_colour_scheme_id", "stop"], name: "index_palette_shades_on_brand_colour_scheme_id_and_stop", unique: true
-    t.index ["brand_colour_scheme_id"], name: "index_palette_shades_on_brand_colour_scheme_id"
+    t.index ["palette_colour_id", "stop"], name: "index_palette_shades_on_palette_colour_id_and_stop", unique: true
+    t.index ["palette_colour_id"], name: "index_palette_shades_on_palette_colour_id"
   end
 
   create_table "token_assignments", force: :cascade do |t|
@@ -115,11 +201,17 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_06_015853) do
   end
 
   add_foreign_key "brand_colour_schemes", "brands"
+  add_foreign_key "brand_languages", "brands"
+  add_foreign_key "brand_logos", "brands"
   add_foreign_key "brand_memberships", "brands"
   add_foreign_key "brand_memberships", "users"
   add_foreign_key "brand_memberships", "users", column: "invited_by_user_id"
+  add_foreign_key "brand_names", "brands"
+  add_foreign_key "brand_typographies", "brands"
+  add_foreign_key "brand_uis", "brands"
+  add_foreign_key "brand_visions", "brands"
   add_foreign_key "palette_colours", "brand_colour_schemes"
-  add_foreign_key "palette_shades", "brand_colour_schemes"
+  add_foreign_key "palette_shades", "palette_colours"
   add_foreign_key "token_assignments", "brand_colour_schemes"
   add_foreign_key "token_assignments", "palette_colours"
 end

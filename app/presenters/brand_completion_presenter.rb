@@ -9,7 +9,7 @@ class BrandCompletionPresenter
       @brand.brand_vision,
       @brand.brand_logo,
       @brand.brand_language,
-      @brand.brand_colours,
+      @brand.brand_colour_scheme,
       @brand.brand_typography,
       @brand.brand_ui
     ]
@@ -23,7 +23,7 @@ class BrandCompletionPresenter
     components << "vision" if @brand.brand_vision&.completed?
     components << "logo" if @brand.brand_logo&.completed?
     components << "language" if @brand.brand_language&.completed?
-    components << "colours" if @brand.brand_colours&.completed?
+    components << "colours" if @brand.brand_colour_scheme&.completed?
     components << "typography" if @brand.brand_typography&.completed?
     components << "ui" if @brand.brand_ui&.completed?
     components
