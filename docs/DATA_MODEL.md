@@ -122,7 +122,7 @@ Add completion flags directly on component tables (see below). Each component ta
 - completed_at (datetime, nullable)
 ```
 
-Brand model has computed properties:
+Completion tracking is handled by the `BrandCompletionPresenter` class (see Presenter Layer Architecture section below), which provides:
 ```ruby
 def completion_percentage
   # Count completed components / 7 * 100
@@ -789,6 +789,48 @@ module BrandPresenters
 end
 ```
 
+### Example: BrandCompletionPresenter
+
+```ruby
+# app/presenters/brand_completion_presenter.rb
+class BrandCompletionPresenter
+  def initialize(brand)
+    @brand = brand
+  end
+
+  def completion_percentage
+    components = [
+      @brand.brand_name,
+      @brand.brand_vision,
+      @brand.brand_logo,
+      @brand.brand_language,
+      @brand.brand_colour_scheme,
+      @brand.brand_typography,
+      @brand.brand_ui
+    ]
+    completed = components.count { |c| c&.completed? }
+    (completed.to_f / 7 * 100).round
+  end
+
+  def completed_components
+    components = []
+    components << "name" if @brand.brand_name&.completed?
+    components << "vision" if @brand.brand_vision&.completed?
+    components << "logo" if @brand.brand_logo&.completed?
+    components << "language" if @brand.brand_language&.completed?
+    components << "colours" if @brand.brand_colour_scheme&.completed?
+    components << "typography" if @brand.brand_typography&.completed?
+    components << "ui" if @brand.brand_ui&.completed?
+    components
+  end
+
+  def pending_components
+    all = %w[name vision logo language colours typography ui]
+    all - completed_components
+  end
+end
+```
+
 ### Usage in Controllers
 
 ```ruby
@@ -798,6 +840,7 @@ class BrandsController < ApplicationController
     @brand = Brand.find(params[:id])
     @stylesheet = BrandPresenters::StylesheetPresenter.new(@brand)
     @accessibility = BrandPresenters::AccessibilityReportPresenter.new(@brand)
+    @completion = BrandCompletionPresenter.new(@brand)
   end
 end
 ```
@@ -811,6 +854,12 @@ end
 <%= @stylesheet.to_css_string %>
   }
 </style>
+
+<div class="completion-status">
+  <h2>Completion: <%= @completion.completion_percentage %>%</h2>
+  <p>Completed: <%= @completion.completed_components.join(", ") %></p>
+  <p>Pending: <%= @completion.pending_components.join(", ") %></p>
+</div>
 
 <div class="accessibility-report">
   <h2>Accessibility Score: <%= @accessibility.overall_score %>%</h2>
@@ -909,13 +958,6 @@ class Brand < ApplicationRecord
   before_validation :generate_slug, if: :name_changed?
   before_validation :generate_working_name, if: -> { name.blank? }
 
-  def completion_percentage
-    components = [brand_name, brand_vision, brand_logo, brand_language,
-                  brand_colour_scheme, brand_typography, brand_ui]
-    completed = components.count { |c| c&.completed? }
-    (completed.to_f / 7 * 100).round
-  end
-
   private
 
   def generate_slug
@@ -1002,6 +1044,7 @@ Suggested migration order:
 
 ### Presenter Examples
 
+- `BrandCompletionPresenter` - Completion tracking and status
 - `StylesheetPresenter` - CSS variables
 - `TailwindPresenter` - Tailwind 4 @theme blocks
 - `AccessibilityReportPresenter` - Formatted WCAG reports
