@@ -57,7 +57,7 @@ This document captures all tasks needed to build out the BrandCore application b
 - [x] Add `paper_trail` gem to Gemfile
 - [x] Run `rails generate paper_trail:install`
 - [x] Configure PaperTrail initializer
-- [ ] Set up `whodunnit` tracking in ApplicationController
+- [x] Set up `whodunnit` tracking in ApplicationController
 - [x] Add `has_paper_trail` to all brand component models
 
 ### 1.5 Initializers
@@ -76,21 +76,21 @@ This document captures all tasks needed to build out the BrandCore application b
 - [ ] Write user model specs
 
 ### 2.2 Authentication System
-- [ ] Create `SessionsController`
-  - [ ] new action (login form)
-  - [ ] create action (login)
-  - [ ] destroy action (logout)
-- [ ] Create session views
-  - [ ] Login form
-  - [ ] Layout considerations
-- [ ] Set up session management
-  - [ ] Configure session store
-  - [ ] Set session timeout
-- [ ] Add authentication before_action to ApplicationController
-- [ ] Create password reset functionality (optional for MVP)
-  - [ ] Password reset controller
-  - [ ] Email templates
-  - [ ] Reset token generation
+- [x] Create `SessionsController`
+  - [x] new action (login form)
+  - [x] create action (login)
+  - [x] destroy action (logout)
+- [x] Create session views
+  - [x] Login form
+  - [x] Layout considerations
+- [x] Set up session management
+  - [x] Configure session store (cookie-based with signed sessions)
+  - [x] Set session timeout (permanent cookies)
+- [x] Add authentication before_action to ApplicationController
+- [x] Create password reset functionality (optional for MVP)
+  - [x] Password reset controller
+  - [x] Email templates
+  - [x] Reset token generation
 
 ### 2.3 Authorization (Brand Memberships)
 - [x] Create `BrandMembership` model
@@ -376,8 +376,8 @@ This document captures all tasks needed to build out the BrandCore application b
 ## 7. Controllers & Routes
 
 ### 7.1 Routes Configuration
-- [ ] Set up root route
-- [ ] Set up authentication routes (sessions)
+- [x] Set up root route (temporary - points to login, will be updated when BrandsController is created)
+- [x] Set up authentication routes (sessions)
 - [ ] Set up brand routes (nested resources)
 - [ ] Set up component routes (nested under brands)
   - [ ] brand_names routes
@@ -392,8 +392,8 @@ This document captures all tasks needed to build out the BrandCore application b
 - [ ] Add route helpers documentation
 
 ### 7.2 Application Controller
-- [ ] Set up PaperTrail whodunnit tracking
-- [ ] Add authentication before_action
+- [x] Set up PaperTrail whodunnit tracking
+- [x] Add authentication before_action (via Authentication concern)
 - [ ] Add error handling
 - [ ] Add rescue_from handlers
 
