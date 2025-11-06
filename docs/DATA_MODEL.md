@@ -320,22 +320,32 @@ Using a **hybrid approach**: normalized tables for core data, JSONB for cached r
 - id (primary key)
 - brand_id (foreign key, indexed, unique)
 - primary_typeface (jsonb)
-  # { name: "Inter", weights: [400, 600, 700], usage: "Headlines and UI" }
+  # { 
+  #   name: "Inter", 
+  #   weights: [400, 600, 700], 
+  #   usage: "Headlines and UI",
+  #   foundry: "google_fonts",  # or "adobe_fonts", "custom", etc.
+  #   url: "https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700"  # For web fonts
+  # }
 - secondary_typeface (jsonb) - Same structure
 - type_scale (jsonb)
   # { h1: "48px", h2: "36px", h3: "24px", body: "16px", small: "14px" }
 - line_heights (jsonb)
   # { heading: 1.2, body: 1.5 }
 - usage_guidelines (text)
-- web_font_urls (jsonb) - Google Fonts URLs or similar
+- web_font_urls (jsonb) - Array of font URLs for <link> tags
+  # ["https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700"]
 - completed (boolean, default: false)
 - completed_at (datetime, nullable)
 - created_at
 - updated_at
 ```
 
-**ActiveStorage attachments:**
-- `has_many_attached :font_files` - For custom/licensed fonts
+**Font Foundry Support:**
+- **Google Fonts:** Most common, referenced via URL
+- **Adobe Fonts:** Subscription-based, referenced via URL
+- **Custom/Self-hosted:** User provides their own URL
+- **System fonts:** No URL needed (e.g., system-ui, Georgia, Times)
 
 **Key relationships:**
 - `belongs_to :brand`
