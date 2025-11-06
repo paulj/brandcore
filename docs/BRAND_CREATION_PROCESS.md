@@ -54,14 +54,14 @@ The verbal identity and communication style:
 - Writing style guidelines
 
 ### 5. Colour Palette
-The visual color system with sophisticated design token architecture.
+The visual colour system with sophisticated design token architecture.
 
 **See `docs/DESIGN_TOKENS.md` for comprehensive philosophy and implementation.**
 
 Key features:
 - **Palette Layer:** Define base colors with optional shading spectrums (50-900 scale)
 - **Semantic Layer:** Assign colors to semantic token roles (surface, content, interactive, etc.)
-- **Accessibility Analysis:** Automated WCAG contrast checking, color blindness simulation
+- **Accessibility Analysis:** Automated WCAG contrast checking, colour blindness simulation
 - **Aesthetic Analysis:** Harmony scoring, perceptual uniformity, industry benchmarking
 - **Dynamic Application:** CSS custom properties generated from token assignments
 
@@ -158,7 +158,7 @@ The final brand book is a comprehensive, web-based reference that includes:
 
 - **Interactive Table of Contents**
 - **Visual Preview** of all brand elements
-- **Copy-friendly** color codes and specifications
+- **Copy-friendly** colour codes and specifications
 - **Downloadable Assets** (logos, fonts where licensed)
 - **Share Options** (public URL, password-protected, team access)
 - **Version History** (track changes over time)
@@ -171,7 +171,7 @@ As the brand is built, the brand book interface itself adopts the brand's identi
 ```css
 /* Brand-specific CSS variables */
 :root {
-  --brand-primary: #000000;      /* Updated when color palette defined */
+  --brand-primary: #000000;      /* Updated when colour palette defined */
   --brand-secondary: #666666;
   --brand-accent: #0066CC;
   --brand-font-heading: system-ui; /* Updated when typography defined */

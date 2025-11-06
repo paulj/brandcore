@@ -2,12 +2,12 @@
 
 ## The Question
 
-Should we store complex structured data (color palettes, token assignments, typography scales) as JSONB blobs, or normalize them into proper relational tables?
+Should we store complex structured data (colour palettes, token assignments, typography scales) as JSONB blobs, or normalize them into proper relational tables?
 
 ## Current Proposal (JSONB-Heavy)
 
 ```ruby
-# brand_colors table
+# brand_colours table
 - palette (jsonb) - All palette colors with shades
 - token_assignments (jsonb) - All semantic token mappings
 - accessibility_analysis (jsonb) - Cached analysis results
@@ -38,10 +38,10 @@ Should we store complex structured data (color palettes, token assignments, typo
 #### Palette Colors
 
 ```ruby
-# palette_colors
+# palette_colours
 - id (primary key)
-- brand_colors_id (foreign key)
-- color_identifier (string) - e.g., "ocean-blue"
+- brand_colours_id (foreign key)
+- colour_identifier (string) - e.g., "ocean-blue"
 - name (string) - e.g., "Ocean Blue"
 - base_hex (string)
 - base_rgb (string)
@@ -54,7 +54,7 @@ Should we store complex structured data (color palettes, token assignments, typo
 
 # palette_shades
 - id (primary key)
-- palette_color_id (foreign key)
+- palette_colour_id (foreign key)
 - stop (integer) - e.g., 50, 100, 200...900
 - hex (string)
 - rgb (string, nullable)
@@ -69,16 +69,16 @@ Should we store complex structured data (color palettes, token assignments, typo
 ```ruby
 # token_assignments
 - id (primary key)
-- brand_colors_id (foreign key)
+- brand_colours_id (foreign key)
 - token_role (string) - e.g., "surface-base", "content-primary"
   - Indexed for fast lookups
-- palette_color_id (foreign key to palette_colors)
+- palette_colour_id (foreign key to palette_colours)
 - shade_stop (integer, nullable) - Which shade from spectrum
 - override_hex (string, nullable) - Optional override instead of palette reference
 - created_at
 - updated_at
 
-# Unique constraint on [brand_colors_id, token_role]
+# Unique constraint on [brand_colours_id, token_role]
 ```
 
 #### Accessibility Analysis (Keep as JSONB)
@@ -90,7 +90,7 @@ This is **cached computed data** that:
 - Is regenerated, not edited directly
 
 ```ruby
-# brand_colors
+# brand_colours
 - accessibility_analysis (jsonb) - Keep as JSONB
 - accessibility_last_analyzed_at (datetime)
 ```
@@ -98,7 +98,7 @@ This is **cached computed data** that:
 **Pros:**
 - ✅ Database enforces data integrity
 - ✅ Foreign keys prevent orphaned references
-- ✅ Easy to query: `PaletteColor.where(category: 'primary')`
+- ✅ Easy to query: `PaletteColour.where(category: 'primary')`
 - ✅ Easy to add indexes on specific fields
 - ✅ Clear schema visible in `schema.rb`
 - ✅ Simpler to test (ActiveRecord validations)
@@ -119,8 +119,8 @@ This is **cached computed data** that:
 **JSONB Approach:**
 ```ruby
 # Must parse JSONB in Ruby
-brand.brand_colors.token_assignments['assignments'].select do |assignment|
-  color = brand.brand_colors.palette['colors'].find { |c| c['id'] == assignment['palette_color_id'] }
+brand.brand_colours.token_assignments['assignments'].select do |assignment|
+  colour = brand.brand_colours.palette['colors'].find { |c| c['id'] == assignment['palette_colour_id'] }
   color['category'] == 'primary'
 end
 ```
@@ -128,9 +128,9 @@ end
 **Normalized Approach:**
 ```ruby
 # Clean ActiveRecord query
-brand.brand_colors.token_assignments
+brand.brand_colours.token_assignments
   .joins(:palette_color)
-  .where(palette_colors: { category: 'primary' })
+  .where(palette_colours: { category: 'primary' })
 ```
 
 ### Example: Changing Color Category from "Secondary" to "Primary"
@@ -138,10 +138,10 @@ brand.brand_colors.token_assignments
 **JSONB Approach:**
 ```ruby
 # Must load, modify, and save entire JSON blob
-palette = brand.brand_colors.palette
-color = palette['colors'].find { |c| c['id'] == 'ocean-blue' }
+palette = brand.brand_colours.palette
+colour = palette['colors'].find { |c| c['id'] == 'ocean-blue' }
 color['category'] = 'primary'
-brand.brand_colors.update!(palette: palette)
+brand.brand_colours.update!(palette: palette)
 
 # Risk: Race conditions if multiple users edit simultaneously
 # Risk: Validation happens in Ruby, not database
@@ -150,7 +150,7 @@ brand.brand_colors.update!(palette: palette)
 **Normalized Approach:**
 ```ruby
 # Simple update, database handles concurrency
-PaletteColor.find_by(color_identifier: 'ocean-blue').update!(category: 'primary')
+PaletteColour.find_by(colour_identifier: 'ocean-blue').update!(category: 'primary')
 
 # Database guarantees integrity
 # Triggers/callbacks work naturally
@@ -162,14 +162,14 @@ PaletteColor.find_by(color_identifier: 'ocean-blue').update!(category: 'primary'
 **JSONB Approach:**
 ```ruby
 # Need migration to update existing records
-class AddDescriptionToPaletteColors < ActiveRecord::Migration[7.0]
+class AddDescriptionToPaletteColours < ActiveRecord::Migration[7.0]
   def up
-    BrandColors.find_each do |brand_colors|
-      palette = brand_colors.palette
+    BrandColors.find_each do |brand_colours|
+      palette = brand_colours.palette
       palette['colors'].each do |color|
         color['description'] ||= '' # Add default value
       end
-      brand_colors.update!(palette: palette)
+      brand_colours.update!(palette: palette)
     end
   end
 end
@@ -181,9 +181,9 @@ end
 **Normalized Approach:**
 ```ruby
 # Standard Rails migration
-class AddDescriptionToPaletteColors < ActiveRecord::Migration[7.0]
+class AddDescriptionToPaletteColours < ActiveRecord::Migration[7.0]
   def change
-    add_column :palette_colors, :description, :text
+    add_column :palette_colours, :description, :text
   end
 end
 
@@ -240,7 +240,7 @@ Use the **right tool for each data type**:
 ### Updated Schema
 
 ```ruby
-# brand_colors
+# brand_colours
 - id
 - brand_id (foreign key)
 - palette_generation_method (string)
@@ -251,10 +251,10 @@ Use the **right tool for each data type**:
 - aesthetic_analysis (jsonb) - KEPT as JSONB (cached)
 - timestamps
 
-# palette_colors - NEW TABLE
+# palette_colours - NEW TABLE
 - id
-- brand_colors_id (foreign key)
-- color_identifier (string, indexed)
+- brand_colours_id (foreign key)
+- colour_identifier (string, indexed)
 - name (string)
 - base_hex (string)
 - base_rgb (string)
@@ -265,7 +265,7 @@ Use the **right tool for each data type**:
 
 # palette_shades - NEW TABLE
 - id
-- palette_color_id (foreign key)
+- palette_colour_id (foreign key)
 - stop (integer)
 - hex (string)
 - rgb (string)
@@ -274,13 +274,13 @@ Use the **right tool for each data type**:
 
 # token_assignments - NEW TABLE
 - id
-- brand_colors_id (foreign key)
+- brand_colours_id (foreign key)
 - token_role (string, indexed)
-- palette_color_id (foreign key, nullable)
+- palette_colour_id (foreign key, nullable)
 - shade_stop (integer, nullable)
 - override_hex (string, nullable)
 - timestamps
-# Unique index on [brand_colors_id, token_role]
+# Unique index on [brand_colours_id, token_role]
 
 # core_values - NEW TABLE (extracted from BrandVision)
 - id
@@ -314,12 +314,12 @@ If we start with JSONB and want to normalize later:
 Example migration:
 
 ```ruby
-class NormalizePaletteColors < ActiveRecord::Migration[7.0]
+class NormalizePaletteColours < ActiveRecord::Migration[7.0]
   def up
     # Create new tables
-    create_table :palette_colors do |t|
-      t.references :brand_colors, null: false, foreign_key: true
-      t.string :color_identifier, null: false
+    create_table :palette_colours do |t|
+      t.references :brand_colours, null: false, foreign_key: true
+      t.string :colour_identifier, null: false
       t.string :name, null: false
       t.string :base_hex, null: false
       # ... other columns
@@ -327,13 +327,13 @@ class NormalizePaletteColors < ActiveRecord::Migration[7.0]
     end
 
     # Extract JSONB data
-    BrandColors.find_each do |brand_colors|
-      next unless brand_colors.palette
+    BrandColors.find_each do |brand_colours|
+      next unless brand_colours.palette
 
-      brand_colors.palette['colors'].each do |color_data|
-        palette_color = PaletteColor.create!(
-          brand_colors: brand_colors,
-          color_identifier: color_data['id'],
+      brand_colours.palette['colors'].each do |color_data|
+        palette_colour = PaletteColour.create!(
+          brand_colours: brand_colours,
+          colour_identifier: color_data['id'],
           name: color_data['name'],
           base_hex: color_data['base']['hex'],
           # ... other fields
@@ -353,14 +353,14 @@ class NormalizePaletteColors < ActiveRecord::Migration[7.0]
 
     # Optionally: rename palette to palette_deprecated
     # Don't drop yet - keep for rollback safety
-    rename_column :brand_colors, :palette, :palette_deprecated
+    rename_column :brand_colours, :palette, :palette_deprecated
   end
 
   def down
     # Can restore from palette_deprecated if needed
     drop_table :palette_shades
-    drop_table :palette_colors
-    rename_column :brand_colors, :palette_deprecated, :palette
+    drop_table :palette_colours
+    rename_column :brand_colours, :palette_deprecated, :palette
   end
 end
 ```
@@ -397,9 +397,9 @@ end
 ```ruby
 class BrandColors < ApplicationRecord
   belongs_to :brand
-  has_many :palette_colors, dependent: :destroy
+  has_many :palette_colours, dependent: :destroy
   has_many :token_assignments, dependent: :destroy
-  has_many :palette_shades, through: :palette_colors
+  has_many :palette_shades, through: :palette_colours
 
   # Delegations for convenience
   def find_token(role)
@@ -407,16 +407,16 @@ class BrandColors < ApplicationRecord
   end
 
   def primary_colors
-    palette_colors.where(category: 'primary').order(:position)
+    palette_colours.where(category: 'primary').order(:position)
   end
 end
 
-class PaletteColor < ApplicationRecord
-  belongs_to :brand_colors
+class PaletteColour < ApplicationRecord
+  belongs_to :brand_colours
   has_many :palette_shades, -> { order(:stop) }, dependent: :destroy
   has_many :token_assignments, dependent: :restrict_with_error
 
-  validates :color_identifier, presence: true, uniqueness: { scope: :brand_colors_id }
+  validates :colour_identifier, presence: true, uniqueness: { scope: :brand_colours_id }
   validates :base_hex, presence: true, format: { with: /\A#[0-9A-F]{6}\z/i }
   validates :category, inclusion: { in: %w[primary secondary accent neutral semantic] }
 
@@ -426,17 +426,17 @@ class PaletteColor < ApplicationRecord
 end
 
 class TokenAssignment < ApplicationRecord
-  belongs_to :brand_colors
-  belongs_to :palette_color, optional: true
+  belongs_to :brand_colours
+  belongs_to :palette_colour, optional: true
 
-  validates :token_role, presence: true, uniqueness: { scope: :brand_colors_id }
-  validate :has_color_source
+  validates :token_role, presence: true, uniqueness: { scope: :brand_colours_id }
+  validate :has_colour_source
 
   private
 
-  def has_color_source
-    if palette_color.nil? && override_hex.nil?
-      errors.add(:base, "Must have either palette_color or override_hex")
+  def has_colour_source
+    if palette_colour.nil? && override_hex.nil?
+      errors.add(:base, "Must have either palette_colour or override_hex")
     end
   end
 end
@@ -447,18 +447,18 @@ end
 **JSONB:**
 ```ruby
 it 'assigns ocean blue to surface-base token' do
-  assignments = brand.brand_colors.token_assignments['assignments']
+  assignments = brand.brand_colours.token_assignments['assignments']
   surface_base = assignments.find { |a| a['token_role'] == 'surface-base' }
-  expect(surface_base['palette_color_id']).to eq('ocean-blue')
+  expect(surface_base['palette_colour_id']).to eq('ocean-blue')
 end
 ```
 
 **Normalized:**
 ```ruby
 it 'assigns ocean blue to surface-base token' do
-  ocean_blue = brand.brand_colors.palette_colors.find_by(color_identifier: 'ocean-blue')
-  surface_base = brand.brand_colors.token_assignments.find_by(token_role: 'surface-base')
-  expect(surface_base.palette_color).to eq(ocean_blue)
+  ocean_blue = brand.brand_colours.palette_colours.find_by(colour_identifier: 'ocean-blue')
+  surface_base = brand.brand_colours.token_assignments.find_by(token_role: 'surface-base')
+  expect(surface_base.palette_colour).to eq(ocean_blue)
 end
 ```
 

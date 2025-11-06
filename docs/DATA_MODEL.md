@@ -243,7 +243,7 @@ Each of the seven brand components has its own table, linked to a specific brand
 Using a **hybrid approach**: normalized tables for core data, JSONB for cached results.
 
 ```ruby
-# brand_colors (parent table)
+# brand_colour_schemes (parent table)
 - id (primary key)
 - brand_id (foreign key, indexed, unique)
 - palette_generation_method (string) - "manual", "auto", "imported"
@@ -261,10 +261,10 @@ Using a **hybrid approach**: normalized tables for core data, JSONB for cached r
 - created_at
 - updated_at
 
-# palette_colors (NORMALIZED - was JSONB)
+# palette_colours (NORMALIZED - was JSONB)
 - id (primary key)
-- brand_colors_id (foreign key, indexed)
-- color_identifier (string) - e.g., "ocean-blue" (unique per brand_colors)
+- brand_colour_scheme_id (foreign key, indexed)
+- colour_identifier (string) - e.g., "ocean-blue" (unique per brand_colour_scheme)
 - name (string) - e.g., "Ocean Blue"
 - base_hex (string) - e.g., "#0066CC"
 - base_rgb (string) - e.g., "0, 102, 204"
@@ -277,7 +277,7 @@ Using a **hybrid approach**: normalized tables for core data, JSONB for cached r
 
 # palette_shades (NORMALIZED - was nested in JSONB)
 - id (primary key)
-- palette_color_id (foreign key, indexed)
+- palette_colour_id (foreign key, indexed)
 - stop (integer) - e.g., 50, 100, 200...900
 - hex (string)
 - rgb (string, nullable)
@@ -288,26 +288,26 @@ Using a **hybrid approach**: normalized tables for core data, JSONB for cached r
 
 # token_assignments (NORMALIZED - was JSONB)
 - id (primary key)
-- brand_colors_id (foreign key, indexed)
+- brand_colour_scheme_id (foreign key, indexed)
 - token_role (string, indexed) - e.g., "surface-base", "content-primary"
-- palette_color_id (foreign key to palette_colors, nullable)
+- palette_colour_id (foreign key to palette_colours, nullable)
 - shade_stop (integer, nullable) - Which shade to use
-- override_hex (string, nullable) - Direct color instead of palette reference
+- override_hex (string, nullable) - Direct colour instead of palette reference
 - created_at
 - updated_at
-# Unique constraint on [brand_colors_id, token_role]
+# Unique constraint on [brand_colour_scheme_id, token_role]
 ```
 
 **Key relationships:**
 - `belongs_to :brand`
-- `has_many :palette_colors, dependent: :destroy`
-- `has_many :palette_shades, through: :palette_colors`
+- `has_many :palette_colours, dependent: :destroy`
+- `has_many :palette_shades, through: :palette_colours`
 - `has_many :token_assignments, dependent: :destroy`
 - `has_paper_trail`
 
 **Why normalized?**
-- Frequent queries by token role, color category
-- Need foreign key integrity (token → palette color)
+- Frequent queries by token role, colour category
+- Need foreign key integrity (token → palette colour)
 - Unique constraints on token roles
 - Better for reporting and analytics
 - Clear schema evolution via migrations
@@ -430,18 +430,18 @@ add_index :brand_names, :brand_id, unique: true
 add_index :brand_visions, :brand_id, unique: true
 add_index :brand_logos, :brand_id, unique: true
 add_index :brand_languages, :brand_id, unique: true
-add_index :brand_colors, :brand_id, unique: true
+add_index :brand_colour_scheme, :brand_id, unique: true
 add_index :brand_typographies, :brand_id, unique: true
 add_index :brand_uis, :brand_id, unique: true
 
 # Color system normalized tables
-add_index :palette_colors, :brand_colors_id
-add_index :palette_colors, [:brand_colors_id, :color_identifier], unique: true
-add_index :palette_colors, :category
-add_index :palette_shades, :palette_color_id
-add_index :token_assignments, :brand_colors_id
-add_index :token_assignments, [:brand_colors_id, :token_role], unique: true
-add_index :token_assignments, :palette_color_id
+add_index :palette_colours, :brand_colour_scheme_id
+add_index :palette_colours, [:brand_colour_scheme_id, :colour_identifier], unique: true
+add_index :palette_colours, :category
+add_index :palette_shades, :palette_colour_id
+add_index :token_assignments, :brand_colour_scheme_id
+add_index :token_assignments, [:brand_colour_scheme_id, :token_role], unique: true
+add_index :token_assignments, :palette_colour_id
 add_index :token_assignments, :token_role
 
 # domain_checks
@@ -543,7 +543,7 @@ module BrandPresenters
   class StylesheetPresenter
     def initialize(brand)
       @brand = brand
-      @colors = brand.brand_colors
+      @colors = brand.brand_colour_scheme
       @typography = brand.brand_typography
     end
 
@@ -608,16 +608,16 @@ module BrandPresenters
       return assignment.override_hex if assignment.override_hex.present?
 
       # Otherwise, resolve from palette
-      palette_color = assignment.palette_color
-      return nil unless palette_color
+      palette_colour = assignment.palette_colour
+      return nil unless palette_colour
 
       if assignment.shade_stop
         # Get specific shade from spectrum
-        shade = palette_color.palette_shades.find_by(stop: assignment.shade_stop)
-        shade&.hex || palette_color.base_hex
+        shade = palette_colour.palette_shades.find_by(stop: assignment.shade_stop)
+        shade&.hex || palette_colour.base_hex
       else
-        # Use base color
-        palette_color.base_hex
+        # Use base colour
+        palette_colour.base_hex
       end
     end
   end
@@ -661,7 +661,7 @@ module BrandPresenters
   class AccessibilityReportPresenter
     def initialize(brand)
       @brand = brand
-      @colors = brand.brand_colors
+      @colors = brand.brand_colour_scheme
       @analysis = @colors&.accessibility_analysis || {}
     end
 
@@ -771,15 +771,15 @@ module BrandPresenters
 
     private
 
-    def color_tokens
-      return {} unless @brand.brand_colors
+    def colour_tokens
+      return {} unless @brand.brand_colour_scheme
 
-      @brand.brand_colors.palette['colors'].map do |color|
+      @brand.brand_colour_scheme.palette_colours.map do |palette_colour|
         {
-          name: color['name'],
-          value: color['base']['hex'],
+          name: palette_colour.name,
+          value: palette_colour.base_hex,
           type: 'color',
-          shades: color['shades']&.map { |s| { stop: s['stop'], value: s['hex'] } }
+          shades: palette_colour.palette_shades.map { |s| { stop: s.stop, value: s.hex } }
         }
       end
     end
@@ -835,7 +835,7 @@ end
    ```ruby
    # brand.rb - focused on data
    class Brand < ApplicationRecord
-     has_one :brand_colors
+     has_one :brand_colour_scheme
      validates :name, presence: true
    end
    ```
@@ -898,7 +898,7 @@ class Brand < ApplicationRecord
   has_one :brand_vision, dependent: :destroy
   has_one :brand_logo, dependent: :destroy
   has_one :brand_language, dependent: :destroy
-  has_one :brand_colors, dependent: :destroy
+  has_one :brand_colour_scheme, dependent: :destroy
   has_one :brand_typography, dependent: :destroy
   has_one :brand_ui, dependent: :destroy
 
@@ -911,7 +911,7 @@ class Brand < ApplicationRecord
 
   def completion_percentage
     components = [brand_name, brand_vision, brand_logo, brand_language,
-                  brand_colors, brand_typography, brand_ui]
+                  brand_colour_scheme, brand_typography, brand_ui]
     completed = components.count { |c| c&.completed? }
     (completed.to_f / 7 * 100).round
   end

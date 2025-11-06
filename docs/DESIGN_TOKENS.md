@@ -13,7 +13,7 @@ Design tokens are the atomic values that define a brand's visual language. Brand
    └─> Define pure color values with optional shading scales
 
 2. SEMANTIC LAYER (Token Roles)
-   └─> Assign meaning/purpose to palette colors
+   └─> Assign meaning/purpose to palette colours
 
 3. APPLICATION LAYER (UI Implementation)
    └─> Reference semantic tokens in components
@@ -28,12 +28,12 @@ This separation allows:
 
 ## 1. Palette Layer
 
-### Color Definition
+### Colour Definition
 
-Users define base colors in their palette with comprehensive specifications:
+Users define base colours in their palette with comprehensive specifications:
 
 ```ruby
-# Example palette structure (stored in brand_colors.palette jsonb)
+# Example palette structure (stored in brand_colours.palette jsonb)
 {
   colors: [
     {
@@ -317,31 +317,31 @@ These ensure text is always readable on its specific background, not just on the
 
 ### Token Assignment Interface
 
-Users assign palette colors to semantic roles:
+Users assign palette colours to semantic roles:
 
 ```ruby
-# Example assignments (stored in brand_colors.token_assignments jsonb)
+# Example assignments (stored in brand_colours.token_assignments jsonb)
 {
   assignments: [
     {
       token_role: "surface-primary",
-      palette_color_id: "slate-gray",
+      palette_colour_id: "slate-gray",
       shade: 50, # Which shade from the spectrum
       override_hex: null # Optional: override instead of using palette
     },
     {
       token_role: "interactive-primary",
-      palette_color_id: "ocean-blue",
+      palette_colour_id: "ocean-blue",
       shade: 500
     },
     {
       token_role: "interactive-primary-hover",
-      palette_color_id: "ocean-blue",
+      palette_colour_id: "ocean-blue",
       shade: 600
     },
     {
       token_role: "content-primary",
-      palette_color_id: "slate-gray",
+      palette_colour_id: "slate-gray",
       shade: 900
     }
   ]
@@ -766,7 +766,7 @@ Compare against well-regarded brand palettes:
 ### Storage Structure
 
 ```ruby
-# brand_colors table
+# brand_colours table
 {
   # PALETTE LAYER
   palette: {
@@ -874,7 +874,7 @@ Show token assignments in context:
 - **AI-assisted palette generation** (from brand vision/prompts)
 
 ### Phase 2: Advanced Palette
-- Shading spectrum generation (auto from base colors)
+- Shading spectrum generation (auto from base colours)
 - Multiple algorithms (HSL, OKLCH)
 - Palette import from tools (Tailwind, Figma)
 - Enhanced AI suggestions with style variations
