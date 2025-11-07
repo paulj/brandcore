@@ -22,6 +22,11 @@ class Brand < ApplicationRecord
   before_validation :generate_working_name, if: -> { name.blank? }
   before_validation :generate_slug, if: -> { name.present? && (slug.blank? || name_changed?) }
 
+  # Use slug in URLs
+  def to_param
+    slug
+  end
+
   private
 
   def generate_slug
