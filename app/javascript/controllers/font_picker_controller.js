@@ -8,12 +8,16 @@ export default class extends Controller {
     "suggestions",
     "selectedFont",
     "form",
-    "preview"
+    "preview",
+    "primaryFontInput",
+    "secondaryFontInput",
+    "typefaceRole"
   ]
 
   static values = {
     brandId: String,
-    currentFont: Object
+    currentFont: Object,
+    typefaceRole: String
   }
 
   connect() {
@@ -27,7 +31,16 @@ export default class extends Controller {
     }
   }
 
-  openModal() {
+  openModal(event) {
+    // Get the typeface role from the button that was clicked
+    const role = event?.currentTarget?.dataset?.typefaceRole || "primary"
+    this.typefaceRoleValue = role
+    
+    // Update the modal header to show which typeface is being selected
+    if (this.hasTypefaceRoleTarget) {
+      this.typefaceRoleTarget.textContent = role.charAt(0).toUpperCase() + role.slice(1)
+    }
+    
     this.modalTarget.classList.remove("hidden")
     this.loadSuggestions()
     this.searchInputTarget.focus()
@@ -155,48 +168,44 @@ export default class extends Controller {
   }
 
   confirmSelection() {
-    if (!this.currentFontValue) return
+    if (!this.currentFontValue) {
+      console.warn("No font selected")
+      return
+    }
 
     const fontData = this.currentFontValue
     const fontName = fontData.family
+    const role = this.typefaceRoleValue || "primary"
 
-    // Update the hidden form field
-    const input = this.formTarget.querySelector('input[name="brand_typography[primary_typeface]"]')
-    if (input) {
-      const fontPayload = {
-        name: fontName,
-        family: fontName,
-        category: fontData.category,
-        variants: fontData.variants || [],
-        subsets: fontData.subsets || [],
-        google_fonts_url: `https://fonts.googleapis.com/css2?family=${fontName.replace(/\s+/g, "+")}:wght@300;400;500;600;700&display=swap`
-      }
-      input.value = JSON.stringify(fontPayload)
-      
-      // Load the Google Font CSS
-      this.loadGoogleFont(fontName)
+    // Determine which input field to use based on the role
+    const inputTarget = role === "secondary" ? "secondaryFontInput" : "primaryFontInput"
+    const input = this[`${inputTarget}Target`]
+    
+    if (!input) {
+      console.error(`Could not find ${role} font input field`)
+      alert("Error: Could not find form field. Please refresh the page and try again.")
+      return
     }
 
-    // Submit the form via Turbo
-    const formData = new FormData(this.formTarget)
-    fetch(this.formTarget.action, {
-      method: this.formTarget.method,
-      body: formData,
-      headers: {
-        'Accept': 'text/vnd.turbo-stream.html',
-        'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
-      }
-    })
-    .then(response => response.text())
-    .then(html => {
-      Turbo.renderStreamMessage(html)
-      this.closeModal()
-      // Reload page to show updated font
-      window.location.reload()
-    })
-    .catch(error => {
-      console.error('Error saving font:', error)
-    })
+    const fontPayload = {
+      name: fontName,
+      family: fontName,
+      category: fontData.category,
+      variants: fontData.variants || [],
+      subsets: fontData.subsets || [],
+      google_fonts_url: `https://fonts.googleapis.com/css2?family=${fontName.replace(/\s+/g, "+")}:wght@300;400;500;600;700&display=swap`
+    }
+    
+    input.value = JSON.stringify(fontPayload)
+    
+    // The other field already has its current value from the form initialization
+    // No need to preserve it manually
+    
+    // Load the Google Font CSS
+    this.loadGoogleFont(fontName)
+
+    // Submit the form - Turbo will handle the page update
+    this.formTarget.requestSubmit()
   }
 
   loadGoogleFont(fontFamily) {
@@ -294,4 +303,5 @@ export default class extends Controller {
     container.innerHTML = `<p class="text-red-500 text-center py-8 col-span-2">${message}</p>`
   }
 }
+
 

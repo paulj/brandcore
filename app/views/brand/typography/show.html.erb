@@ -1,8 +1,11 @@
 <% content_for :title, "Typography - #{@brand.name}" %>
 
-<%# Load Google Fonts CSS if a font is selected %>
-<% if @brand_typography.primary_typeface&.dig('google_fonts_url') %>
-  <link href="<%= @brand_typography.primary_typeface['google_fonts_url'] %>" rel="stylesheet">
+<%# Load Google Fonts CSS if fonts are selected %>
+<% if @brand_typography.primary_typeface&.google_fonts_url.present? %>
+  <link href="<%= @brand_typography.primary_typeface.google_fonts_url %>" rel="stylesheet">
+<% end %>
+<% if @brand_typography.secondary_typeface&.google_fonts_url.present? %>
+  <link href="<%= @brand_typography.secondary_typeface.google_fonts_url %>" rel="stylesheet">
 <% end %>
 
 <header class="bg-white border-b border-gray-200 px-8 py-6">
@@ -32,16 +35,15 @@
   <div class="space-y-8"
        data-controller="font-picker"
        data-font-picker-brand-id-value="<%= @brand.slug %>"
-       data-font-picker-current-font-value="<%= @brand_typography.primary_typeface.to_json if @brand_typography.primary_typeface.present? %>">
-    <%= form_with model: @brand_typography, url: brand_typography_path(@brand), method: :patch, data: { turbo: true, controller: "autosave", autosave_target: "form", font_picker_target: "form" } do |f| %>
-      <%= hidden_field_tag "brand_typography[primary_typeface]", @brand_typography.primary_typeface.to_json, id: "primary_typeface_input" %>
+       data-font-picker-current-primary-font-value="<%= @brand_typography.primary_typeface.to_json if @brand_typography.primary_typeface.present? %>"
+       data-font-picker-current-secondary-font-value="<%= @brand_typography.secondary_typeface.to_json if @brand_typography.secondary_typeface.present? %>">
       <div class="bg-white border border-gray-200 rounded-xl p-8">
         <h2 class="text-xl font-semibold text-gray-900 mb-6">Primary Typeface</h2>
         <div class="bg-gray-50 rounded-lg p-8 mb-4" data-font-picker-target="preview">
           <p class="text-xs text-gray-500 mb-4">SELECTED FONT FAMILY</p>
-          <% if @brand_typography.primary_typeface&.dig('name') %>
-            <h3 class="text-4xl font-bold mb-2" style="font-family: '<%= @brand_typography.primary_typeface['name'] %>', sans-serif"><%= @brand_typography.primary_typeface['name'] %></h3>
-            <p class="text-gray-600"><%= @brand_typography.primary_typeface['description'] || 'Primary typeface for your brand' %></p>
+          <% if @brand_typography.primary_typeface&.name.present? %>
+            <h3 class="text-4xl font-bold mb-2" style="font-family: '<%= @brand_typography.primary_typeface.name %>', sans-serif"><%= @brand_typography.primary_typeface.name %></h3>
+            <p class="text-gray-600">Primary typeface for your brand</p>
           <% else %>
             <h3 class="text-4xl font-bold mb-2 text-gray-400">Not Set</h3>
             <p class="text-gray-600">Select a primary typeface for your brand</p>
@@ -49,25 +51,48 @@
         </div>
         <button type="button" 
                 class="bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors"
-                data-action="click->font-picker#openModal">
-          <%= @brand_typography.primary_typeface&.dig('name') ? 'Change Typeface' : 'Select Typeface' %>
+                data-action="click->font-picker#openModal"
+                data-typeface-role="primary">
+          <%= @brand_typography.primary_typeface&.name.present? ? 'Change Typeface' : 'Select Typeface' %>
         </button>
         <div class="mt-4">
           <%= render "shared/save_indicator" %>
         </div>
       </div>
-    <% end %>
+
+      <div class="bg-white border border-gray-200 rounded-xl p-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-6">Secondary Typeface</h2>
+        <div class="bg-gray-50 rounded-lg p-8 mb-4">
+          <p class="text-xs text-gray-500 mb-4">SELECTED FONT FAMILY</p>
+          <% if @brand_typography.secondary_typeface&.name.present? %>
+            <h3 class="text-4xl font-bold mb-2" style="font-family: '<%= @brand_typography.secondary_typeface.name %>', sans-serif"><%= @brand_typography.secondary_typeface.name %></h3>
+            <p class="text-gray-600">Secondary typeface for your brand</p>
+          <% else %>
+            <h3 class="text-4xl font-bold mb-2 text-gray-400">Not Set</h3>
+            <p class="text-gray-600">Select a secondary typeface for your brand (optional)</p>
+          <% end %>
+        </div>
+        <button type="button" 
+                class="bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors"
+                data-action="click->font-picker#openModal"
+                data-typeface-role="secondary">
+          <%= @brand_typography.secondary_typeface&.name.present? ? 'Change Typeface' : 'Select Typeface' %>
+        </button>
+      </div>
 
     <!-- Font Picker Modal -->
     <div class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
          data-font-picker-target="modal"
          data-action="click->font-picker#closeModal">
-      <div class="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
-           onclick="event.stopPropagation()">
+      <%= form_with model: @brand_typography, url: brand_typography_path(@brand), method: :patch, data: { turbo: true, turbo_frame: "_top", font_picker_target: "form" } do |f| %>
+        <%= hidden_field_tag "brand_typography[primary_typeface]", @brand_typography.primary_typeface.to_json, data: { font_picker_target: "primaryFontInput" } %>
+        <%= hidden_field_tag "brand_typography[secondary_typeface]", @brand_typography.secondary_typeface.to_json, data: { font_picker_target: "secondaryFontInput" } %>
+        <div class="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
+             onclick="event.stopPropagation()">
         <!-- Modal Header -->
         <div class="flex items-center justify-between p-6 border-b border-gray-200">
           <div>
-            <h3 class="text-xl font-semibold text-gray-900">Select Font</h3>
+            <h3 class="text-xl font-semibold text-gray-900">Select <span data-font-picker-target="typefaceRole">Primary</span> Typeface</h3>
             <p class="text-sm text-gray-600 mt-1">Choose a font from Google Fonts</p>
           </div>
           <button type="button"
@@ -142,7 +167,8 @@
         <div class="p-6 border-t border-gray-200 bg-gray-50" data-font-picker-target="selectedFont">
           <p class="text-sm text-gray-500 mb-2">No font selected</p>
         </div>
-      </div>
+        </div>
+      <% end %>
     </div>
 
     <%= form_with model: @brand_typography, url: brand_typography_path(@brand), method: :patch, data: { turbo: true, controller: "autosave", autosave_target: "form" } do |f| %>

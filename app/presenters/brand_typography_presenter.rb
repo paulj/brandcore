@@ -32,8 +32,7 @@ class BrandTypographyPresenter
 
   def primary_typeface_complete?
     @brand_typography.primary_typeface.present? &&
-      @brand_typography.primary_typeface.is_a?(Hash) &&
-      @brand_typography.primary_typeface['name'].present?
+      @brand_typography.primary_typeface.name.present?
   end
 
   def type_scale_complete?
@@ -46,4 +45,3 @@ class BrandTypographyPresenter
     @brand_typography.usage_guidelines.present?
   end
 end
-
