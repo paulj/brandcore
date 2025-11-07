@@ -1,0 +1,35 @@
+<div id="typeface-panels" class="space-y-8">
+  <%# Display typefaces only for roles required by the selected scheme %>
+  <% if @brand_typography.scheme.present? %>
+    <% @brand_typography.required_roles.each do |role| %>
+      <% typeface = @brand_typography.typeface_by_role(role) %>
+      <div class="bg-white border border-gray-200 rounded-xl p-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-6 capitalize"><%= role %> Typeface</h2>
+        <div class="bg-gray-50 rounded-lg p-8 mb-4" data-font-picker-target="preview" data-role="<%= role %>">
+          <p class="text-xs text-gray-500 mb-4">SELECTED FONT FAMILY</p>
+          <% if typeface&.name.present? %>
+            <h3 class="text-4xl font-bold mb-2" style="font-family: '<%= typeface.name %>', sans-serif"><%= typeface.name %></h3>
+            <p class="text-gray-600 capitalize"><%= role %> typeface for your brand</p>
+            <% if typeface.category.present? %>
+              <p class="text-sm text-gray-500 mt-2 capitalize"><%= typeface.category %></p>
+            <% end %>
+          <% else %>
+            <h3 class="text-4xl font-bold mb-2 text-gray-400">Not Set</h3>
+            <p class="text-gray-600">Select a <%= role %> typeface for your brand</p>
+          <% end %>
+        </div>
+        <button type="button" 
+                class="bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors"
+                data-action="click->font-picker#openModal"
+                data-typeface-role="<%= role %>"
+                data-typeface-id="<%= typeface&.id %>">
+          <%= typeface&.name.present? ? 'Change Typeface' : 'Select Typeface' %>
+        </button>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="bg-white border border-gray-200 rounded-xl p-8">
+      <p class="text-gray-600">Please select a typography scheme above to continue.</p>
+    </div>
+  <% end %>
+</div>

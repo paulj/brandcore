@@ -13,6 +13,7 @@ Rails.application.routes.draw do
           get :search_fonts
           get :suggest_fonts
           get :fonts_by_category
+          patch :update_typeface
         end
       end
       resource :ui, only: [ :show, :update ], controller: :ui

@@ -1,11 +1,10 @@
 <% content_for :title, "Typography - #{@brand.name}" %>
 
-<%# Load Google Fonts CSS if fonts are selected %>
-<% if @brand_typography.primary_typeface&.google_fonts_url.present? %>
-  <link href="<%= @brand_typography.primary_typeface.google_fonts_url %>" rel="stylesheet">
-<% end %>
-<% if @brand_typography.secondary_typeface&.google_fonts_url.present? %>
-  <link href="<%= @brand_typography.secondary_typeface.google_fonts_url %>" rel="stylesheet">
+<%# Load Google Fonts CSS for all typefaces %>
+<% @brand_typography.typefaces.each do |typeface| %>
+  <% if typeface.google_fonts_url.present? %>
+    <link href="<%= typeface.google_fonts_url %>" rel="stylesheet">
+  <% end %>
 <% end %>
 
 <header class="bg-white border-b border-gray-200 px-8 py-6">
@@ -34,177 +33,146 @@
 
   <div class="space-y-8"
        data-controller="font-picker"
-       data-font-picker-brand-id-value="<%= @brand.slug %>"
-       data-font-picker-current-primary-font-value="<%= @brand_typography.primary_typeface.to_json if @brand_typography.primary_typeface.present? %>"
-       data-font-picker-current-secondary-font-value="<%= @brand_typography.secondary_typeface.to_json if @brand_typography.secondary_typeface.present? %>">
+       data-font-picker-brand-id-value="<%= @brand.slug %>">
+    
+    <%# Scheme Selector %>
+    <%= form_with model: @brand_typography, url: brand_typography_path(@brand), method: :patch, data: { turbo: true, "turbo-action": "morph", controller: "autosave", autosave_target: "form" } do |f| %>
       <div class="bg-white border border-gray-200 rounded-xl p-8">
-        <h2 class="text-xl font-semibold text-gray-900 mb-6">Primary Typeface</h2>
-        <div class="bg-gray-50 rounded-lg p-8 mb-4" data-font-picker-target="preview">
-          <p class="text-xs text-gray-500 mb-4">SELECTED FONT FAMILY</p>
-          <% if @brand_typography.primary_typeface&.name.present? %>
-            <h3 class="text-4xl font-bold mb-2" style="font-family: '<%= @brand_typography.primary_typeface.name %>', sans-serif"><%= @brand_typography.primary_typeface.name %></h3>
-            <p class="text-gray-600">Primary typeface for your brand</p>
-          <% else %>
-            <h3 class="text-4xl font-bold mb-2 text-gray-400">Not Set</h3>
-            <p class="text-gray-600">Select a primary typeface for your brand</p>
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Typography Scheme</h2>
+        <p class="text-gray-600 text-sm mb-6">Choose how many typefaces you want to use in your brand system.</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <% @schemes.each do |scheme_key, scheme_data| %>
+            <label class="relative cursor-pointer">
+              <%= f.radio_button :scheme, scheme_key, 
+                  class: "peer sr-only",
+                  data: { action: "change->autosave#save" } %>
+              <div class="border-2 border-gray-200 rounded-xl p-6 hover:border-gray-300 peer-checked:border-black peer-checked:bg-gray-50 transition-all">
+                <h3 class="font-semibold text-gray-900 mb-2"><%= scheme_data[:name] %></h3>
+                <p class="text-sm text-gray-600"><%= scheme_data[:description] %></p>
+                <div class="mt-4 text-xs text-gray-500">
+                  <% scheme_data[:roles].each do |role| %>
+                    <span class="inline-block bg-gray-100 px-2 py-1 rounded mr-2 mb-1 capitalize"><%= role %></span>
+                  <% end %>
+                </div>
+              </div>
+            </label>
           <% end %>
         </div>
-        <button type="button" 
-                class="bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors"
-                data-action="click->font-picker#openModal"
-                data-typeface-role="primary">
-          <%= @brand_typography.primary_typeface&.name.present? ? 'Change Typeface' : 'Select Typeface' %>
-        </button>
+        
         <div class="mt-4">
           <%= render "shared/save_indicator" %>
         </div>
       </div>
+    <% end %>
 
-      <div class="bg-white border border-gray-200 rounded-xl p-8">
-        <h2 class="text-xl font-semibold text-gray-900 mb-6">Secondary Typeface</h2>
-        <div class="bg-gray-50 rounded-lg p-8 mb-4">
-          <p class="text-xs text-gray-500 mb-4">SELECTED FONT FAMILY</p>
-          <% if @brand_typography.secondary_typeface&.name.present? %>
-            <h3 class="text-4xl font-bold mb-2" style="font-family: '<%= @brand_typography.secondary_typeface.name %>', sans-serif"><%= @brand_typography.secondary_typeface.name %></h3>
-            <p class="text-gray-600">Secondary typeface for your brand</p>
-          <% else %>
-            <h3 class="text-4xl font-bold mb-2 text-gray-400">Not Set</h3>
-            <p class="text-gray-600">Select a secondary typeface for your brand (optional)</p>
-          <% end %>
-        </div>
-        <button type="button" 
-                class="bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors"
-                data-action="click->font-picker#openModal"
-                data-typeface-role="secondary">
-          <%= @brand_typography.secondary_typeface&.name.present? ? 'Change Typeface' : 'Select Typeface' %>
-        </button>
-      </div>
+    <%# Display typefaces only for roles required by the selected scheme %>
+    <div id="typeface-panels">
+      <%= render "typeface_panels" %>
+    </div>
 
     <!-- Font Picker Modal -->
     <div class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
          data-font-picker-target="modal"
          data-action="click->font-picker#closeModal">
-      <%= form_with model: @brand_typography, url: brand_typography_path(@brand), method: :patch, data: { turbo: true, turbo_frame: "_top", font_picker_target: "form" } do |f| %>
-        <!-- Primary Typeface Fields -->
-        <div data-font-picker-target="primaryTypefaceFields">
-          <%= hidden_field_tag "brand_typography[primary_typeface][name]", @brand_typography.primary_typeface&.name, data: { font_picker_target: "primaryName" } %>
-          <%= hidden_field_tag "brand_typography[primary_typeface][family]", @brand_typography.primary_typeface&.family, data: { font_picker_target: "primaryFamily" } %>
-          <%= hidden_field_tag "brand_typography[primary_typeface][category]", @brand_typography.primary_typeface&.category, data: { font_picker_target: "primaryCategory" } %>
-          <%= hidden_field_tag "brand_typography[primary_typeface][google_fonts_url]", @brand_typography.primary_typeface&.google_fonts_url, data: { font_picker_target: "primaryGoogleFontsUrl" } %>
-          <% if @brand_typography.primary_typeface&.variants.present? %>
-            <% @brand_typography.primary_typeface.variants.each do |variant| %>
-              <%= hidden_field_tag "brand_typography[primary_typeface][variants][]", variant %>
-            <% end %>
-          <% end %>
-          <% if @brand_typography.primary_typeface&.subsets.present? %>
-            <% @brand_typography.primary_typeface.subsets.each do |subset| %>
-              <%= hidden_field_tag "brand_typography[primary_typeface][subsets][]", subset %>
-            <% end %>
-          <% end %>
+      <%= form_with url: update_typeface_brand_typography_path(@brand), method: :patch, data: { turbo: true, turbo_frame: "_top", font_picker_target: "form" } do |f| %>
+        <!-- Typeface Fields (dynamically populated) -->
+        <div data-font-picker-target="typefaceFields">
+          <%= hidden_field_tag "role", "", data: { font_picker_target: "role" } %>
+          <%= hidden_field_tag "typeface[id]", "", data: { font_picker_target: "typefaceId" } %>
+          <%= hidden_field_tag "typeface[name]", "", data: { font_picker_target: "name" } %>
+          <%= hidden_field_tag "typeface[family]", "", data: { font_picker_target: "family" } %>
+          <%= hidden_field_tag "typeface[category]", "", data: { font_picker_target: "category" } %>
+          <%= hidden_field_tag "typeface[google_fonts_url]", "", data: { font_picker_target: "googleFontsUrl" } %>
+          <div data-font-picker-target="variantsContainer"></div>
+          <div data-font-picker-target="subsetsContainer"></div>
         </div>
         
-        <!-- Secondary Typeface Fields -->
-        <div data-font-picker-target="secondaryTypefaceFields">
-          <%= hidden_field_tag "brand_typography[secondary_typeface][name]", @brand_typography.secondary_typeface&.name, data: { font_picker_target: "secondaryName" } %>
-          <%= hidden_field_tag "brand_typography[secondary_typeface][family]", @brand_typography.secondary_typeface&.family, data: { font_picker_target: "secondaryFamily" } %>
-          <%= hidden_field_tag "brand_typography[secondary_typeface][category]", @brand_typography.secondary_typeface&.category, data: { font_picker_target: "secondaryCategory" } %>
-          <%= hidden_field_tag "brand_typography[secondary_typeface][google_fonts_url]", @brand_typography.secondary_typeface&.google_fonts_url, data: { font_picker_target: "secondaryGoogleFontsUrl" } %>
-          <% if @brand_typography.secondary_typeface&.variants.present? %>
-            <% @brand_typography.secondary_typeface.variants.each do |variant| %>
-              <%= hidden_field_tag "brand_typography[secondary_typeface][variants][]", variant %>
-            <% end %>
-          <% end %>
-          <% if @brand_typography.secondary_typeface&.subsets.present? %>
-            <% @brand_typography.secondary_typeface.subsets.each do |subset| %>
-              <%= hidden_field_tag "brand_typography[secondary_typeface][subsets][]", subset %>
-            <% end %>
-          <% end %>
-        </div>
         <div class="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
              onclick="event.stopPropagation()">
-        <!-- Modal Header -->
-        <div class="flex items-center justify-between p-6 border-b border-gray-200">
-          <div>
-            <h3 class="text-xl font-semibold text-gray-900">Select <span data-font-picker-target="typefaceRole">Primary</span> Typeface</h3>
-            <p class="text-sm text-gray-600 mt-1">Choose a font from Google Fonts</p>
+          <!-- Modal Header -->
+          <div class="flex items-center justify-between p-6 border-b border-gray-200">
+            <div>
+              <h3 class="text-xl font-semibold text-gray-900">Select <span data-font-picker-target="typefaceRole" class="capitalize">Primary</span> Typeface</h3>
+              <p class="text-sm text-gray-600 mt-1">Choose a font from Google Fonts</p>
+            </div>
+            <button type="button"
+                    class="text-gray-400 hover:text-gray-600"
+                    data-action="click->font-picker#closeModal">
+              <i class="fa-solid fa-times text-xl"></i>
+            </button>
           </div>
-          <button type="button"
-                  class="text-gray-400 hover:text-gray-600"
-                  data-action="click->font-picker#closeModal">
-            <i class="fa-solid fa-times text-xl"></i>
-          </button>
-        </div>
 
-        <!-- Search Bar -->
-        <div class="p-6 border-b border-gray-200">
-          <div class="relative">
-            <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-            <input type="text"
-                   placeholder="Search fonts..."
-                   class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-                   data-font-picker-target="searchInput"
-                   data-action="input->font-picker#search">
+          <!-- Search Bar -->
+          <div class="p-6 border-b border-gray-200">
+            <div class="relative">
+              <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+              <input type="text"
+                     placeholder="Search fonts..."
+                     class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                     data-font-picker-target="searchInput"
+                     data-action="input->font-picker#search">
+            </div>
           </div>
-        </div>
 
-        <!-- Category Filters -->
-        <div class="px-6 py-4 border-b border-gray-200 flex gap-2 overflow-x-auto">
-          <button type="button"
-                  class="px-4 py-2 text-sm rounded-lg border border-gray-300 hover:border-black transition-colors whitespace-nowrap"
-                  data-category="serif"
-                  data-action="click->font-picker#loadByCategory">
-            Serif
-          </button>
-          <button type="button"
-                  class="px-4 py-2 text-sm rounded-lg border border-gray-300 hover:border-black transition-colors whitespace-nowrap"
-                  data-category="sans-serif"
-                  data-action="click->font-picker#loadByCategory">
-            Sans Serif
-          </button>
-          <button type="button"
-                  class="px-4 py-2 text-sm rounded-lg border border-gray-300 hover:border-black transition-colors whitespace-nowrap"
-                  data-category="display"
-                  data-action="click->font-picker#loadByCategory">
-            Display
-          </button>
-          <button type="button"
-                  class="px-4 py-2 text-sm rounded-lg border border-gray-300 hover:border-black transition-colors whitespace-nowrap"
-                  data-category="handwriting"
-                  data-action="click->font-picker#loadByCategory">
-            Handwriting
-          </button>
-          <button type="button"
-                  class="px-4 py-2 text-sm rounded-lg border border-gray-300 hover:border-black transition-colors whitespace-nowrap"
-                  data-category="monospace"
-                  data-action="click->font-picker#loadByCategory">
-            Monospace
-          </button>
-        </div>
-
-        <!-- Suggestions Section -->
-        <div class="p-6 border-b border-gray-200">
-          <h4 class="text-sm font-semibold text-gray-900 mb-4">Suggested for Your Brand</h4>
-          <div class="grid grid-cols-2 gap-4" data-font-picker-target="suggestions">
-            <!-- Suggestions will be loaded here -->
+          <!-- Category Filters -->
+          <div class="px-6 py-4 border-b border-gray-200 flex gap-2 overflow-x-auto">
+            <button type="button"
+                    class="px-4 py-2 text-sm rounded-lg border border-gray-300 hover:border-black transition-colors whitespace-nowrap"
+                    data-category="serif"
+                    data-action="click->font-picker#loadByCategory">
+              Serif
+            </button>
+            <button type="button"
+                    class="px-4 py-2 text-sm rounded-lg border border-gray-300 hover:border-black transition-colors whitespace-nowrap"
+                    data-category="sans-serif"
+                    data-action="click->font-picker#loadByCategory">
+              Sans Serif
+            </button>
+            <button type="button"
+                    class="px-4 py-2 text-sm rounded-lg border border-gray-300 hover:border-black transition-colors whitespace-nowrap"
+                    data-category="display"
+                    data-action="click->font-picker#loadByCategory">
+              Display
+            </button>
+            <button type="button"
+                    class="px-4 py-2 text-sm rounded-lg border border-gray-300 hover:border-black transition-colors whitespace-nowrap"
+                    data-category="handwriting"
+                    data-action="click->font-picker#loadByCategory">
+              Handwriting
+            </button>
+            <button type="button"
+                    class="px-4 py-2 text-sm rounded-lg border border-gray-300 hover:border-black transition-colors whitespace-nowrap"
+                    data-category="monospace"
+                    data-action="click->font-picker#loadByCategory">
+              Monospace
+            </button>
           </div>
-        </div>
 
-        <!-- Search Results -->
-        <div class="flex-1 overflow-y-auto p-6">
-          <div class="grid grid-cols-2 gap-4" data-font-picker-target="results">
-            <!-- Search results will be loaded here -->
+          <!-- Suggestions Section -->
+          <div class="p-6 border-b border-gray-200">
+            <h4 class="text-sm font-semibold text-gray-900 mb-4">Suggested for Your Brand</h4>
+            <div class="grid grid-cols-2 gap-4" data-font-picker-target="suggestions">
+              <!-- Suggestions will be loaded here -->
+            </div>
           </div>
-        </div>
 
-        <!-- Selected Font Preview -->
-        <div class="p-6 border-t border-gray-200 bg-gray-50" data-font-picker-target="selectedFont">
-          <p class="text-sm text-gray-500 mb-2">No font selected</p>
-        </div>
+          <!-- Search Results -->
+          <div class="flex-1 overflow-y-auto p-6">
+            <div class="grid grid-cols-2 gap-4" data-font-picker-target="results">
+              <!-- Search results will be loaded here -->
+            </div>
+          </div>
+
+          <!-- Selected Font Preview -->
+          <div class="p-6 border-t border-gray-200 bg-gray-50" data-font-picker-target="selectedFont">
+            <p class="text-sm text-gray-500 mb-2">No font selected</p>
+          </div>
         </div>
       <% end %>
     </div>
 
-    <%= form_with model: @brand_typography, url: brand_typography_path(@brand), method: :patch, data: { turbo: true, controller: "autosave", autosave_target: "form" } do |f| %>
+    <%= form_with model: @brand_typography, url: brand_typography_path(@brand), method: :patch, data: { turbo: true, "turbo-action": "morph", controller: "autosave", autosave_target: "form" } do |f| %>
       <div class="bg-white border border-gray-200 rounded-xl p-8">
         <h2 class="text-xl font-semibold text-gray-900 mb-6">Usage Guidelines</h2>
         <%= f.text_area :usage_guidelines,

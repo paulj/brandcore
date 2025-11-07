@@ -2,6 +2,7 @@ class Brand::TypographyController < Brand::BaseController
   def show
     @brand_typography = @brand.brand_typography || @brand.create_brand_typography!
     @typography_presenter = BrandTypographyPresenter.new(@brand_typography)
+    @schemes = BrandTypography::SCHEMES
   end
 
   # Search fonts endpoint
@@ -29,12 +30,26 @@ class Brand::TypographyController < Brand::BaseController
     @brand_typography = @brand.brand_typography || @brand.create_brand_typography!
     @typography_presenter = BrandTypographyPresenter.new(@brand_typography)
 
-    # No need to parse JSON strings - Rails handles nested attributes automatically
+    old_scheme = @brand_typography.scheme
+    new_scheme = brand_typography_params[:scheme]
+
     if @brand_typography.update(brand_typography_params)
+      # Clean up typefaces that don't match the new scheme
+      if new_scheme.present? && old_scheme != new_scheme
+        cleanup_invalid_typefaces
+        # Reload presenter after cleanup
+        @typography_presenter = BrandTypographyPresenter.new(@brand_typography.reload)
+      end
+
       respond_to do |format|
         format.turbo_stream do
-          # Return a redirect response - Turbo will follow it and reload the page
-          redirect_to brand_typography_path(@brand), status: :see_other
+          # When scheme changes, replace the typeface panels section
+          # Turbo Morph will preserve scroll position
+          render turbo_stream: [
+            turbo_stream.replace("typeface-panels", partial: "typeface_panels"),
+            turbo_stream.replace("section_progress", partial: "shared/section_progress", locals: { presenter: @typography_presenter }),
+            turbo_stream.replace("save_indicator", partial: "shared/save_indicator", locals: { saved: true })
+          ]
         end
         format.html { redirect_to brand_typography_path(@brand), notice: "Brand typography updated successfully." }
         format.json { head :no_content }
@@ -48,16 +63,79 @@ class Brand::TypographyController < Brand::BaseController
     end
   end
 
+  # Create or update a typeface by role
+  def update_typeface
+    @brand_typography = @brand.brand_typography || @brand.create_brand_typography!
+    role = params[:role]
+
+    # Validate role is allowed by current scheme
+    unless @brand_typography.required_roles.include?(role)
+      respond_to do |format|
+        format.html { redirect_to brand_typography_path(@brand), alert: "Role '#{role}' is not allowed for the current scheme." }
+        format.json { render json: { error: "Role '#{role}' is not allowed for the current scheme" }, status: :unprocessable_entity }
+      end
+      return
+    end
+
+    typeface = @brand_typography.typefaces.find_or_initialize_by(role: role)
+    typeface.assign_attributes(typeface_params)
+    typeface.role = role # Ensure role is set
+
+    if typeface.save
+      respond_to do |format|
+        format.turbo_stream { redirect_to brand_typography_path(@brand), status: :see_other }
+        format.html { redirect_to brand_typography_path(@brand), notice: "Typeface updated successfully." }
+        format.json { render json: { success: true, typeface: typeface } }
+      end
+    else
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("save_indicator", partial: "shared/save_indicator", locals: { saved: false, errors: typeface.errors }) }
+        format.html { redirect_to brand_typography_path(@brand), alert: typeface.errors.full_messages.join(", ") }
+        format.json { render json: { error: typeface.errors.full_messages.join(", ") }, status: :unprocessable_entity }
+      end
+    end
+  end
+
   private
+
+  def cleanup_invalid_typefaces
+    allowed_roles = @brand_typography.required_roles
+    @brand_typography.typefaces.where.not(role: allowed_roles).destroy_all
+  end
 
   def brand_typography_params
     params.require(:brand_typography).permit(
+      :scheme,
       :usage_guidelines,
-      primary_typeface: [ :name, :family, :category, :google_fonts_url, variants: [], subsets: [] ],
-      secondary_typeface: [ :name, :family, :category, :google_fonts_url, variants: [], subsets: [] ],
+      typefaces_attributes: [
+        :id,
+        :role,
+        :name,
+        :family,
+        :category,
+        :google_fonts_url,
+        :position,
+        :_destroy,
+        variants: [],
+        subsets: [],
+        type_scale: {},
+        line_heights: {}
+      ]
+    )
+  end
+
+  def typeface_params
+    params.require(:typeface).permit(
+      :role,
+      :name,
+      :family,
+      :category,
+      :google_fonts_url,
+      :position,
+      variants: [],
+      subsets: [],
       type_scale: {},
-      line_heights: {},
-      web_font_urls: []
+      line_heights: {}
     )
   end
 end

@@ -9,16 +9,15 @@ export default class extends Controller {
     "selectedFont",
     "form",
     "preview",
-    "primaryName",
-    "primaryFamily",
-    "primaryCategory",
-    "primaryGoogleFontsUrl",
-    "primaryTypefaceFields",
-    "secondaryName",
-    "secondaryFamily",
-    "secondaryCategory",
-    "secondaryGoogleFontsUrl",
-    "secondaryTypefaceFields",
+    "typefaceFields",
+    "role",
+    "typefaceId",
+    "name",
+    "family",
+    "category",
+    "googleFontsUrl",
+    "variantsContainer",
+    "subsetsContainer",
     "typefaceRole"
   ]
 
@@ -40,9 +39,18 @@ export default class extends Controller {
   }
 
   openModal(event) {
-    // Get the typeface role from the button that was clicked
+    // Get the typeface role and ID from the button that was clicked
     const role = event?.currentTarget?.dataset?.typefaceRole || "primary"
+    const typefaceId = event?.currentTarget?.dataset?.typefaceId || ""
     this.typefaceRoleValue = role
+    
+    // Set the role and typeface ID in the form
+    if (this.hasRoleTarget) {
+      this.roleTarget.value = role
+    }
+    if (this.hasTypefaceIdTarget) {
+      this.typefaceIdTarget.value = typefaceId
+    }
     
     // Update the modal header to show which typeface is being selected
     if (this.hasTypefaceRoleTarget) {
@@ -185,52 +193,47 @@ export default class extends Controller {
     const fontName = fontData.family
     const role = this.typefaceRoleValue || "primary"
 
-    // Determine which targets to use based on the role
-    const nameTarget = role === "secondary" ? "secondaryName" : "primaryName"
-    const familyTarget = role === "secondary" ? "secondaryFamily" : "primaryFamily"
-    const categoryTarget = role === "secondary" ? "secondaryCategory" : "primaryCategory"
-    const googleFontsUrlTarget = role === "secondary" ? "secondaryGoogleFontsUrl" : "primaryGoogleFontsUrl"
-    const fieldsContainerTarget = role === "secondary" ? "secondaryTypefaceFields" : "primaryTypefaceFields"
-
-    // Get the field container
-    const fieldsContainer = this[`${fieldsContainerTarget}Target`]
-    if (!fieldsContainer) {
-      console.error(`Could not find ${role} typeface fields container`)
-      alert("Error: Could not find form fields. Please refresh the page and try again.")
-      return
+    // Update the basic fields
+    if (this.hasNameTarget) {
+      this.nameTarget.value = fontName
+    }
+    if (this.hasFamilyTarget) {
+      this.familyTarget.value = fontName
+    }
+    if (this.hasCategoryTarget) {
+      this.categoryTarget.value = fontData.category || ""
+    }
+    if (this.hasGoogleFontsUrlTarget) {
+      this.googleFontsUrlTarget.value = `https://fonts.googleapis.com/css2?family=${fontName.replace(/\s+/g, "+")}:wght@300;400;500;600;700&display=swap`
     }
 
-    // Update the basic fields
-    this[`${nameTarget}Target`].value = fontName
-    this[`${familyTarget}Target`].value = fontName
-    this[`${categoryTarget}Target`].value = fontData.category || ""
-    this[`${googleFontsUrlTarget}Target`].value = `https://fonts.googleapis.com/css2?family=${fontName.replace(/\s+/g, "+")}:wght@300;400;500;600;700&display=swap`
-
     // Remove existing variant and subset fields
-    const existingVariants = fieldsContainer.querySelectorAll('input[name*="[variants][]"]')
-    const existingSubsets = fieldsContainer.querySelectorAll('input[name*="[subsets][]"]')
-    existingVariants.forEach(field => field.remove())
-    existingSubsets.forEach(field => field.remove())
+    if (this.hasVariantsContainerTarget) {
+      const existingVariants = this.variantsContainerTarget.querySelectorAll('input[name*="[variants][]"]')
+      const existingSubsets = this.subsetsContainerTarget.querySelectorAll('input[name*="[subsets][]"]')
+      existingVariants.forEach(field => field.remove())
+      existingSubsets.forEach(field => field.remove())
 
-    // Add variant fields
-    const variants = fontData.variants || []
-    variants.forEach(variant => {
-      const input = document.createElement("input")
-      input.type = "hidden"
-      input.name = `brand_typography[${role}_typeface][variants][]`
-      input.value = variant
-      fieldsContainer.appendChild(input)
-    })
+      // Add variant fields
+      const variants = fontData.variants || []
+      variants.forEach(variant => {
+        const input = document.createElement("input")
+        input.type = "hidden"
+        input.name = "typeface[variants][]"
+        input.value = variant
+        this.variantsContainerTarget.appendChild(input)
+      })
 
-    // Add subset fields
-    const subsets = fontData.subsets || []
-    subsets.forEach(subset => {
-      const input = document.createElement("input")
-      input.type = "hidden"
-      input.name = `brand_typography[${role}_typeface][subsets][]`
-      input.value = subset
-      fieldsContainer.appendChild(input)
-    })
+      // Add subset fields
+      const subsets = fontData.subsets || []
+      subsets.forEach(subset => {
+        const input = document.createElement("input")
+        input.type = "hidden"
+        input.name = "typeface[subsets][]"
+        input.value = subset
+        this.subsetsContainerTarget.appendChild(input)
+      })
+    }
     
     // Load the Google Font CSS
     this.loadGoogleFont(fontName)
@@ -300,7 +303,12 @@ export default class extends Controller {
     if (!this.hasPreviewTarget) return
 
     const fontFamily = font.family || "Unknown"
-    this.previewTarget.style.fontFamily = `'${fontFamily}', sans-serif`
+    const role = this.typefaceRoleValue || "primary"
+    // Update the preview for the specific role
+    const previewElement = document.querySelector(`[data-font-picker-target="preview"][data-role="${role}"]`)
+    if (previewElement) {
+      previewElement.style.fontFamily = `'${fontFamily}', sans-serif`
+    }
   }
 
   updateSelectedDisplay(font) {

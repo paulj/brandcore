@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_07_012753) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_07_025524) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -115,13 +115,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_012753) do
     t.boolean "completed", default: false, null: false
     t.datetime "completed_at"
     t.datetime "created_at", null: false
-    t.jsonb "line_heights", default: {}
-    t.jsonb "primary_typeface", default: {}
-    t.jsonb "secondary_typeface", default: {}
-    t.jsonb "type_scale", default: {}
+    t.string "scheme", default: "primary_secondary", null: false
     t.datetime "updated_at", null: false
     t.text "usage_guidelines"
-    t.jsonb "web_font_urls", default: []
     t.index ["brand_id"], name: "index_brand_typographies_on_brand_id", unique: true
   end
 
@@ -218,6 +214,24 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_012753) do
     t.index ["token_role"], name: "index_token_assignments_on_token_role"
   end
 
+  create_table "typefaces", force: :cascade do |t|
+    t.bigint "brand_typography_id", null: false
+    t.string "category", null: false
+    t.datetime "created_at", null: false
+    t.string "family", null: false
+    t.string "google_fonts_url"
+    t.jsonb "line_heights", default: {}
+    t.string "name", null: false
+    t.integer "position", default: 0, null: false
+    t.string "role", null: false
+    t.text "subsets", default: [], array: true
+    t.jsonb "type_scale", default: {}
+    t.datetime "updated_at", null: false
+    t.text "variants", default: [], array: true
+    t.index ["brand_typography_id", "role"], name: "index_typefaces_on_brand_typography_and_role", unique: true
+    t.index ["brand_typography_id"], name: "index_typefaces_on_brand_typography_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email_address", null: false
@@ -254,4 +268,5 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_07_012753) do
   add_foreign_key "sessions", "users"
   add_foreign_key "token_assignments", "brand_colour_schemes"
   add_foreign_key "token_assignments", "palette_colours"
+  add_foreign_key "typefaces", "brand_typographies"
 end
