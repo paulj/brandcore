@@ -112,20 +112,21 @@ This document captures all tasks needed to build out the BrandCore application b
 - [ ] Write brand model specs
 
 ### 3.2 Brand Creation Flow
-- [ ] Create `BrandsController`
-  - [ ] index action (list user's brands)
-  - [ ] new action (creation form)
-  - [ ] create action (with working name generation)
-  - [ ] show action (brand book view)
+- [x] Create `BrandsController`
+  - [x] index action (list user's brands)
+  - [x] new action (onboarding form with static mockup view)
+  - [x] create action (with working name generation)
+  - [x] show action (brand book dashboard with static mockup view)
   - [ ] edit action (brand settings)
   - [ ] update action
   - [ ] destroy action (with owner check)
-- [ ] Create brand views
-  - [ ] Index page (dashboard)
-  - [ ] New/create form
-  - [ ] Brand book skeleton (show page)
+- [x] Create brand views (static mockups implemented)
+  - [ ] Index page (list of brands)
+  - [x] New/create form (onboarding mockup)
+  - [x] Brand book dashboard (show page mockup)
   - [ ] Brand settings form
-- [ ] Set up routes for brands
+- [x] Set up routes for brands
+- [ ] Make forms functional and connected to models
 - [ ] Add authorization checks to BrandsController
 - [ ] Write controller specs
 
@@ -376,20 +377,19 @@ This document captures all tasks needed to build out the BrandCore application b
 ## 7. Controllers & Routes
 
 ### 7.1 Routes Configuration
-- [x] Set up root route (temporary - points to login, will be updated when BrandsController is created)
+- [x] Set up root route (points to brands#index)
 - [x] Set up authentication routes (sessions)
-- [ ] Set up brand routes (nested resources)
-- [ ] Set up component routes (nested under brands)
-  - [ ] brand_names routes
-  - [ ] brand_visions routes
-  - [ ] brand_logos routes
-  - [ ] brand_languages routes
-  - [ ] brand_colour_schemes routes
-  - [ ] brand_typographies routes
-  - [ ] brand_uis routes
+- [x] Set up brand routes (nested resources)
+- [x] Set up component routes (nested under brands with `scope module: :brand`)
+  - [x] vision routes (`/brands/:brand_id/vision`)
+  - [x] logo routes (`/brands/:brand_id/logo`)
+  - [x] language routes (`/brands/:brand_id/language`)
+  - [x] colour_scheme routes (`/brands/:brand_id/colour_scheme`)
+  - [x] typography routes (`/brands/:brand_id/typography`)
+  - [x] ui routes (`/brands/:brand_id/ui`)
 - [ ] Set up sharing routes (public brand book access)
 - [ ] Set up API routes (if needed for future integrations)
-- [ ] Add route helpers documentation
+- [x] Route helpers use clean URLs (no "brand" duplication)
 
 ### 7.2 Application Controller
 - [x] Set up PaperTrail whodunnit tracking
@@ -398,8 +398,18 @@ This document captures all tasks needed to build out the BrandCore application b
 - [ ] Add rescue_from handlers
 
 ### 7.3 Component Controllers
-- [ ] Ensure all component controllers have proper authorization
-- [ ] Add auto-save functionality (optional)
+- [x] Create `Brand::BaseController` with shared layout and brand setup
+- [x] All component controllers inherit from `Brand::BaseController`
+  - [x] `Brand::VisionController`
+  - [x] `Brand::LogoController`
+  - [x] `Brand::LanguageController`
+  - [x] `Brand::ColourSchemeController` (Australian spelling)
+  - [x] `Brand::TypographyController`
+  - [x] `Brand::UiController`
+- [x] Basic show actions implemented (serving static mockup views)
+- [ ] Implement edit/update actions
+- [ ] Add auto-save functionality
+- [ ] Ensure proper authorization on all actions
 - [ ] Add version history endpoints (if exposing via API)
 
 ---
@@ -407,39 +417,83 @@ This document captures all tasks needed to build out the BrandCore application b
 ## 8. Views & UI
 
 ### 8.1 Layout & Styling
-- [ ] Create application layout
-  - [ ] Header/navigation
-  - [ ] Sidebar (completion checklist)
-  - [ ] Footer
-- [ ] Set up Tailwind CSS 4
+- [x] Create brand book layout (`brand_book.html.erb`)
+  - [x] Sidebar with navigation and user panel
+  - [x] Sticky sidebar with fixed user panel at bottom
+  - [x] Simple layout for onboarding (`simple.html.erb`)
+- [x] Set up Tailwind CSS with external CDN (mockup phase)
+  - [x] Font Awesome icons integration
+  - [x] Inter font family
+- [ ] Migrate to Tailwind CSS 4 (native Rails setup)
   - [ ] Configure Tailwind with @theme directive support
   - [ ] Set up brand-specific CSS variable injection
   - [ ] Create base styles
-- [ ] Create brand book layout
+- [ ] Enhanced brand book layout features
   - [ ] Dynamic styling based on brand tokens
-  - [ ] Responsive design
   - [ ] Print styles (for PDF export)
 
-### 8.2 Brand Book Pages
-- [ ] Create brand book show page (skeleton)
-  - [ ] Component navigation
-  - [ ] Completion status sidebar
-  - [ ] Skeleton states for incomplete components
-- [ ] Create component show pages (7 total)
-  - [ ] Name page
-  - [ ] Vision page
-  - [ ] Logo page
-  - [ ] Language page
-  - [ ] Colour Palette page
-  - [ ] Typography page
-  - [ ] UI Language page
-- [ ] Create component edit pages (7 total)
-  - [ ] Edit forms with proper field types
-  - [ ] Auto-save indicators
-  - [ ] Validation error display
-  - [ ] Help text and examples
+### 8.2 Static Mockup Views (Implemented - Phase 1)
+**Status:** All mockup screens have been converted to static Rails views with trivial controllers. These views are based on external mockup designs and are currently non-functional placeholders.
 
-### 8.3 Color Palette UI
+**Next Steps:** Align views with underlying data models, make interactive, and implement proper form handling and persistence.
+
+- [x] Create brand book dashboard (`brands#show`)
+  - [x] Component overview cards with status
+  - [x] Recent activity feed
+  - [x] Recommended next steps
+  - [x] AI suggestions panel
+- [x] Create onboarding page (`brands#new`)
+  - [x] User registration form
+  - [x] Brand name selection (AI suggestion vs custom)
+  - [x] Privacy notice
+- [x] Create Brand Vision page (`brand/vision#show`)
+  - [x] Brand name display
+  - [x] Mission statement form
+  - [x] Vision statement form
+  - [x] Core values editor
+  - [x] AI assistance buttons (non-functional)
+- [x] Create Logo Design page (`brand/logo#show`)
+  - [x] Logo upload interface
+  - [x] Logo adaptations display (primary, monochrome, white, favicon)
+  - [x] AI logo generator button (non-functional)
+- [x] Create Voice & Tone page (`brand/language#show`)
+  - [x] Brand voice characteristics selector
+  - [x] Language guidelines (words to use/avoid)
+  - [x] Tone variations by context
+- [x] Create Colour Scheme page (`brand/colour_scheme#show`)
+  - [x] Current selection display
+  - [x] Palette category filters
+  - [x] Pre-defined palette gallery
+  - [x] Custom palette creator
+- [x] Create Typography page (`brand/typography#show`)
+  - [x] Primary typeface selector
+  - [x] Type scale hierarchy display
+  - [x] Font weight samples
+- [x] Create UI Elements page (`brand/ui#show`)
+  - [x] Button variations
+  - [x] Form element examples
+  - [x] Card components
+- [x] Create shared sidebar partial
+  - [x] Brand header with link to dashboard
+  - [x] Progress overview section
+  - [x] Navigation links to all components
+  - [x] Completion status indicators (green/orange dots)
+  - [x] User profile panel with logout
+
+### 8.3 Functional Implementation (Next Phase)
+- [ ] Make onboarding form functional
+  - [ ] Connect to user creation logic
+  - [ ] Connect to brand creation logic
+  - [ ] Implement working name generation
+  - [ ] Handle form validation and errors
+- [ ] Make component edit pages functional
+  - [ ] Connect forms to actual model attributes
+  - [ ] Implement auto-save functionality
+  - [ ] Add validation error display
+  - [ ] Add help text and examples
+  - [ ] Make AI assistance buttons functional
+
+### 8.4 Color Palette UI (Advanced Features)
 - [ ] Create palette editor page
   - [ ] Color grid/list view
   - [ ] Add color button
@@ -459,7 +513,7 @@ This document captures all tasks needed to build out the BrandCore application b
   - [ ] Color relationship visualization
   - [ ] Comparison charts
 
-### 8.4 JavaScript/Stimulus
+### 8.5 JavaScript/Stimulus
 - [ ] Set up Stimulus controllers
   - [ ] Auto-save controller
   - [ ] Color picker controller
@@ -471,7 +525,7 @@ This document captures all tasks needed to build out the BrandCore application b
   - [ ] Contrast calculation
   - [ ] Debounce helpers
 
-### 8.5 Progressive Enhancement
+### 8.6 Progressive Enhancement
 - [ ] Implement dynamic brand book styling
   - [ ] Inject CSS variables when colors are defined
   - [ ] Inject typography when defined
