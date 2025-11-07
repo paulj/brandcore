@@ -7,10 +7,7 @@
       <p class="text-gray-600 mt-1">Define your brand's core purpose, values, and messaging framework</p>
     </div>
     <div class="flex items-center space-x-4">
-      <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-        <i class="fa-solid fa-save mr-2"></i>
-        Save Progress
-      </button>
+      <%= render "shared/save_indicator" %>
       <button class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
         <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
         AI Assistant
@@ -55,55 +52,63 @@
       </div>
     </div>
 
-    <div class="bg-white border border-gray-200 rounded-xl p-8">
-      <div class="flex items-center justify-between mb-6">
-        <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
-            <i class="fa-solid fa-bullseye text-gray-400"></i>
+    <%= form_with model: @brand_vision, url: brand_vision_path(@brand), method: :patch, data: { turbo: true, controller: "autosave", autosave_target: "form" } do |f| %>
+      <div class="bg-white border border-gray-200 rounded-xl p-8">
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+              <i class="fa-solid fa-bullseye text-gray-400"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold text-gray-900">Mission Statement</h3>
+              <p class="text-gray-600 text-sm">Why your brand exists and what it aims to accomplish</p>
+            </div>
           </div>
-          <div>
-            <h3 class="text-xl font-semibold text-gray-900">Mission Statement</h3>
-            <p class="text-gray-600 text-sm">Why your brand exists and what it aims to accomplish</p>
-          </div>
-        </div>
-        <button class="bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors">
-          <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
-          AI Help
-        </button>
-      </div>
-      <div class="space-y-4">
-        <textarea class="w-full h-32 p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-black focus:border-transparent"
-                  placeholder="Describe your brand's purpose and what it aims to achieve in the world..."><%= @brand_vision&.mission_statement %></textarea>
-        <div class="flex items-center justify-between">
-          <span class="text-sm text-gray-500">Draft saved automatically</span>
-          <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm">
-            Get Examples
+          <button type="button" class="bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors">
+            <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
+            AI Help
           </button>
         </div>
-      </div>
-    </div>
-
-    <div class="bg-white border border-gray-200 rounded-xl p-8">
-      <div class="flex items-center justify-between mb-6">
-        <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
-            <i class="fa-solid fa-eye text-gray-400"></i>
-          </div>
-          <div>
-            <h3 class="text-xl font-semibold text-gray-900">Vision Statement</h3>
-            <p class="text-gray-600 text-sm">Your brand's aspirational future and long-term goals</p>
+        <div class="space-y-4">
+          <%= f.text_area :mission_statement,
+                          class: "w-full h-32 p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-black focus:border-transparent",
+                          placeholder: "Describe your brand's purpose and what it aims to achieve in the world...",
+                          data: { action: "input->autosave#save" } %>
+          <div class="flex items-center justify-between">
+            <%= render "shared/save_indicator" %>
+            <button type="button" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm">
+              Get Examples
+            </button>
           </div>
         </div>
-        <button class="bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors">
-          <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
-          AI Help
-        </button>
       </div>
-      <div class="space-y-4">
-        <textarea class="w-full h-32 p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-black focus:border-transparent"
-                  placeholder="Paint a picture of the future your brand is working towards..."><%= @brand_vision&.vision_statement %></textarea>
+    <% end %>
+
+    <%= form_with model: @brand_vision, url: brand_vision_path(@brand), method: :patch, data: { turbo: true, controller: "autosave", autosave_target: "form" } do |f| %>
+      <div class="bg-white border border-gray-200 rounded-xl p-8">
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+              <i class="fa-solid fa-eye text-gray-400"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold text-gray-900">Vision Statement</h3>
+              <p class="text-gray-600 text-sm">Your brand's aspirational future and long-term goals</p>
+            </div>
+          </div>
+          <button type="button" class="bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors">
+            <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
+            AI Help
+          </button>
+        </div>
+        <div class="space-y-4">
+          <%= f.text_area :vision_statement,
+                          class: "w-full h-32 p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-black focus:border-transparent",
+                          placeholder: "Paint a picture of the future your brand is working towards...",
+                          data: { action: "input->autosave#save" } %>
+        </div>
       </div>
-    </div>
+    <% end %>
 
     <div class="bg-white border border-gray-200 rounded-xl p-8">
       <div class="flex items-center justify-between mb-6">
@@ -116,20 +121,110 @@
             <p class="text-gray-600 text-sm">The fundamental beliefs that guide your brand</p>
           </div>
         </div>
-        <button class="bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors">
+        <button type="button" class="bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors">
           <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
           AI Help
         </button>
       </div>
       <div class="space-y-4">
-        <div class="grid grid-cols-2 gap-4">
-          <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors cursor-pointer">
-            <i class="fa-solid fa-plus text-gray-400 text-2xl mb-2"></i>
-            <p class="text-gray-500 text-sm">Add Core Value</p>
-          </div>
-          <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors cursor-pointer">
-            <i class="fa-solid fa-plus text-gray-400 text-2xl mb-2"></i>
-            <p class="text-gray-500 text-sm">Add Core Value</p>
+        <div data-controller="core-values"
+             data-core-values-values-value="<%= (@brand_vision&.core_values || []).to_json %>"
+             data-core-values-brand-id-value="<%= @brand.slug %>">
+          <div class="grid grid-cols-2 gap-4" data-core-values-target="list">
+            <% if @brand_vision&.core_values.present? %>
+              <% @brand_vision.core_values.each_with_index do |value, index| %>
+                <%
+                  # Handle both string and hash formats for backwards compatibility
+                  if value.is_a?(String)
+                    name = value
+                    description = nil
+                    icon = "fa-solid fa-heart"
+                  else
+                    name = value["name"] || value[:name]
+                    description = value["description"] || value[:description]
+                    icon = value["icon"] || value[:icon] || "fa-solid fa-heart"
+                  end
+                %>
+                <div class="bg-white border-2 border-gray-200 rounded-lg p-6 flex items-start justify-between hover:border-gray-300 transition-colors">
+                  <div class="flex-1">
+                    <div class="flex items-start space-x-3">
+                      <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <i class="<%= icon %> text-gray-600"></i>
+                      </div>
+                      <div class="flex-1">
+                        <h4 class="text-gray-900 font-semibold mb-1"><%= name %></h4>
+                        <% if description.present? %>
+                          <p class="text-gray-600 text-sm leading-relaxed"><%= description %></p>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                  <button type="button"
+                          data-action="click->core-values#remove"
+                          data-index="<%= index %>"
+                          class="text-gray-400 hover:text-red-500 transition-colors ml-4 flex-shrink-0">
+                    <i class="fa-solid fa-times"></i>
+                  </button>
+                </div>
+              <% end %>
+            <% end %>
+
+            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-gray-400 transition-colors">
+              <div class="space-y-3">
+                <div class="flex items-center space-x-2 mb-4">
+                  <i class="fa-solid fa-plus text-gray-400"></i>
+                  <span class="text-sm font-medium text-gray-600">Add Core Value</span>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Icon</label>
+                  <select data-core-values-target="iconSelect"
+                          class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent">
+                    <option value="fa-solid fa-heart">❤️ Heart</option>
+                    <option value="fa-solid fa-star">⭐ Star</option>
+                    <option value="fa-solid fa-shield">🛡️ Shield</option>
+                    <option value="fa-solid fa-lightbulb">💡 Lightbulb</option>
+                    <option value="fa-solid fa-rocket">🚀 Rocket</option>
+                    <option value="fa-solid fa-users">👥 Users</option>
+                    <option value="fa-solid fa-handshake">🤝 Handshake</option>
+                    <option value="fa-solid fa-trophy">🏆 Trophy</option>
+                    <option value="fa-solid fa-compass">🧭 Compass</option>
+                    <option value="fa-solid fa-gem">💎 Gem</option>
+                    <option value="fa-solid fa-bolt">⚡ Bolt</option>
+                    <option value="fa-solid fa-fire">🔥 Fire</option>
+                    <option value="fa-solid fa-leaf">🌿 Leaf</option>
+                    <option value="fa-solid fa-crown">👑 Crown</option>
+                    <option value="fa-solid fa-thumbs-up">👍 Thumbs Up</option>
+                    <option value="fa-solid fa-balance-scale">⚖️ Balance</option>
+                    <option value="fa-solid fa-brain">🧠 Brain</option>
+                    <option value="fa-solid fa-eye">👁️ Eye</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Value Name *</label>
+                  <input type="text"
+                         data-core-values-target="nameInput"
+                         placeholder="e.g., Integrity, Innovation, Excellence..."
+                         class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent">
+                </div>
+
+                <div>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Description</label>
+                  <textarea data-core-values-target="descriptionInput"
+                            placeholder="Explain what this value means to your brand..."
+                            rows="3"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent resize-none"></textarea>
+                </div>
+
+                <button type="button"
+                        data-core-values-target="addButton"
+                        data-action="click->core-values#add"
+                        class="w-full bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                  Add Value
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -4,7 +4,7 @@
 
 BrandCore is a step-by-step brand creation tool that guides users through building a complete, professional brand identity from absolute zero. The tool produces a structured brand profile and web-accessible brand book that can be shared and referenced.
 
-**Tech Stack:** Rails 8.1, PostgreSQL, Tailwind CSS, Turbo, Stimulus, PaperTrail (versioning)
+**Tech Stack:** Rails 8.1, PostgreSQL, Tailwind CSS, Turbo, Stimulus, PaperTrail (versioning), StoreModel (JSONB structuring)
 
 **Spelling Convention:** This project uses Australian English spelling (e.g., "colour" not "color", "organisation" not "organization"). This applies to all model names, database columns, UI text, and documentation.
 
@@ -63,10 +63,14 @@ BrandCore guides users through seven core brand elements in a logical sequence:
 
 1. **Presenter Layer** - Data transformation in presenters, not models
 2. **Hybrid JSONB/Normalized** - Normalized tables for integrity, JSONB for cached analysis
-3. **One-to-One Components** - Each brand has exactly one of each component
-4. **Version History** - PaperTrail gem tracks all changes with whodunnit
-5. **Working Names** - Auto-generated (Adjective + Noun) if user doesn't provide name
-6. **Slug-Based URLs** - Human-readable URLs instead of IDs
+3. **StoreModel for JSONB** - Structured JSONB attributes with validations using StoreModel gem
+   - Complex JSONB fields are modeled as separate classes (e.g., `CoreValue` for `BrandVision.core_values`)
+   - Provides type safety, validations, and accessor methods for JSONB arrays/objects
+   - Example: `attribute :core_values, CoreValue.to_array_type`
+4. **One-to-One Components** - Each brand has exactly one of each component
+5. **Version History** - PaperTrail gem tracks all changes with whodunnit
+6. **Working Names** - Auto-generated (Adjective + Noun) if user doesn't provide name
+7. **Slug-Based URLs** - Human-readable URLs instead of IDs
 
 ### Controllers & Routes
 
@@ -121,7 +125,9 @@ This ensures brand consistency, accessibility compliance, and future-proof desig
 **Recent Work:**
 - Brand model implementation with working name generation
 - BrandsController with full CRUD operations
-- Brand book view structure
+- Brand book view structure with sidebar navigation
+- Brand Vision component with auto-save functionality
+- Core values editor with StoreModel (name, description, icon)
 - Color system model specs
 - Authentication flow
 
@@ -130,3 +136,6 @@ This ensures brand consistency, accessibility compliance, and future-proof desig
 - Presenter pattern for data exports
 - Version history via PaperTrail
 - Role-based access control
+- StoreModel for structured JSONB attributes
+- Turbo Streams for auto-save functionality
+- Stimulus controllers for interactive components

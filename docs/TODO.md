@@ -158,14 +158,20 @@ This document captures all tasks needed to build out the BrandCore application b
 
 ### 4.2 Brand Vision Component
 - [x] Create `BrandVision` model
-- [ ] Create `BrandVisionsController`
-  - [ ] show action
-  - [ ] edit action
-  - [ ] update action
-- [ ] Create brand vision views
-  - [ ] Show page (brand book section)
-  - [ ] Edit form (with all vision fields)
-- [ ] Add form helpers for structured JSONB fields
+- [x] Create `BrandVisionsController`
+  - [x] show action
+  - [x] update action with auto-save
+- [x] Create brand vision views
+  - [x] Show page (brand book section)
+  - [x] Mission statement form with auto-save
+  - [x] Vision statement form with auto-save
+  - [x] Core values editor (with StoreModel)
+- [x] Add StoreModel for structured JSONB fields (CoreValue model)
+- [ ] Implement comprehensive FontAwesome icon picker for core values
+  - [ ] Searchable icon browser with all FontAwesome icons
+  - [ ] Icon preview and categories
+  - [ ] Modal or popover interface
+  - [ ] Replace current limited dropdown with full picker
 - [ ] Write model and controller specs
 
 ### 4.3 Brand Logo Component

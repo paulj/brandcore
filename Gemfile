@@ -25,6 +25,9 @@ gem "bcrypt", "~> 3.1.7"
 # Track changes and versions for all models [https://github.com/paper-trail-gem/paper_trail]
 gem "paper_trail"
 
+# Structured JSONB attributes with validations [https://github.com/DmitryTsepelev/store_model]
+gem "store_model"
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
