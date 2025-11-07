@@ -7,27 +7,21 @@ module BrandColorPalette
     attr_reader :brand_input, :options
 
     # Initialize the generator with brand inputs
-    # @param brand_input [Hash] Brand vision details
-    # @option brand_input [String] :brand_id Brand identifier
-    # @option brand_input [Array<String>] :traits Brand traits (e.g., "innovative", "approachable")
-    # @option brand_input [Array<String>] :tone Brand tone (e.g., "confident", "friendly")
-    # @option brand_input [Array<String>] :audiences Target audiences (e.g., "prosumer", "SMB")
-    # @option brand_input [String] :category Business category (e.g., "SaaS")
-    # @option brand_input [Array<String>] :markets Target markets (e.g., "US", "AU")
-    # @option brand_input [Array<String>] :keywords Brand keywords (e.g., "automation", "reliability")
+    # @param brand_input [BrandInput, Hash] Brand vision details (struct or hash)
     # @param options [Hash] Generation options
     # @option options [Integer] :palette_count Number of palettes to generate (default: 10)
     # @option options [Boolean] :include_dark_mode Generate dark mode variants (default: true)
     def initialize(brand_input, options = {})
-      @brand_input = brand_input
+      @brand_input = normalize_input(brand_input)
+      @original_input = brand_input # Keep original for struct return
       @options = default_options.merge(options)
     end
 
     # Execute the full palette generation pipeline
-    # @return [Hash] Complete generation result with palettes and metadata
+    # @return [GeneratorResult] Complete generation result with palettes and metadata
     def generate
       # Step 1: NLP Normalization
-      normalized_data = normalize_inputs
+      normalized_data = normalize_nlp
 
       # Step 2: Palette Generation (includes emotion-color mapping)
       palettes = generate_palettes(normalized_data)
@@ -38,32 +32,32 @@ module BrandColorPalette
       # Step 4: Generate mode variations
       final_palettes = generate_variations(constrained_palettes)
 
-      # Build final result
-      {
+      # Build final result as struct
+      GeneratorResult.new(
         brand_id: @brand_input[:brand_id],
-        palettes: final_palettes,
-        metadata: {
-          input: @brand_input,
-          design_vector: normalized_data[:design_vector],
+        palettes: final_palettes.map { |p| Palette.from_hash(p) },
+        metadata: GenerationMetadata.new(
+          input: @original_input.is_a?(BrandInput) ? @original_input : BrandInput.from_hash(@brand_input),
+          design_vector: DesignVector.from_hash(normalized_data[:design_vector]),
           descriptors: normalized_data[:descriptors],
           primary_traits: normalized_data[:primary_traits],
           color_hints: normalized_data[:color_hints],
+          mapped_traits: normalized_data[:mapped_traits].map { |m| TraitMapping.new(**m) },
           generated_at: Time.now
-        }
-      }
+        )
+      )
     end
 
     # Generate a single best palette (quick mode)
-    # @return [Hash] Single palette result
+    # @return [SinglePaletteResult] Single palette result
     def generate_best
       result = generate
-      best_palette = result[:palettes].first
 
-      {
-        brand_id: @brand_input[:brand_id],
-        palette: best_palette,
-        metadata: result[:metadata]
-      }
+      SinglePaletteResult.new(
+        brand_id: result.brand_id,
+        palette: result.best_palette,
+        metadata: result.metadata
+      )
     end
 
     private
@@ -75,8 +69,19 @@ module BrandColorPalette
       }
     end
 
+    # Normalize input to hash format for internal use
+    def normalize_input(input)
+      if input.is_a?(BrandInput)
+        input.to_h
+      elsif input.is_a?(Hash)
+        input
+      else
+        raise ArgumentError, "brand_input must be a BrandInput struct or Hash"
+      end
+    end
+
     # Step 1: NLP Normalization
-    def normalize_inputs
+    def normalize_nlp
       normalizer = NlpNormalizer.new(@brand_input)
       normalized = normalizer.normalize
 

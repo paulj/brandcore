@@ -13,7 +13,25 @@
 # 4. Constraint Layer - Apply accessibility (WCAG), cultural, and category constraints
 # 5. Output Generation - Produce light/dark mode variations in multiple formats
 #
-# @example Basic usage
+# @example Using structs (recommended)
+#   input = BrandColorPalette::BrandInput.new(
+#     brand_id: "acme",
+#     traits: ["innovative", "approachable", "premium"],
+#     tone: ["confident", "friendly"],
+#     audiences: ["prosumer", "SMB"],
+#     category: "SaaS",
+#     markets: ["US", "AU"],
+#     keywords: ["automation", "reliability", "speed"]
+#   )
+#
+#   generator = BrandColorPalette::Generator.new(input)
+#   result = generator.generate # Returns GeneratorResult struct
+#
+#   # Access the best palette
+#   best = result.best_palette
+#   puts best.primary_color.hex
+#
+# @example Using hashes (backward compatible)
 #   input = {
 #     brand_id: "acme",
 #     traits: ["innovative", "approachable", "premium"],
@@ -27,10 +45,10 @@
 #   generator = BrandColorPalette::Generator.new(input)
 #   result = generator.generate
 #
-#   # Get just the best palette
-#   best = generator.generate_best
-#
 module BrandColorPalette
+  # Load type definitions first
+  require_relative "brand_color_palette/types"
+
   # Load all submodules
   autoload :ColorSpace, "brand_color_palette/color_space"
   autoload :EmotionColorMap, "brand_color_palette/emotion_color_map"
