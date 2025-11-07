@@ -25,11 +25,13 @@ module BrandColorPalette
       "fun" => { playfulness: 0.6, saturation: 0.4 }
     }.freeze
 
-    attr_reader :brand_input, :design_vector
+    attr_reader :brand_input, :design_vector, :trait_mapper, :mapped_traits
 
-    def initialize(brand_input)
+    def initialize(brand_input, trait_mapper: nil)
       @brand_input = brand_input
       @design_vector = DESIGN_AXES.dup
+      @trait_mapper = trait_mapper || TraitMapper.new
+      @mapped_traits = []
     end
 
     # Process brand inputs and compute design vector
@@ -47,7 +49,8 @@ module BrandColorPalette
         design_vector: @design_vector,
         descriptors: extract_descriptors,
         primary_traits: extract_primary_traits,
-        color_hints: extract_color_hints
+        color_hints: extract_color_hints,
+        mapped_traits: @mapped_traits
       }
     end
 
@@ -57,7 +60,18 @@ module BrandColorPalette
       return unless brand_input[:traits]
 
       brand_input[:traits].each do |trait|
+        # Try direct lookup first
         color_data = EmotionColorMap.color_for_trait(trait)
+
+        # If not found, try mapping via embeddings
+        unless color_data
+          mapped_trait = @trait_mapper.map_trait(trait)
+          if mapped_trait
+            color_data = EmotionColorMap.color_for_trait(mapped_trait)
+            @mapped_traits << { original: trait, mapped: mapped_trait } if color_data
+          end
+        end
+
         next unless color_data
 
         @design_vector[:warmth] += color_data[:warmth] * 0.3
@@ -176,10 +190,19 @@ module BrandColorPalette
 
     def extract_color_hints
       hints = []
+
+      # Get hints from original traits
       (brand_input[:traits] || []).each do |trait|
         color_data = EmotionColorMap.color_for_trait(trait)
         hints.concat(color_data[:families]) if color_data
       end
+
+      # Also get hints from mapped traits
+      @mapped_traits.each do |mapping|
+        color_data = EmotionColorMap.color_for_trait(mapping[:mapped])
+        hints.concat(color_data[:families]) if color_data
+      end
+
       hints.uniq
     end
   end

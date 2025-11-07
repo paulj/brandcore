@@ -34,6 +34,7 @@ module BrandColorPalette
   # Load all submodules
   autoload :ColorSpace, "brand_color_palette/color_space"
   autoload :EmotionColorMap, "brand_color_palette/emotion_color_map"
+  autoload :TraitMapper, "brand_color_palette/trait_mapper"
   autoload :NlpNormalizer, "brand_color_palette/nlp_normalizer"
   autoload :WcagChecker, "brand_color_palette/wcag_checker"
   autoload :PaletteGenerator, "brand_color_palette/palette_generator"

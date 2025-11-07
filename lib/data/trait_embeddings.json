@@ -1,0 +1,3 @@
+{
+  "placeholder": "Run 'OPENAI_API_KEY=your-key rake brand_color_palette:generate_trait_embeddings' to generate embeddings"
+}
