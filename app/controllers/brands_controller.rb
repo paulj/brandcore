@@ -1,5 +1,7 @@
 class BrandsController < ApplicationController
   allow_unauthenticated_access only: %i[ new create ]
+  layout "simple", only: [ :new ]
+  layout "brand_book", only: [ :show ]
 
   before_action :set_brand, only: %i[ show edit update destroy ]
 

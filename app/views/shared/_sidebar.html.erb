@@ -1,0 +1,137 @@
+<aside class="w-80 bg-gray-50 border-r border-gray-200 flex flex-col h-screen sticky top-0">
+  <div class="p-6 border-b border-gray-200">
+    <%= link_to brand_path(@brand), class: "flex items-center space-x-3 hover:opacity-80 transition-opacity" do %>
+      <div class="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
+        <i class="fa-solid fa-cube text-white text-sm"></i>
+      </div>
+      <div>
+        <h1 class="text-lg font-semibold text-gray-900">Brand Builder</h1>
+        <p class="text-sm text-gray-500"><%= @brand.is_working_name? ? "Working Name: " : "" %><%= @brand.name %></p>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="p-6 border-b border-gray-200">
+    <h3 class="text-sm font-medium text-gray-900 mb-4">Progress Overview</h3>
+    <div class="space-y-3">
+      <div class="flex items-center justify-between">
+        <span class="text-sm text-gray-600">Brand Strategy</span>
+        <div class="w-16 h-2 bg-gray-200 rounded-full">
+          <div class="w-4 h-2 bg-black rounded-full"></div>
+        </div>
+      </div>
+      <div class="flex items-center justify-between">
+        <span class="text-sm text-gray-600">Visual Identity</span>
+        <div class="w-16 h-2 bg-gray-200 rounded-full">
+          <div class="w-2 h-2 bg-black rounded-full"></div>
+        </div>
+      </div>
+      <div class="flex items-center justify-between">
+        <span class="text-sm text-gray-600">Voice & Tone</span>
+        <div class="w-16 h-2 bg-gray-200 rounded-full"></div>
+      </div>
+      <div class="flex items-center justify-between">
+        <span class="text-sm text-gray-600">Design System</span>
+        <div class="w-16 h-2 bg-gray-200 rounded-full"></div>
+      </div>
+    </div>
+    <div class="mt-4 text-xs text-gray-500">
+      2 of 6 sections started
+    </div>
+  </div>
+
+  <nav class="flex-1 p-6 overflow-y-auto">
+    <div class="space-y-6">
+      <div>
+        <h4 class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">Brand</h4>
+        <ul class="space-y-2">
+          <li>
+            <%= link_to brand_vision_path(@brand), class: "flex items-center space-x-3 text-sm text-gray-700 hover:text-black hover:bg-gray-100 p-2 rounded-lg transition-colors" do %>
+              <i class="fa-solid fa-bullseye w-4"></i>
+              <span>Brand Strategy & Messaging</span>
+              <% if @brand.brand_vision&.completed? %>
+                <i class="fa-solid fa-circle text-green-400 text-xs ml-auto"></i>
+              <% else %>
+                <i class="fa-solid fa-circle text-orange-400 text-xs ml-auto"></i>
+              <% end %>
+            <% end %>
+          </li>
+          <li>
+            <%= link_to brand_logo_path(@brand), class: "flex items-center space-x-3 text-sm text-gray-700 hover:text-black hover:bg-gray-100 p-2 rounded-lg transition-colors" do %>
+              <i class="fa-solid fa-palette w-4"></i>
+              <span>Visual Identity</span>
+              <% if @brand.brand_logo&.completed? %>
+                <i class="fa-solid fa-circle text-green-400 text-xs ml-auto"></i>
+              <% else %>
+                <i class="fa-solid fa-circle text-orange-400 text-xs ml-auto"></i>
+              <% end %>
+            <% end %>
+          </li>
+          <li>
+            <%= link_to brand_language_path(@brand), class: "flex items-center space-x-3 text-sm text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2 rounded-lg transition-colors" do %>
+              <i class="fa-solid fa-microphone w-4"></i>
+              <span>Voice and Tone</span>
+              <% if @brand.brand_language&.completed? %>
+                <i class="fa-solid fa-circle text-green-400 text-xs ml-auto"></i>
+              <% end %>
+            <% end %>
+          </li>
+          <li>
+            <%= link_to "#", class: "flex items-center space-x-3 text-sm text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2 rounded-lg transition-colors" do %>
+              <i class="fa-solid fa-shield-halved w-4"></i>
+              <span>Usage Rules</span>
+            <% end %>
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">Design System</h4>
+        <ul class="space-y-2">
+          <li>
+            <%= link_to brand_colour_scheme_path(@brand), class: "flex items-center space-x-3 text-sm text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2 rounded-lg transition-colors" do %>
+              <i class="fa-solid fa-droplet w-4"></i>
+              <span>Colour Scheme</span>
+              <% if @brand.brand_colour_scheme&.completed? %>
+                <i class="fa-solid fa-circle text-green-400 text-xs ml-auto"></i>
+              <% end %>
+            <% end %>
+          </li>
+          <li>
+            <%= link_to brand_typography_path(@brand), class: "flex items-center space-x-3 text-sm text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2 rounded-lg transition-colors" do %>
+              <i class="fa-solid fa-font w-4"></i>
+              <span>Typography</span>
+              <% if @brand.brand_typography&.completed? %>
+                <i class="fa-solid fa-circle text-green-400 text-xs ml-auto"></i>
+              <% end %>
+            <% end %>
+          </li>
+          <li>
+            <%= link_to brand_ui_path(@brand), class: "flex items-center space-x-3 text-sm text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2 rounded-lg transition-colors" do %>
+              <i class="fa-solid fa-layer-group w-4"></i>
+              <span>UI Elements</span>
+              <% if @brand.brand_ui&.completed? %>
+                <i class="fa-solid fa-circle text-green-400 text-xs ml-auto"></i>
+              <% end %>
+            <% end %>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="p-6 border-t border-gray-200">
+    <div class="flex items-center space-x-3">
+      <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+        <i class="fa-solid fa-user text-gray-600 text-sm"></i>
+      </div>
+      <div class="flex-1">
+        <p class="text-sm font-medium text-gray-900"><%= Current.user.name %></p>
+        <p class="text-xs text-gray-500"><%= Current.user.email_address %></p>
+      </div>
+      <%= link_to session_path, data: { turbo_method: :delete }, class: "text-gray-400 hover:text-gray-600" do %>
+        <i class="fa-solid fa-arrow-right-from-bracket text-sm"></i>
+      <% end %>
+    </div>
+  </div>
+</aside>

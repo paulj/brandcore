@@ -1,7 +1,17 @@
 Rails.application.routes.draw do
   resource :session
   resources :passwords, param: :token
-  resources :brands
+
+  resources :brands do
+    scope module: :brand do
+      resource :vision, only: [:show], controller: :vision
+      resource :logo, only: [:show], controller: :logo
+      resource :language, only: [:show], controller: :language
+      resource :colour_scheme, only: [:show], controller: :colour_scheme
+      resource :typography, only: [:show], controller: :typography
+      resource :ui, only: [:show], controller: :ui
+    end
+  end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

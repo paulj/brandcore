@@ -6,6 +6,8 @@ BrandCore is a step-by-step brand creation tool that guides users through buildi
 
 **Tech Stack:** Rails 8.1, PostgreSQL, Tailwind CSS, Turbo, Stimulus, PaperTrail (versioning)
 
+**Spelling Convention:** This project uses Australian English spelling (e.g., "colour" not "color", "organisation" not "organization"). This applies to all model names, database columns, UI text, and documentation.
+
 ## Core Philosophy
 
 The brand book IS the interface. Rather than a separate creation flow followed by brand book generation, users work directly within their brand book, providing:

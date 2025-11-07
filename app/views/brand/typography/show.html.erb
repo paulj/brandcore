@@ -1,0 +1,86 @@
+<% content_for :title, "Typography - #{@brand.name}" %>
+
+<header class="bg-white border-b border-gray-200 px-8 py-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-semibold text-gray-900">Typography</h1>
+      <p class="text-gray-600 mt-1">Define your brand's type system and hierarchy</p>
+    </div>
+    <div class="flex items-center space-x-4">
+      <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+        <i class="fa-solid fa-save mr-2"></i>
+        Save Progress
+      </button>
+      <button class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+        <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
+        AI Suggest
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="p-8">
+  <div class="bg-gray-50 border border-gray-200 rounded-xl p-6 mb-8">
+    <h3 class="text-lg font-semibold text-gray-900 mb-2">Typography System</h3>
+    <p class="text-gray-600 text-sm">Your typography choices communicate your brand's personality and ensure readability across all touchpoints.</p>
+  </div>
+
+  <div class="space-y-8">
+    <div class="bg-white border border-gray-200 rounded-xl p-8">
+      <h2 class="text-xl font-semibold text-gray-900 mb-6">Primary Typeface</h2>
+      <div class="bg-gray-50 rounded-lg p-8 mb-4">
+        <p class="text-xs text-gray-500 mb-4">SELECTED FONT FAMILY</p>
+        <h3 class="text-4xl font-bold mb-2">Inter</h3>
+        <p class="text-gray-600">A modern, versatile sans-serif typeface</p>
+      </div>
+      <button class="bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors">
+        Change Typeface
+      </button>
+    </div>
+
+    <div class="bg-white border border-gray-200 rounded-xl p-8">
+      <h2 class="text-xl font-semibold text-gray-900 mb-6">Type Scale & Hierarchy</h2>
+      <div class="space-y-6">
+        <div class="p-4 border border-gray-200 rounded-lg">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-medium text-gray-500">H1 - HEADING 1</span>
+            <span class="text-xs text-gray-400">48px / Bold</span>
+          </div>
+          <h1 class="text-5xl font-bold text-gray-900">The quick brown fox</h1>
+        </div>
+
+        <div class="p-4 border border-gray-200 rounded-lg">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-medium text-gray-500">H2 - HEADING 2</span>
+            <span class="text-xs text-gray-400">36px / Bold</span>
+          </div>
+          <h2 class="text-4xl font-bold text-gray-900">The quick brown fox</h2>
+        </div>
+
+        <div class="p-4 border border-gray-200 rounded-lg">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-medium text-gray-500">H3 - HEADING 3</span>
+            <span class="text-xs text-gray-400">24px / Semibold</span>
+          </div>
+          <h3 class="text-2xl font-semibold text-gray-900">The quick brown fox</h3>
+        </div>
+
+        <div class="p-4 border border-gray-200 rounded-lg">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-medium text-gray-500">BODY - REGULAR</span>
+            <span class="text-xs text-gray-400">16px / Regular</span>
+          </div>
+          <p class="text-base text-gray-900">The quick brown fox jumps over the lazy dog</p>
+        </div>
+
+        <div class="p-4 border border-gray-200 rounded-lg">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-medium text-gray-500">SMALL - CAPTION</span>
+            <span class="text-xs text-gray-400">14px / Regular</span>
+          </div>
+          <p class="text-sm text-gray-600">The quick brown fox jumps over the lazy dog</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

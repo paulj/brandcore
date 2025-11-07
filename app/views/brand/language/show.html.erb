@@ -1,0 +1,130 @@
+<% content_for :title, "Voice & Tone - #{@brand.name}" %>
+
+<header class="bg-white border-b border-gray-200 px-8 py-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-semibold text-gray-900">Voice and Tone</h1>
+      <p class="text-gray-600 mt-1">Define your brand's communication style and personality</p>
+    </div>
+    <div class="flex items-center space-x-4">
+      <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+        <i class="fa-solid fa-save mr-2"></i>
+        Save Progress
+      </button>
+      <button class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+        <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
+        AI Generate
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="p-8">
+  <div class="bg-gray-50 border border-gray-200 rounded-xl p-6 mb-8">
+    <div class="flex items-start space-x-4">
+      <div class="w-12 h-12 bg-black rounded-lg flex items-center justify-center">
+        <i class="fa-solid fa-microphone text-white"></i>
+      </div>
+      <div class="flex-1">
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">Brand Voice & Tone Definition</h3>
+        <p class="text-gray-600 text-sm mb-4">Your brand voice is the personality and emotion infused into your company's communications.</p>
+        <div class="flex items-center space-x-4">
+          <span class="text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full">0% Complete</span>
+          <span class="text-xs text-gray-500">0 of 4 sections defined</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 gap-8">
+    <div class="space-y-6">
+      <div class="bg-white border border-gray-200 rounded-xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">Brand Voice</h3>
+          <i class="fa-solid fa-circle text-orange-400 text-xs"></i>
+        </div>
+        <p class="text-gray-600 text-sm mb-6">Select the core characteristics that define your brand's personality</p>
+
+        <div class="space-y-4">
+          <div>
+            <label class="text-sm font-medium text-gray-900 mb-3 block">Primary Voice Characteristics</label>
+            <div class="grid grid-cols-2 gap-3">
+              <button class="p-3 border-2 border-gray-200 bg-white text-gray-700 hover:border-gray-300 rounded-lg text-sm font-medium transition-colors">
+                Professional
+              </button>
+              <button class="p-3 border-2 border-gray-200 bg-white text-gray-700 hover:border-gray-300 rounded-lg text-sm font-medium transition-colors">
+                Casual
+              </button>
+              <button class="p-3 border-2 border-gray-200 bg-white text-gray-700 hover:border-gray-300 rounded-lg text-sm font-medium transition-colors">
+                Innovative
+              </button>
+              <button class="p-3 border-2 border-gray-200 bg-white text-gray-700 hover:border-gray-300 rounded-lg text-sm font-medium transition-colors">
+                Traditional
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white border border-gray-200 rounded-xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">Language Guidelines</h3>
+          <i class="fa-solid fa-circle text-gray-300 text-xs"></i>
+        </div>
+
+        <div class="space-y-4">
+          <div>
+            <label class="text-sm font-medium text-gray-900 mb-2 block">Words We Use</label>
+            <textarea class="w-full h-20 border border-gray-200 rounded-lg p-3 text-sm resize-none focus:border-black focus:outline-none"
+                      placeholder="e.g., innovative, solutions, cutting-edge, reliable, transform..."></textarea>
+          </div>
+
+          <div>
+            <label class="text-sm font-medium text-gray-900 mb-2 block">Words We Avoid</label>
+            <textarea class="w-full h-20 border border-gray-200 rounded-lg p-3 text-sm resize-none focus:border-black focus:outline-none"
+                      placeholder="e.g., cheap, basic, ordinary, outdated, complicated..."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-6">
+      <div class="bg-white border border-gray-200 rounded-xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-semibold text-gray-900">Tone Variations</h3>
+          <i class="fa-solid fa-circle text-gray-300 text-xs"></i>
+        </div>
+        <p class="text-gray-600 text-sm mb-6">Define how your voice adapts to different situations and contexts</p>
+
+        <div class="space-y-4">
+          <div class="p-4 border border-gray-200 rounded-lg">
+            <div class="flex items-center justify-between mb-2">
+              <h4 class="text-sm font-medium text-gray-900">Marketing & Sales</h4>
+              <span class="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-full">Pending</span>
+            </div>
+            <p class="text-xs text-gray-400 mb-2">Confident, persuasive, results-focused</p>
+            <button class="text-xs text-black hover:underline">Define tone →</button>
+          </div>
+
+          <div class="p-4 border border-gray-200 rounded-lg">
+            <div class="flex items-center justify-between mb-2">
+              <h4 class="text-sm font-medium text-gray-900">Customer Support</h4>
+              <span class="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-full">Pending</span>
+            </div>
+            <p class="text-xs text-gray-400 mb-2">Helpful, empathetic, solution-oriented</p>
+            <button class="text-xs text-black hover:underline">Define tone →</button>
+          </div>
+
+          <div class="p-4 border border-gray-200 rounded-lg">
+            <div class="flex items-center justify-between mb-2">
+              <h4 class="text-sm font-medium text-gray-900">Social Media</h4>
+              <span class="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-full">Pending</span>
+            </div>
+            <p class="text-xs text-gray-400 mb-2">Engaging, approachable, informative</p>
+            <button class="text-xs text-black hover:underline">Define tone →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

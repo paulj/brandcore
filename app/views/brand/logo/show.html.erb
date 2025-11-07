@@ -1,0 +1,132 @@
+<% content_for :title, "Logo Design - #{@brand.name}" %>
+
+<header class="bg-white border-b border-gray-200 px-8 py-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-semibold text-gray-900">Visual Identity</h1>
+      <p class="text-gray-600 mt-1">Create and upload your brand logo with AI assistance</p>
+    </div>
+    <div class="flex items-center space-x-4">
+      <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+        <i class="fa-solid fa-download mr-2"></i>
+        Export Logo Pack
+      </button>
+      <button class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+        <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
+        AI Logo Generator
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="p-8">
+  <div class="grid grid-cols-2 gap-8 mb-8">
+    <div class="bg-white border border-gray-200 rounded-xl p-8">
+      <h3 class="text-xl font-semibold text-gray-900 mb-6">Upload Your Logo</h3>
+
+      <div class="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center hover:border-gray-400 hover:bg-gray-50 transition-colors cursor-pointer">
+        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fa-solid fa-cloud-arrow-up text-gray-400 text-2xl"></i>
+        </div>
+        <h4 class="text-lg font-medium text-gray-900 mb-2">Drop your logo here</h4>
+        <p class="text-gray-500 text-sm mb-4">or click to browse files</p>
+        <div class="flex justify-center space-x-2 text-xs text-gray-400">
+          <span>SVG</span>
+          <span>•</span>
+          <span>PNG</span>
+          <span>•</span>
+          <span>JPG</span>
+          <span>•</span>
+          <span>PDF</span>
+        </div>
+      </div>
+
+      <div class="mt-6 flex items-center">
+        <hr class="flex-1 border-gray-200">
+        <span class="px-4 text-sm text-gray-500">or</span>
+        <hr class="flex-1 border-gray-200">
+      </div>
+
+      <button class="w-full mt-6 bg-black hover:bg-gray-800 text-white py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center">
+        <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
+        Generate Logo with AI
+      </button>
+    </div>
+
+    <div class="bg-gray-50 border border-gray-200 rounded-xl p-8">
+      <h3 class="text-xl font-semibold text-gray-900 mb-6">Current Logo</h3>
+
+      <div class="bg-white border border-gray-200 rounded-lg p-12 text-center mb-6">
+        <div class="w-24 h-24 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+          <i class="fa-solid fa-image text-gray-400 text-3xl"></i>
+        </div>
+        <p class="text-gray-500 text-sm">No logo uploaded yet</p>
+      </div>
+
+      <div class="space-y-3">
+        <div class="flex items-center justify-between text-sm">
+          <span class="text-gray-600">Status</span>
+          <span class="text-orange-600 bg-orange-100 px-2 py-1 rounded-full text-xs">Pending</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-8">
+    <h2 class="text-xl font-semibold text-gray-900 mb-6">Logo Adaptations</h2>
+
+    <div class="grid grid-cols-4 gap-6">
+      <div class="bg-white border border-gray-200 rounded-xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h4 class="text-sm font-medium text-gray-900">Primary Logo</h4>
+          <i class="fa-solid fa-lock text-gray-300"></i>
+        </div>
+        <div class="bg-gray-50 border border-gray-200 rounded-lg h-32 flex items-center justify-center mb-4">
+          <div class="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">
+            <i class="fa-solid fa-image text-gray-400"></i>
+          </div>
+        </div>
+        <p class="text-xs text-gray-500">Full color version for primary use</p>
+      </div>
+
+      <div class="bg-white border border-gray-200 rounded-xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h4 class="text-sm font-medium text-gray-900">Monochrome</h4>
+          <i class="fa-solid fa-lock text-gray-300"></i>
+        </div>
+        <div class="bg-gray-50 border border-gray-200 rounded-lg h-32 flex items-center justify-center mb-4">
+          <div class="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">
+            <i class="fa-solid fa-image text-gray-400"></i>
+          </div>
+        </div>
+        <p class="text-xs text-gray-500">Single color version for limited use</p>
+      </div>
+
+      <div class="bg-white border border-gray-200 rounded-xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h4 class="text-sm font-medium text-gray-900">White Version</h4>
+          <i class="fa-solid fa-lock text-gray-300"></i>
+        </div>
+        <div class="bg-black rounded-lg h-32 flex items-center justify-center mb-4">
+          <div class="w-12 h-12 bg-gray-700 rounded flex items-center justify-center">
+            <i class="fa-solid fa-image text-gray-400"></i>
+          </div>
+        </div>
+        <p class="text-xs text-gray-500">White version for dark backgrounds</p>
+      </div>
+
+      <div class="bg-white border border-gray-200 rounded-xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h4 class="text-sm font-medium text-gray-900">Favicon</h4>
+          <i class="fa-solid fa-lock text-gray-300"></i>
+        </div>
+        <div class="bg-gray-50 border border-gray-200 rounded-lg h-32 flex items-center justify-center mb-4">
+          <div class="w-8 h-8 bg-gray-200 rounded flex items-center justify-center">
+            <i class="fa-solid fa-image text-gray-400 text-xs"></i>
+          </div>
+        </div>
+        <p class="text-xs text-gray-500">16x16px icon for web browsers</p>
+      </div>
+    </div>
+  </div>
+</div>
