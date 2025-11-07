@@ -7,7 +7,7 @@ rubocop:
 	bin/rubocop -A
 
 spec:
-	bundle exec rspec
+	bin/rspec
 
 brakeman:
 	bin/brakeman -q --no-pager
