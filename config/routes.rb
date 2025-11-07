@@ -5,11 +5,17 @@ Rails.application.routes.draw do
   resources :brands do
     scope module: :brand do
       resource :vision, only: [ :show, :update ], controller: :vision
-      resource :logo, only: [ :show ], controller: :logo
-      resource :language, only: [ :show ], controller: :language
-      resource :colour_scheme, only: [ :show ], controller: :colour_scheme
-      resource :typography, only: [ :show ], controller: :typography
-      resource :ui, only: [ :show ], controller: :ui
+      resource :logo, only: [ :show, :update ], controller: :logo
+      resource :language, only: [ :show, :update ], controller: :language
+      resource :colour_scheme, only: [ :show, :update ], controller: :colour_scheme
+      resource :typography, only: [ :show, :update ], controller: :typography do
+        collection do
+          get :search_fonts
+          get :suggest_fonts
+          get :fonts_by_category
+        end
+      end
+      resource :ui, only: [ :show, :update ], controller: :ui
     end
   end
 

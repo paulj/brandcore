@@ -12,6 +12,7 @@
       </div>
     </div>
     <div class="flex items-center space-x-4">
+      <%= render "shared/save_indicator" %>
       <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
         <i class="fa-solid fa-upload mr-2"></i>
         Upload Colours
@@ -25,37 +26,42 @@
 </header>
 
 <div class="p-8">
+  <%= render "shared/section_progress", presenter: @colour_scheme_presenter %>
+
   <div class="mb-8">
-    <h2 class="text-lg font-semibold text-gray-900 mb-4">Current Selection</h2>
-    <div class="bg-white border border-gray-200 rounded-xl p-6">
-      <div class="flex items-center justify-between mb-4">
-        <div>
-          <h3 class="text-lg font-medium text-gray-900">Tech Blue</h3>
-          <p class="text-sm text-gray-500">Modern and professional palette</p>
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">Current Palette</h2>
+    <% if @brand_colour_scheme.palette_colours.any? %>
+      <div class="bg-white border border-gray-200 rounded-xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-medium text-gray-900">Your Colour Palette</h3>
+            <p class="text-sm text-gray-500"><%= pluralize(@brand_colour_scheme.palette_colours.count, 'colour') %> defined</p>
+          </div>
         </div>
-        <button class="text-sm text-gray-500 hover:text-gray-700">
-          <i class="fa-solid fa-edit mr-1"></i>
-          Customize
-        </button>
-      </div>
-      <div class="flex space-x-2">
-        <div class="flex-1 h-16 bg-blue-600 rounded-lg flex items-end justify-center pb-2">
-          <span class="text-white text-xs font-medium">#2563EB</span>
-        </div>
-        <div class="flex-1 h-16 bg-blue-500 rounded-lg flex items-end justify-center pb-2">
-          <span class="text-white text-xs font-medium">#3B82F6</span>
-        </div>
-        <div class="flex-1 h-16 bg-blue-400 rounded-lg flex items-end justify-center pb-2">
-          <span class="text-white text-xs font-medium">#60A5FA</span>
-        </div>
-        <div class="flex-1 h-16 bg-blue-300 rounded-lg flex items-end justify-center pb-2">
-          <span class="text-gray-800 text-xs font-medium">#93C5FD</span>
-        </div>
-        <div class="flex-1 h-16 bg-blue-100 rounded-lg flex items-end justify-center pb-2">
-          <span class="text-gray-800 text-xs font-medium">#DBEAFE</span>
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          <% @brand_colour_scheme.palette_colours.order(:position).each do |palette_colour| %>
+            <div class="space-y-2">
+              <div class="h-16 rounded-lg flex items-end justify-center pb-2" style="background-color: <%= palette_colour.base_hex %>">
+                <span class="<%= palette_colour.base_hex.match?(/#[0-9A-F]{6}/i) && palette_colour.base_hex[1..2].to_i(16) + palette_colour.base_hex[3..4].to_i(16) + palette_colour.base_hex[5..6].to_i(16) < 382 ? 'text-white' : 'text-gray-800' %> text-xs font-medium"><%= palette_colour.base_hex %></span>
+              </div>
+              <div class="text-center">
+                <p class="text-sm font-medium text-gray-900"><%= palette_colour.name %></p>
+                <p class="text-xs text-gray-500"><%= palette_colour.category.humanize %></p>
+              </div>
+            </div>
+          <% end %>
         </div>
       </div>
-    </div>
+    <% else %>
+      <div class="bg-white border border-gray-200 rounded-xl p-6">
+        <div class="text-center py-8">
+          <div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+            <i class="fa-solid fa-palette text-gray-400 text-2xl"></i>
+          </div>
+          <p class="text-gray-500">No colours defined yet. Add colours below to get started.</p>
+        </div>
+      </div>
+    <% end %>
   </div>
 
   <div class="mb-8">
@@ -138,27 +144,28 @@
     </div>
   </div>
 
-  <div>
-    <h2 class="text-lg font-semibold text-gray-900 mb-6">Create Custom Palette</h2>
-    <div class="bg-white border border-gray-200 rounded-xl p-6">
-      <div class="grid grid-cols-5 gap-4 mb-6">
-        <% %w[Primary Secondary Accent Neutral Light].each do |label| %>
-          <div class="text-center">
-            <div class="w-full h-24 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:border-gray-400 transition-colors">
-              <i class="fa-solid fa-plus text-gray-400 text-xl"></i>
-            </div>
-            <p class="text-xs text-gray-500 mt-2"><%= label %></p>
+  <%= form_with model: @brand_colour_scheme, url: brand_colour_scheme_path(@brand), method: :patch, data: { turbo: true, controller: "autosave", autosave_target: "form" } do |f| %>
+    <div class="bg-white border border-gray-200 rounded-xl p-8">
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-book text-gray-400"></i>
           </div>
-        <% end %>
+          <div>
+            <h3 class="text-xl font-semibold text-gray-900">Usage Guidelines</h3>
+            <p class="text-gray-600 text-sm">Document how your colours should be used</p>
+          </div>
+        </div>
       </div>
-      <div class="flex justify-end space-x-3">
-        <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-          Reset
-        </button>
-        <button class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-          Save Palette
-        </button>
+      <div class="space-y-4">
+        <%= f.text_area :usage_guidelines,
+                        class: "w-full h-32 p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-black focus:border-transparent",
+                        placeholder: "Describe when and how to use your colour palette...",
+                        data: { action: "input->autosave#save" } %>
+        <div class="flex items-center justify-between">
+          <%= render "shared/save_indicator" %>
+        </div>
       </div>
     </div>
-  </div>
+  <% end %>
 </div>

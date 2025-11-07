@@ -7,6 +7,7 @@
       <p class="text-gray-600 mt-1">Define your brand's design system components and patterns</p>
     </div>
     <div class="flex items-center space-x-4">
+      <%= render "shared/save_indicator" %>
       <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
         <i class="fa-solid fa-download mr-2"></i>
         Export Components
@@ -20,6 +21,8 @@
 </header>
 
 <div class="p-8">
+  <%= render "shared/section_progress", presenter: @ui_presenter %>
+
   <div class="bg-gray-50 border border-gray-200 rounded-xl p-6 mb-8">
     <h3 class="text-lg font-semibold text-gray-900 mb-2">UI Design System</h3>
     <p class="text-gray-600 text-sm">Your UI elements ensure consistency and cohesion across all brand touchpoints.</p>

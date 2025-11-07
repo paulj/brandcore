@@ -1,5 +1,10 @@
 <% content_for :title, "Typography - #{@brand.name}" %>
 
+<%# Load Google Fonts CSS if a font is selected %>
+<% if @brand_typography.primary_typeface&.dig('google_fonts_url') %>
+  <link href="<%= @brand_typography.primary_typeface['google_fonts_url'] %>" rel="stylesheet">
+<% end %>
+
 <header class="bg-white border-b border-gray-200 px-8 py-6">
   <div class="flex items-center justify-between">
     <div>
@@ -7,10 +12,7 @@
       <p class="text-gray-600 mt-1">Define your brand's type system and hierarchy</p>
     </div>
     <div class="flex items-center space-x-4">
-      <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-        <i class="fa-solid fa-save mr-2"></i>
-        Save Progress
-      </button>
+      <%= render "shared/save_indicator" %>
       <button class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
         <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
         AI Suggest
@@ -20,67 +22,140 @@
 </header>
 
 <div class="p-8">
+  <%= render "shared/section_progress", presenter: @typography_presenter %>
+
   <div class="bg-gray-50 border border-gray-200 rounded-xl p-6 mb-8">
     <h3 class="text-lg font-semibold text-gray-900 mb-2">Typography System</h3>
     <p class="text-gray-600 text-sm">Your typography choices communicate your brand's personality and ensure readability across all touchpoints.</p>
   </div>
 
-  <div class="space-y-8">
-    <div class="bg-white border border-gray-200 rounded-xl p-8">
-      <h2 class="text-xl font-semibold text-gray-900 mb-6">Primary Typeface</h2>
-      <div class="bg-gray-50 rounded-lg p-8 mb-4">
-        <p class="text-xs text-gray-500 mb-4">SELECTED FONT FAMILY</p>
-        <h3 class="text-4xl font-bold mb-2">Inter</h3>
-        <p class="text-gray-600">A modern, versatile sans-serif typeface</p>
-      </div>
-      <button class="bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors">
-        Change Typeface
-      </button>
-    </div>
-
-    <div class="bg-white border border-gray-200 rounded-xl p-8">
-      <h2 class="text-xl font-semibold text-gray-900 mb-6">Type Scale & Hierarchy</h2>
-      <div class="space-y-6">
-        <div class="p-4 border border-gray-200 rounded-lg">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-medium text-gray-500">H1 - HEADING 1</span>
-            <span class="text-xs text-gray-400">48px / Bold</span>
-          </div>
-          <h1 class="text-5xl font-bold text-gray-900">The quick brown fox</h1>
+  <div class="space-y-8"
+       data-controller="font-picker"
+       data-font-picker-brand-id-value="<%= @brand.slug %>"
+       data-font-picker-current-font-value="<%= @brand_typography.primary_typeface.to_json if @brand_typography.primary_typeface.present? %>">
+    <%= form_with model: @brand_typography, url: brand_typography_path(@brand), method: :patch, data: { turbo: true, controller: "autosave", autosave_target: "form", font_picker_target: "form" } do |f| %>
+      <%= hidden_field_tag "brand_typography[primary_typeface]", @brand_typography.primary_typeface.to_json, id: "primary_typeface_input" %>
+      <div class="bg-white border border-gray-200 rounded-xl p-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-6">Primary Typeface</h2>
+        <div class="bg-gray-50 rounded-lg p-8 mb-4" data-font-picker-target="preview">
+          <p class="text-xs text-gray-500 mb-4">SELECTED FONT FAMILY</p>
+          <% if @brand_typography.primary_typeface&.dig('name') %>
+            <h3 class="text-4xl font-bold mb-2" style="font-family: '<%= @brand_typography.primary_typeface['name'] %>', sans-serif"><%= @brand_typography.primary_typeface['name'] %></h3>
+            <p class="text-gray-600"><%= @brand_typography.primary_typeface['description'] || 'Primary typeface for your brand' %></p>
+          <% else %>
+            <h3 class="text-4xl font-bold mb-2 text-gray-400">Not Set</h3>
+            <p class="text-gray-600">Select a primary typeface for your brand</p>
+          <% end %>
         </div>
-
-        <div class="p-4 border border-gray-200 rounded-lg">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-medium text-gray-500">H2 - HEADING 2</span>
-            <span class="text-xs text-gray-400">36px / Bold</span>
-          </div>
-          <h2 class="text-4xl font-bold text-gray-900">The quick brown fox</h2>
-        </div>
-
-        <div class="p-4 border border-gray-200 rounded-lg">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-medium text-gray-500">H3 - HEADING 3</span>
-            <span class="text-xs text-gray-400">24px / Semibold</span>
-          </div>
-          <h3 class="text-2xl font-semibold text-gray-900">The quick brown fox</h3>
-        </div>
-
-        <div class="p-4 border border-gray-200 rounded-lg">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-medium text-gray-500">BODY - REGULAR</span>
-            <span class="text-xs text-gray-400">16px / Regular</span>
-          </div>
-          <p class="text-base text-gray-900">The quick brown fox jumps over the lazy dog</p>
-        </div>
-
-        <div class="p-4 border border-gray-200 rounded-lg">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-medium text-gray-500">SMALL - CAPTION</span>
-            <span class="text-xs text-gray-400">14px / Regular</span>
-          </div>
-          <p class="text-sm text-gray-600">The quick brown fox jumps over the lazy dog</p>
+        <button type="button" 
+                class="bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors"
+                data-action="click->font-picker#openModal">
+          <%= @brand_typography.primary_typeface&.dig('name') ? 'Change Typeface' : 'Select Typeface' %>
+        </button>
+        <div class="mt-4">
+          <%= render "shared/save_indicator" %>
         </div>
       </div>
+    <% end %>
+
+    <!-- Font Picker Modal -->
+    <div class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+         data-font-picker-target="modal"
+         data-action="click->font-picker#closeModal">
+      <div class="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
+           onclick="event.stopPropagation()">
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between p-6 border-b border-gray-200">
+          <div>
+            <h3 class="text-xl font-semibold text-gray-900">Select Font</h3>
+            <p class="text-sm text-gray-600 mt-1">Choose a font from Google Fonts</p>
+          </div>
+          <button type="button"
+                  class="text-gray-400 hover:text-gray-600"
+                  data-action="click->font-picker#closeModal">
+            <i class="fa-solid fa-times text-xl"></i>
+          </button>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="p-6 border-b border-gray-200">
+          <div class="relative">
+            <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            <input type="text"
+                   placeholder="Search fonts..."
+                   class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                   data-font-picker-target="searchInput"
+                   data-action="input->font-picker#search">
+          </div>
+        </div>
+
+        <!-- Category Filters -->
+        <div class="px-6 py-4 border-b border-gray-200 flex gap-2 overflow-x-auto">
+          <button type="button"
+                  class="px-4 py-2 text-sm rounded-lg border border-gray-300 hover:border-black transition-colors whitespace-nowrap"
+                  data-category="serif"
+                  data-action="click->font-picker#loadByCategory">
+            Serif
+          </button>
+          <button type="button"
+                  class="px-4 py-2 text-sm rounded-lg border border-gray-300 hover:border-black transition-colors whitespace-nowrap"
+                  data-category="sans-serif"
+                  data-action="click->font-picker#loadByCategory">
+            Sans Serif
+          </button>
+          <button type="button"
+                  class="px-4 py-2 text-sm rounded-lg border border-gray-300 hover:border-black transition-colors whitespace-nowrap"
+                  data-category="display"
+                  data-action="click->font-picker#loadByCategory">
+            Display
+          </button>
+          <button type="button"
+                  class="px-4 py-2 text-sm rounded-lg border border-gray-300 hover:border-black transition-colors whitespace-nowrap"
+                  data-category="handwriting"
+                  data-action="click->font-picker#loadByCategory">
+            Handwriting
+          </button>
+          <button type="button"
+                  class="px-4 py-2 text-sm rounded-lg border border-gray-300 hover:border-black transition-colors whitespace-nowrap"
+                  data-category="monospace"
+                  data-action="click->font-picker#loadByCategory">
+            Monospace
+          </button>
+        </div>
+
+        <!-- Suggestions Section -->
+        <div class="p-6 border-b border-gray-200">
+          <h4 class="text-sm font-semibold text-gray-900 mb-4">Suggested for Your Brand</h4>
+          <div class="grid grid-cols-2 gap-4" data-font-picker-target="suggestions">
+            <!-- Suggestions will be loaded here -->
+          </div>
+        </div>
+
+        <!-- Search Results -->
+        <div class="flex-1 overflow-y-auto p-6">
+          <div class="grid grid-cols-2 gap-4" data-font-picker-target="results">
+            <!-- Search results will be loaded here -->
+          </div>
+        </div>
+
+        <!-- Selected Font Preview -->
+        <div class="p-6 border-t border-gray-200 bg-gray-50" data-font-picker-target="selectedFont">
+          <p class="text-sm text-gray-500 mb-2">No font selected</p>
+        </div>
+      </div>
     </div>
+
+    <%= form_with model: @brand_typography, url: brand_typography_path(@brand), method: :patch, data: { turbo: true, controller: "autosave", autosave_target: "form" } do |f| %>
+      <div class="bg-white border border-gray-200 rounded-xl p-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-6">Usage Guidelines</h2>
+        <%= f.text_area :usage_guidelines,
+                        class: "w-full h-32 p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-black focus:border-transparent",
+                        placeholder: "Document how your typography should be used across different contexts...",
+                        data: { action: "input->autosave#save" } %>
+        <div class="mt-4">
+          <%= render "shared/save_indicator" %>
+        </div>
+      </div>
+    <% end %>
   </div>
 </div>
