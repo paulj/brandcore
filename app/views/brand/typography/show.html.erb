@@ -85,8 +85,41 @@
          data-font-picker-target="modal"
          data-action="click->font-picker#closeModal">
       <%= form_with model: @brand_typography, url: brand_typography_path(@brand), method: :patch, data: { turbo: true, turbo_frame: "_top", font_picker_target: "form" } do |f| %>
-        <%= hidden_field_tag "brand_typography[primary_typeface]", @brand_typography.primary_typeface.to_json, data: { font_picker_target: "primaryFontInput" } %>
-        <%= hidden_field_tag "brand_typography[secondary_typeface]", @brand_typography.secondary_typeface.to_json, data: { font_picker_target: "secondaryFontInput" } %>
+        <!-- Primary Typeface Fields -->
+        <div data-font-picker-target="primaryTypefaceFields">
+          <%= hidden_field_tag "brand_typography[primary_typeface][name]", @brand_typography.primary_typeface&.name, data: { font_picker_target: "primaryName" } %>
+          <%= hidden_field_tag "brand_typography[primary_typeface][family]", @brand_typography.primary_typeface&.family, data: { font_picker_target: "primaryFamily" } %>
+          <%= hidden_field_tag "brand_typography[primary_typeface][category]", @brand_typography.primary_typeface&.category, data: { font_picker_target: "primaryCategory" } %>
+          <%= hidden_field_tag "brand_typography[primary_typeface][google_fonts_url]", @brand_typography.primary_typeface&.google_fonts_url, data: { font_picker_target: "primaryGoogleFontsUrl" } %>
+          <% if @brand_typography.primary_typeface&.variants.present? %>
+            <% @brand_typography.primary_typeface.variants.each do |variant| %>
+              <%= hidden_field_tag "brand_typography[primary_typeface][variants][]", variant %>
+            <% end %>
+          <% end %>
+          <% if @brand_typography.primary_typeface&.subsets.present? %>
+            <% @brand_typography.primary_typeface.subsets.each do |subset| %>
+              <%= hidden_field_tag "brand_typography[primary_typeface][subsets][]", subset %>
+            <% end %>
+          <% end %>
+        </div>
+        
+        <!-- Secondary Typeface Fields -->
+        <div data-font-picker-target="secondaryTypefaceFields">
+          <%= hidden_field_tag "brand_typography[secondary_typeface][name]", @brand_typography.secondary_typeface&.name, data: { font_picker_target: "secondaryName" } %>
+          <%= hidden_field_tag "brand_typography[secondary_typeface][family]", @brand_typography.secondary_typeface&.family, data: { font_picker_target: "secondaryFamily" } %>
+          <%= hidden_field_tag "brand_typography[secondary_typeface][category]", @brand_typography.secondary_typeface&.category, data: { font_picker_target: "secondaryCategory" } %>
+          <%= hidden_field_tag "brand_typography[secondary_typeface][google_fonts_url]", @brand_typography.secondary_typeface&.google_fonts_url, data: { font_picker_target: "secondaryGoogleFontsUrl" } %>
+          <% if @brand_typography.secondary_typeface&.variants.present? %>
+            <% @brand_typography.secondary_typeface.variants.each do |variant| %>
+              <%= hidden_field_tag "brand_typography[secondary_typeface][variants][]", variant %>
+            <% end %>
+          <% end %>
+          <% if @brand_typography.secondary_typeface&.subsets.present? %>
+            <% @brand_typography.secondary_typeface.subsets.each do |subset| %>
+              <%= hidden_field_tag "brand_typography[secondary_typeface][subsets][]", subset %>
+            <% end %>
+          <% end %>
+        </div>
         <div class="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col"
              onclick="event.stopPropagation()">
         <!-- Modal Header -->

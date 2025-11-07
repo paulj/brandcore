@@ -29,29 +29,8 @@ class Brand::TypographyController < Brand::BaseController
     @brand_typography = @brand.brand_typography || @brand.create_brand_typography!
     @typography_presenter = BrandTypographyPresenter.new(@brand_typography)
 
-    # Parse JSONB fields if they come as JSON strings
-    parsed_params = brand_typography_params.to_h
-
-    # Handle typeface fields - can come as JSON string or hash
-    %i[primary_typeface secondary_typeface].each do |field|
-      if parsed_params[field].present?
-        if parsed_params[field].is_a?(String) && parsed_params[field].strip.present?
-          parsed_params[field] = JSON.parse(parsed_params[field])
-        elsif parsed_params[field].is_a?(String) && parsed_params[field].strip.empty?
-          # Empty string means don't update this field - preserve existing value
-          parsed_params.delete(field)
-        end
-      end
-    end
-
-    # Handle other JSONB fields
-    %i[type_scale line_heights web_font_urls].each do |field|
-      if parsed_params[field].present? && parsed_params[field].is_a?(String)
-        parsed_params[field] = JSON.parse(parsed_params[field])
-      end
-    end
-
-    if @brand_typography.update(parsed_params)
+    # No need to parse JSON strings - Rails handles nested attributes automatically
+    if @brand_typography.update(brand_typography_params)
       respond_to do |format|
         format.turbo_stream do
           # Return a redirect response - Turbo will follow it and reload the page
@@ -74,8 +53,8 @@ class Brand::TypographyController < Brand::BaseController
   def brand_typography_params
     params.require(:brand_typography).permit(
       :usage_guidelines,
-      :primary_typeface,  # Permit as string (will be parsed)
-      :secondary_typeface,  # Permit as string (will be parsed)
+      primary_typeface: [ :name, :family, :category, :google_fonts_url, variants: [], subsets: [] ],
+      secondary_typeface: [ :name, :family, :category, :google_fonts_url, variants: [], subsets: [] ],
       type_scale: {},
       line_heights: {},
       web_font_urls: []

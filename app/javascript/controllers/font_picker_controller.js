@@ -9,8 +9,16 @@ export default class extends Controller {
     "selectedFont",
     "form",
     "preview",
-    "primaryFontInput",
-    "secondaryFontInput",
+    "primaryName",
+    "primaryFamily",
+    "primaryCategory",
+    "primaryGoogleFontsUrl",
+    "primaryTypefaceFields",
+    "secondaryName",
+    "secondaryFamily",
+    "secondaryCategory",
+    "secondaryGoogleFontsUrl",
+    "secondaryTypefaceFields",
     "typefaceRole"
   ]
 
@@ -177,29 +185,52 @@ export default class extends Controller {
     const fontName = fontData.family
     const role = this.typefaceRoleValue || "primary"
 
-    // Determine which input field to use based on the role
-    const inputTarget = role === "secondary" ? "secondaryFontInput" : "primaryFontInput"
-    const input = this[`${inputTarget}Target`]
-    
-    if (!input) {
-      console.error(`Could not find ${role} font input field`)
-      alert("Error: Could not find form field. Please refresh the page and try again.")
+    // Determine which targets to use based on the role
+    const nameTarget = role === "secondary" ? "secondaryName" : "primaryName"
+    const familyTarget = role === "secondary" ? "secondaryFamily" : "primaryFamily"
+    const categoryTarget = role === "secondary" ? "secondaryCategory" : "primaryCategory"
+    const googleFontsUrlTarget = role === "secondary" ? "secondaryGoogleFontsUrl" : "primaryGoogleFontsUrl"
+    const fieldsContainerTarget = role === "secondary" ? "secondaryTypefaceFields" : "primaryTypefaceFields"
+
+    // Get the field container
+    const fieldsContainer = this[`${fieldsContainerTarget}Target`]
+    if (!fieldsContainer) {
+      console.error(`Could not find ${role} typeface fields container`)
+      alert("Error: Could not find form fields. Please refresh the page and try again.")
       return
     }
 
-    const fontPayload = {
-      name: fontName,
-      family: fontName,
-      category: fontData.category,
-      variants: fontData.variants || [],
-      subsets: fontData.subsets || [],
-      google_fonts_url: `https://fonts.googleapis.com/css2?family=${fontName.replace(/\s+/g, "+")}:wght@300;400;500;600;700&display=swap`
-    }
-    
-    input.value = JSON.stringify(fontPayload)
-    
-    // The other field already has its current value from the form initialization
-    // No need to preserve it manually
+    // Update the basic fields
+    this[`${nameTarget}Target`].value = fontName
+    this[`${familyTarget}Target`].value = fontName
+    this[`${categoryTarget}Target`].value = fontData.category || ""
+    this[`${googleFontsUrlTarget}Target`].value = `https://fonts.googleapis.com/css2?family=${fontName.replace(/\s+/g, "+")}:wght@300;400;500;600;700&display=swap`
+
+    // Remove existing variant and subset fields
+    const existingVariants = fieldsContainer.querySelectorAll('input[name*="[variants][]"]')
+    const existingSubsets = fieldsContainer.querySelectorAll('input[name*="[subsets][]"]')
+    existingVariants.forEach(field => field.remove())
+    existingSubsets.forEach(field => field.remove())
+
+    // Add variant fields
+    const variants = fontData.variants || []
+    variants.forEach(variant => {
+      const input = document.createElement("input")
+      input.type = "hidden"
+      input.name = `brand_typography[${role}_typeface][variants][]`
+      input.value = variant
+      fieldsContainer.appendChild(input)
+    })
+
+    // Add subset fields
+    const subsets = fontData.subsets || []
+    subsets.forEach(subset => {
+      const input = document.createElement("input")
+      input.type = "hidden"
+      input.name = `brand_typography[${role}_typeface][subsets][]`
+      input.value = subset
+      fieldsContainer.appendChild(input)
+    })
     
     // Load the Google Font CSS
     this.loadGoogleFont(fontName)
