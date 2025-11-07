@@ -63,27 +63,116 @@ class Brand::TypographyController < Brand::BaseController
     end
   end
 
-  # Create or update a typeface by role
-  def update_typeface
+  # Add a new type scale item
+  def add_type_scale_item
     @brand_typography = @brand.brand_typography || @brand.create_brand_typography!
-    role = params[:role]
+    typeface = @brand_typography.typefaces.find(params[:typeface_id])
 
-    # Validate role is allowed by current scheme
-    unless @brand_typography.required_roles.include?(role)
+    # Add a new empty scale item
+    new_scale = TypeScaleItem.new(font_size: "", line_height: "", variant: "Regular", font_weight: "400")
+    typeface.type_scale = (typeface.type_scale || []) + [ new_scale ]
+
+    if typeface.save
+      @typeface = typeface.reload
       respond_to do |format|
-        format.html { redirect_to brand_typography_path(@brand), alert: "Role '#{role}' is not allowed for the current scheme." }
-        format.json { render json: { error: "Role '#{role}' is not allowed for the current scheme" }, status: :unprocessable_entity }
+        format.turbo_stream do
+          # Remove the "no items" message if it exists, then append the new row
+          streams = [
+            turbo_stream.remove("no-scale-items-#{@typeface.id}"),
+            turbo_stream.before(
+              "add-scale-row-#{@typeface.id}",
+              partial: "type_scale_item",
+              locals: {
+                f: nil, # Use standalone form helpers
+                typeface: @typeface,
+                scale: new_scale,
+                index: @typeface.type_scale.length - 1,
+                brand: @brand
+              }
+            )
+          ]
+          render turbo_stream: streams
+        end
+        format.html { redirect_to brand_typography_path(@brand) }
       end
-      return
+    else
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("save_indicator", partial: "shared/save_indicator", locals: { saved: false, errors: typeface.errors }) }
+        format.html { redirect_to brand_typography_path(@brand), alert: typeface.errors.full_messages.join(", ") }
+      end
     end
+  end
 
-    typeface = @brand_typography.typefaces.find_or_initialize_by(role: role)
-    typeface.assign_attributes(typeface_params)
-    typeface.role = role # Ensure role is set
+  # Remove a type scale item
+  def remove_type_scale_item
+    @brand_typography = @brand.brand_typography || @brand.create_brand_typography!
+    typeface = @brand_typography.typefaces.find(params[:typeface_id])
+    index = params[:index].to_i
+
+    # Remove the item at the specified index
+    typeface.type_scale = (typeface.type_scale || []).reject.with_index { |_, i| i == index }
 
     if typeface.save
       respond_to do |format|
-        format.turbo_stream { redirect_to brand_typography_path(@brand), status: :see_other }
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace(
+            "type-scale-#{typeface.id}",
+            partial: "type_scale",
+            locals: { typeface: typeface.reload, brand: @brand }
+          )
+        end
+        format.html { redirect_to brand_typography_path(@brand) }
+      end
+    else
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("save_indicator", partial: "shared/save_indicator", locals: { saved: false, errors: typeface.errors }) }
+        format.html { redirect_to brand_typography_path(@brand), alert: typeface.errors.full_messages.join(", ") }
+      end
+    end
+  end
+
+  # Create or update a typeface by role
+  def update_typeface
+    @brand_typography = @brand.brand_typography || @brand.create_brand_typography!
+
+    # Find typeface by ID if provided, otherwise by role
+    if params[:typeface] && params[:typeface][:id].present?
+      typeface = @brand_typography.typefaces.find_by(id: params[:typeface][:id])
+      unless typeface
+        respond_to do |format|
+          format.html { redirect_to brand_typography_path(@brand), alert: "Typeface not found." }
+          format.json { render json: { error: "Typeface not found" }, status: :not_found }
+        end
+        return
+      end
+      role = typeface.role
+    else
+      role = params[:role]
+      # Validate role is allowed by current scheme
+      unless @brand_typography.required_roles.include?(role)
+        respond_to do |format|
+          format.html { redirect_to brand_typography_path(@brand), alert: "Role '#{role}' is not allowed for the current scheme." }
+          format.json { render json: { error: "Role '#{role}' is not allowed for the current scheme" }, status: :unprocessable_entity }
+        end
+        return
+      end
+      typeface = @brand_typography.typefaces.find_or_initialize_by(role: role)
+    end
+
+    # Get parsed params (type_scale will be structured as an array of hashes)
+    parsed_params = typeface_params.to_h
+
+    typeface.assign_attributes(parsed_params)
+    typeface.role = role unless typeface.persisted? # Ensure role is set for new records
+
+    if typeface.save
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.replace("typeface-panels", partial: "typeface_panels"),
+            turbo_stream.replace("save_indicator", partial: "shared/save_indicator", locals: { saved: true })
+          ]
+        end
         format.html { redirect_to brand_typography_path(@brand), notice: "Typeface updated successfully." }
         format.json { render json: { success: true, typeface: typeface } }
       end
@@ -118,14 +207,22 @@ class Brand::TypographyController < Brand::BaseController
         :_destroy,
         variants: [],
         subsets: [],
-        type_scale: {},
+        type_scale: [ :font_size, :line_height, :variant, :font_weight ],
         line_heights: {}
       ]
-    )
+    ).tap do |params|
+      # Convert the type scale hash from a form like { "0" => { font_size: ... }, "1" => { font_size: ... } } to an array of hashes
+      if params[:typeface_attributes] && scales = params[:typeface_attributes][:type_scale].presence
+        if scales.is_a?(Hash) && scales.keys.all? { |key| key.is_a?(String) && key.to_i.to_s == key }
+          params[:typeface_attributes][:type_scale] = scales.values
+        end
+      end
+    end
   end
 
   def typeface_params
     params.require(:typeface).permit(
+      :id,
       :role,
       :name,
       :family,
@@ -134,8 +231,15 @@ class Brand::TypographyController < Brand::BaseController
       :position,
       variants: [],
       subsets: [],
-      type_scale: {},
+      type_scale: [ :font_size, :line_height, :variant, :font_weight ],
       line_heights: {}
-    )
+    ).tap do |params|
+      # Convert the type scale hash from a form like { "0" => { font_size: ... }, "1" => { font_size: ... } } to an array of hashes
+      if scales = params[:type_scale].presence
+        if scales.is_a?(ActionController::Parameters) && scales.keys.all? { |key| key.is_a?(String) && key.to_i.to_s == key }
+          params[:type_scale] = scales.values
+        end
+      end
+    end
   end
 end

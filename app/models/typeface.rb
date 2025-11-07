@@ -6,6 +6,9 @@ class Typeface < ApplicationRecord
 
   belongs_to :brand_typography
 
+  # Structured JSONB attributes
+  attribute :type_scale, TypeScaleItem.to_array_type
+
   validates :role, presence: true, inclusion: { in: ROLES }
   validates :name, presence: true
   validates :family, presence: true
@@ -16,13 +19,17 @@ class Typeface < ApplicationRecord
   scope :by_role, ->(role) { where(role: role) }
   scope :ordered, -> { order(:position, :created_at) }
 
-  # Type scale helpers
+  # Type scale helpers (backwards compatibility)
   def type_scale_value(key)
-    type_scale[key.to_s] if type_scale.present?
+    return nil if type_scale.blank?
+    item = type_scale.find { |item| item.font_size == key.to_s }
+    item&.font_size
   end
 
   def line_height_value(key)
-    line_heights[key.to_s] if line_heights.present?
+    return nil if type_scale.blank?
+    item = type_scale.find { |item| item.font_size == key.to_s }
+    item&.line_height
   end
 
   private

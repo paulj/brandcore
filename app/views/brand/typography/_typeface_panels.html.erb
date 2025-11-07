@@ -25,6 +25,9 @@
                 data-typeface-id="<%= typeface&.id %>">
           <%= typeface&.name.present? ? 'Change Typeface' : 'Select Typeface' %>
         </button>
+        
+        <%# Type Scale Configuration %>
+        <%= render "type_scale", typeface: typeface, brand: @brand %>
       </div>
     <% end %>
   <% else %>

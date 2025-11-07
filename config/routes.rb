@@ -14,6 +14,8 @@ Rails.application.routes.draw do
           get :suggest_fonts
           get :fonts_by_category
           patch :update_typeface
+          post :add_type_scale_item
+          delete :remove_type_scale_item
         end
       end
       resource :ui, only: [ :show, :update ], controller: :ui
