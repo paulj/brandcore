@@ -7,13 +7,15 @@ module BrandColorPalette
     attr_reader :brand_input, :options
 
     # Initialize the generator with brand inputs
-    # @param brand_input [BrandInput, Hash] Brand vision details (struct or hash)
+    # @param brand_input [BrandInput] Brand vision details
     # @param options [Hash] Generation options
     # @option options [Integer] :palette_count Number of palettes to generate (default: 10)
     # @option options [Boolean] :include_dark_mode Generate dark mode variants (default: true)
     def initialize(brand_input, options = {})
-      @brand_input = normalize_input(brand_input)
-      @original_input = brand_input # Keep original for struct return
+      raise ArgumentError, "brand_input must be a BrandInput struct" unless brand_input.is_a?(BrandInput)
+
+      @brand_input = brand_input
+      @brand_input_hash = brand_input.to_h
       @options = default_options.merge(options)
     end
 
@@ -34,10 +36,10 @@ module BrandColorPalette
 
       # Build final result as struct
       GeneratorResult.new(
-        brand_id: @brand_input[:brand_id],
+        brand_id: @brand_input.brand_id,
         palettes: final_palettes.map { |p| Palette.from_hash(p) },
         metadata: GenerationMetadata.new(
-          input: @original_input.is_a?(BrandInput) ? @original_input : BrandInput.from_hash(@brand_input),
+          input: @brand_input,
           design_vector: DesignVector.from_hash(normalized_data[:design_vector]),
           descriptors: normalized_data[:descriptors],
           primary_traits: normalized_data[:primary_traits],
@@ -69,24 +71,13 @@ module BrandColorPalette
       }
     end
 
-    # Normalize input to hash format for internal use
-    def normalize_input(input)
-      if input.is_a?(BrandInput)
-        input.to_h
-      elsif input.is_a?(Hash)
-        input
-      else
-        raise ArgumentError, "brand_input must be a BrandInput struct or Hash"
-      end
-    end
-
     # Step 1: NLP Normalization
     def normalize_nlp
-      normalizer = NlpNormalizer.new(@brand_input)
+      normalizer = NlpNormalizer.new(@brand_input_hash)
       normalized = normalizer.normalize
 
-      # Add the design vector back to brand_input for constraint layer
-      @brand_input[:design_vector] = normalized[:design_vector]
+      # Add the design vector back to brand_input_hash for constraint layer
+      @brand_input_hash[:design_vector] = normalized[:design_vector]
 
       normalized
     end
@@ -99,7 +90,7 @@ module BrandColorPalette
 
     # Step 3: Apply constraints (accessibility, cultural, category)
     def apply_constraints(palettes)
-      constraint_layer = ConstraintLayer.new(@brand_input, palettes)
+      constraint_layer = ConstraintLayer.new(@brand_input_hash, palettes)
       constraint_layer.apply
     end
 
@@ -107,7 +98,7 @@ module BrandColorPalette
     def generate_variations(palettes)
       palettes.map do |palette|
         if @options[:include_dark_mode]
-          constraint_layer = ConstraintLayer.new(@brand_input, [ palette ])
+          constraint_layer = ConstraintLayer.new(@brand_input_hash, [ palette ])
           variations = constraint_layer.generate_mode_variations(palette)
 
           palette.merge(

@@ -13,7 +13,7 @@ require_relative "../../../app/services/brand_color_palette/generator"
 
 RSpec.describe BrandColorPalette::Generator do
   let(:brand_input) do
-    {
+    BrandColorPalette::BrandInput.new(
       brand_id: "acme",
       traits: [ "innovative", "approachable", "premium" ],
       tone: [ "confident", "friendly" ],
@@ -21,7 +21,7 @@ RSpec.describe BrandColorPalette::Generator do
       category: "SaaS",
       markets: [ "US", "AU" ],
       keywords: [ "automation", "reliability", "speed" ]
-    }
+    )
   end
 
   describe "#generate" do
