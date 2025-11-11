@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_11_084153) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_11_231819) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -137,6 +137,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_11_084153) do
   end
 
   create_table "brand_visions", force: :cascade do |t|
+    t.string "audiences", default: [], array: true
     t.bigint "brand_id", null: false
     t.jsonb "brand_personality", default: {}
     t.text "brand_positioning"
@@ -145,6 +146,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_11_084153) do
     t.datetime "completed_at"
     t.jsonb "core_values", default: []
     t.datetime "created_at", null: false
+    t.string "keywords", default: [], array: true
     t.string "markets", default: [], array: true
     t.text "mission_statement"
     t.text "target_audience"
