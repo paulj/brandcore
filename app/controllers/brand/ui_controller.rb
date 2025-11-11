@@ -1,12 +1,12 @@
 class Brand::UiController < Brand::BaseController
   def show
     @brand_ui = @brand.brand_ui || @brand.create_brand_ui!
-    @ui_presenter = BrandUIPresenter.new(@brand_ui)
+    @ui_presenter = BrandUiPresenter.new(@brand_ui)
   end
 
   def update
     @brand_ui = @brand.brand_ui || @brand.create_brand_ui!
-    @ui_presenter = BrandUIPresenter.new(@brand_ui)
+    @ui_presenter = BrandUiPresenter.new(@brand_ui)
 
     # Parse JSONB fields if they come as JSON strings
     parsed_params = brand_ui_params.to_h

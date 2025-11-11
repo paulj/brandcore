@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-# BrandUIPresenter calculates completion status for the UI Elements section.
+# BrandUiPresenter calculates completion status for the UI Elements section.
 # It tracks completion based on:
 # - Button styles defined
 # - Form elements defined
 # - Spacing system defined
-class BrandUIPresenter
+class BrandUiPresenter
   include SectionProgress
 
   def initialize(brand_ui)
