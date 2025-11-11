@@ -139,6 +139,8 @@ class Brand::VisionController < Brand::BaseController
       :category,
       brand_personality: {},
       core_values: [ :name, :description, :icon ],
+      traits: [],
+      tone: [],
       markets: []
     )
   end

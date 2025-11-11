@@ -63,9 +63,20 @@ class BrandVisionPresenter
   end
 
   def brand_personality_complete?
-    @brand_vision.brand_personality.present? &&
-      @brand_vision.brand_personality.is_a?(Hash) &&
-      @brand_vision.brand_personality.any?
+    # Brand personality is complete if either traits or tone have values
+    (traits_present? || tone_present?)
+  end
+
+  def traits_present?
+    @brand_vision.traits.present? &&
+      @brand_vision.traits.is_a?(Array) &&
+      @brand_vision.traits.any?
+  end
+
+  def tone_present?
+    @brand_vision.tone.present? &&
+      @brand_vision.tone.is_a?(Array) &&
+      @brand_vision.tone.any?
   end
 
   def category_complete?
