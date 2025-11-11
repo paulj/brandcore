@@ -167,15 +167,32 @@ Each of the seven brand components has its own table, linked to a specific brand
 - mission_statement (text)
 - vision_statement (text)
 - core_values (jsonb) - Array of values with descriptions
-  # [{ value: "Integrity", description: "We act with honesty..." }, ...]
+  # [{ name: "Integrity", description: "We act with honesty...", icon: "fa-heart" }, ...]
 - brand_positioning (text)
 - target_audience (text)
-- brand_personality (jsonb) - Structured personality attributes
-  # { traits: ["Innovative", "Approachable"], voice: "Friendly yet professional" }
+- brand_personality (jsonb) - Legacy/additional personality attributes (optional)
+- traits (jsonb) - Array of personality traits
+  # ["innovative", "approachable", "professional"]
+- tone (jsonb) - Array of tone descriptors
+  # ["confident", "friendly", "authoritative"]
+- category (string) - Brand industry category (e.g., "SaaS", "E-commerce", "Fintech")
+- markets (jsonb) - Array of target geographic markets
+  # ["US", "UK", "EU", "APAC"]
 - completed (boolean, default: false)
 - completed_at (datetime, nullable)
 - created_at
 - updated_at
+```
+
+**Brand Input Structure:**
+The vision component supports structured brand metadata for external integrations:
+```ruby
+{
+  traits: ["innovative", "approachable"],
+  tone: ["confident"],
+  category: "SaaS",
+  markets: ["US"]
+}
 ```
 
 **Key relationships:**
