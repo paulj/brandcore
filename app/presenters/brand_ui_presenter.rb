@@ -48,4 +48,3 @@ class BrandUIPresenter
       @brand_ui.spacing_system.any?
   end
 end
-

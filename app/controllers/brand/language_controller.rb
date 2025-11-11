@@ -10,18 +10,18 @@ class Brand::LanguageController < Brand::BaseController
 
     # Parse JSONB fields if they come as JSON strings
     parsed_params = brand_language_params.to_h
-    
+
     # Handle vocabulary_guidelines which comes as separate use/avoid fields
     if params[:brand_language][:vocabulary_guidelines].present?
       vocab_params = params[:brand_language][:vocabulary_guidelines]
-      use_words = vocab_params[:use].present? ? vocab_params[:use].to_s.split(',').map(&:strip).reject(&:blank?) : []
-      avoid_words = vocab_params[:avoid].present? ? vocab_params[:avoid].to_s.split(',').map(&:strip).reject(&:blank?) : []
+      use_words = vocab_params[:use].present? ? vocab_params[:use].to_s.split(",").map(&:strip).reject(&:blank?) : []
+      avoid_words = vocab_params[:avoid].present? ? vocab_params[:avoid].to_s.split(",").map(&:strip).reject(&:blank?) : []
       parsed_params[:vocabulary_guidelines] = {
-        'use' => use_words,
-        'avoid' => avoid_words
+        "use" => use_words,
+        "avoid" => avoid_words
       }
     end
-    
+
     %i[tone_of_voice messaging_pillars].each do |field|
       if parsed_params[field].present? && parsed_params[field].is_a?(String)
         parsed_params[field] = JSON.parse(parsed_params[field])

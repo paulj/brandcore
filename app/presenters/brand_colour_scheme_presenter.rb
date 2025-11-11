@@ -45,4 +45,3 @@ class BrandColourSchemePresenter
     @brand_colour_scheme.usage_guidelines.present?
   end
 end
-

@@ -44,4 +44,3 @@ class BrandLogoPresenter
       @brand_logo.usage_guidelines.any?
   end
 end
-

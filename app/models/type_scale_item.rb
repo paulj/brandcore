@@ -11,4 +11,3 @@ class TypeScaleItem
   validates :variant, presence: true
   validates :font_weight, presence: true
 end
-

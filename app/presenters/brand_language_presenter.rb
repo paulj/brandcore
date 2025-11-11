@@ -52,4 +52,3 @@ class BrandLanguagePresenter
     @brand_language.writing_style_notes.present?
   end
 end
-

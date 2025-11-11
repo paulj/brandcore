@@ -58,7 +58,7 @@ class Brand::VisionController < Brand::BaseController
 
     if new_value.valid?
       current_values = @brand_vision.core_values || []
-      @brand_vision.core_values = current_values + [new_value]
+      @brand_vision.core_values = current_values + [ new_value ]
 
       if @brand_vision.save
         respond_to do |format|
@@ -137,7 +137,7 @@ class Brand::VisionController < Brand::BaseController
       :brand_positioning,
       :target_audience,
       brand_personality: {},
-      core_values: [:name, :description, :icon]
+      core_values: [ :name, :description, :icon ]
     )
   end
 end
