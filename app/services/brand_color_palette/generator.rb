@@ -7,12 +7,12 @@ module BrandColorPalette
     attr_reader :brand_input, :options
 
     # Initialize the generator with brand inputs
-    # @param brand_input [BrandInput] Brand vision details
+    # @param brand_input [BrandVision] Brand vision details (BrandVision model)
     # @param options [Hash] Generation options
     # @option options [Integer] :palette_count Number of palettes to generate (default: 10)
     # @option options [Boolean] :include_dark_mode Generate dark mode variants (default: true)
     def initialize(brand_input, options = {})
-      raise ArgumentError, "brand_input must be a BrandInput struct" unless brand_input.is_a?(BrandInput)
+      raise ArgumentError, "brand_input must be a BrandVision model" unless brand_input.is_a?(BrandVision)
 
       @brand_input = brand_input
       @brand_input_hash = brand_input.to_h

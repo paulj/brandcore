@@ -14,17 +14,11 @@
 # 5. Output Generation - Produce light/dark mode variations in multiple formats
 #
 # @example Basic usage
-#   input = BrandColorPalette::BrandInput.new(
-#     brand_id: "acme",
-#     traits: ["innovative", "approachable", "premium"],
-#     tone: ["confident", "friendly"],
-#     audiences: ["prosumer", "SMB"],
-#     category: "SaaS",
-#     markets: ["US", "AU"],
-#     keywords: ["automation", "reliability", "speed"]
-#   )
+#   # Get the brand vision from the database
+#   brand = Brand.find_by(slug: "acme")
+#   brand_vision = brand.brand_vision
 #
-#   generator = BrandColorPalette::Generator.new(input)
+#   generator = BrandColorPalette::Generator.new(brand_vision)
 #   result = generator.generate
 #
 #   # Access results

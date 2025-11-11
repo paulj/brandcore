@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "spec_helper"
+require "rails_helper"
 require_relative "../../../app/services/brand_color_palette/types"
 require_relative "../../../app/services/brand_color_palette/color_space"
 require_relative "../../../app/services/brand_color_palette/emotion_color_map"
@@ -12,9 +12,16 @@ require_relative "../../../app/services/brand_color_palette/constraint_layer"
 require_relative "../../../app/services/brand_color_palette/generator"
 
 RSpec.describe BrandColorPalette::Generator do
+  let(:brand) do
+    Brand.create!(
+      name: "ACME Corp",
+      slug: "acme"
+    )
+  end
+
   let(:brand_input) do
-    BrandColorPalette::BrandInput.new(
-      brand_id: "acme",
+    BrandVision.create!(
+      brand: brand,
       traits: [ "innovative", "approachable", "premium" ],
       tone: [ "confident", "friendly" ],
       audiences: [ "prosumer", "SMB" ],
@@ -30,7 +37,7 @@ RSpec.describe BrandColorPalette::Generator do
       result = generator.generate
 
       expect(result).to be_a(BrandColorPalette::GeneratorResult)
-      expect(result.brand_id).to eq("acme")
+      expect(result.brand_id).to eq(brand.id)
       expect(result.palettes).to be_an(Array)
       expect(result.metadata).to be_a(BrandColorPalette::GenerationMetadata)
     end
@@ -116,7 +123,7 @@ RSpec.describe BrandColorPalette::Generator do
       result = generator.generate_best
 
       expect(result).to be_a(BrandColorPalette::SinglePaletteResult)
-      expect(result.brand_id).to eq("acme")
+      expect(result.brand_id).to eq(brand.id)
       expect(result.palette).to be_a(BrandColorPalette::Palette)
       expect(result.metadata).to be_a(BrandColorPalette::GenerationMetadata)
     end
