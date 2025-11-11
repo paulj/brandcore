@@ -7,11 +7,7 @@ module BrandColorPalette
   # Known trait embeddings are cached to disk to avoid API calls
   class TraitMapper
     SIMILARITY_THRESHOLD = 0.75
-    CACHE_FILE_PATH = if defined?(Rails)
-                        Rails.root.join("lib/data/trait_embeddings.json")
-    else
-                        File.expand_path("../../../lib/data/trait_embeddings.json", __dir__)
-    end
+    CACHE_FILE_PATH = Rails.root.join("lib/data/trait_embeddings.json")
     EMBEDDING_MODEL = "text-embedding-3-small"
 
     attr_reader :known_traits, :embeddings_cache
@@ -127,20 +123,14 @@ module BrandColorPalette
 
     # Safe logging methods that work with or without Rails
     def log_info(message)
-      return unless defined?(Rails)
-
       Rails.logger.info(message)
     end
 
     def log_warn(message)
-      return unless defined?(Rails)
-
       Rails.logger.warn(message)
     end
 
     def log_error(message)
-      return unless defined?(Rails)
-
       Rails.logger.error(message)
     end
   end

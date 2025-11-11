@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "spec_helper"
-require_relative "../../../app/services/brand_color_palette/emotion_color_map"
 
 RSpec.describe BrandColorPalette::EmotionColorMap do
   describe ".color_for_trait" do

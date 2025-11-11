@@ -1,26 +1,9 @@
 # frozen_string_literal: true
 
-require "spec_helper"
-require_relative "../../../app/services/brand_color_palette/emotion_color_map"
-require_relative "../../../app/services/brand_color_palette/trait_mapper"
+require "rails_helper"
 
 RSpec.describe BrandColorPalette::TraitMapper do
   let(:mapper) { described_class.new }
-
-  # Create a simple mock embeddings cache for testing
-  let(:mock_embeddings) do
-    {
-      "innovative" => Array.new(1536) { rand },
-      "trustworthy" => Array.new(1536) { rand },
-      "energetic" => Array.new(1536) { rand }
-    }
-  end
-
-  before do
-    # Mock the embeddings cache file
-    allow(File).to receive(:exist?).with(described_class::CACHE_FILE_PATH).and_return(true)
-    allow(File).to receive(:read).with(described_class::CACHE_FILE_PATH).and_return(mock_embeddings.to_json)
-  end
 
   describe "#map_trait" do
     context "with known traits" do
@@ -69,7 +52,6 @@ RSpec.describe BrandColorPalette::TraitMapper do
       end
 
       let(:mock_client) { instance_double(OpenAI::Client) }
-      let(:similar_embedding) { mock_embeddings["innovative"].map { |v| v + rand * 0.1 } }
 
       before do
         allow(ENV).to receive(:[]).with("OPENAI_API_KEY").and_return("test-key")
@@ -81,7 +63,7 @@ RSpec.describe BrandColorPalette::TraitMapper do
         allow(mock_client).to receive(:embeddings).and_return(
           {
             "data" => [
-              { "embedding" => similar_embedding }
+              { "embedding" => Array.new(1536) { rand } }
             ]
           }
         )

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "spec_helper"
-require_relative "../../../app/services/brand_color_palette/color_space"
 
 RSpec.describe BrandColorPalette::ColorSpace do
   describe ".oklch_to_srgb" do
