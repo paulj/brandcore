@@ -10,6 +10,8 @@
 #   IDLE_SHUTDOWN_TIMEOUT - timeout in seconds (default: 1200 = 20 minutes)
 #   IDLE_SHUTDOWN_CHECK_INTERVAL - how often to check in seconds (default: 60)
 
+require "puma/plugin"
+
 Puma::Plugin.create do
   def start(launcher)
     @launcher = launcher
@@ -64,7 +66,7 @@ Puma::Plugin.create do
   end
 
   def log(message)
-    @launcher.events.log "idle_shutdown: #{message}"
+    @launcher.log_writer.log "idle_shutdown: #{message}"
   end
 end
 
