@@ -5,6 +5,7 @@ class BrandVision < ApplicationRecord
 
   # Structured JSONB attributes
   attribute :core_values, CoreValue.to_array_type
+  attribute :markets, :string, array: true, default: []
 
   validates :brand_id, uniqueness: true
 end

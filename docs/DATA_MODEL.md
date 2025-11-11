@@ -171,12 +171,20 @@ Each of the seven brand components has its own table, linked to a specific brand
 - brand_positioning (text)
 - target_audience (text)
 - brand_personality (jsonb) - Structured personality attributes
-  # { traits: ["Innovative", "Approachable"], voice: "Friendly yet professional" }
+  # { traits: ["innovative", "approachable"], tone: ["confident", "friendly"] }
+- category (string) - Brand industry category (e.g., "SaaS", "E-commerce", "Fintech")
+- markets (jsonb) - Array of target geographic markets
+  # ["US", "UK", "EU", "APAC"]
 - completed (boolean, default: false)
 - completed_at (datetime, nullable)
 - created_at
 - updated_at
 ```
+
+**Brand Personality Structure:**
+The `brand_personality` JSONB field stores:
+- `traits` (array) - Personality characteristics (e.g., "innovative", "approachable", "professional")
+- `tone` (array) - Communication tone descriptors (e.g., "confident", "friendly", "authoritative")
 
 **Key relationships:**
 - `belongs_to :brand`

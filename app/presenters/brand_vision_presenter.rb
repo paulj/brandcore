@@ -20,7 +20,7 @@ class BrandVisionPresenter
   # Total number of completable fields in the Vision section
   # @return [Integer]
   def total_fields
-    6
+    8
   end
 
   # Number of completed fields in the Vision section
@@ -33,6 +33,8 @@ class BrandVisionPresenter
     count += 1 if brand_positioning_complete?
     count += 1 if target_audience_complete?
     count += 1 if brand_personality_complete?
+    count += 1 if category_complete?
+    count += 1 if markets_complete?
     count
   end
 
@@ -64,5 +66,15 @@ class BrandVisionPresenter
     @brand_vision.brand_personality.present? &&
       @brand_vision.brand_personality.is_a?(Hash) &&
       @brand_vision.brand_personality.any?
+  end
+
+  def category_complete?
+    @brand_vision.category.present?
+  end
+
+  def markets_complete?
+    @brand_vision.markets.present? &&
+      @brand_vision.markets.is_a?(Array) &&
+      @brand_vision.markets.any?
   end
 end

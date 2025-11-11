@@ -136,8 +136,10 @@ class Brand::VisionController < Brand::BaseController
       :vision_statement,
       :brand_positioning,
       :target_audience,
+      :category,
       brand_personality: {},
-      core_values: [ :name, :description, :icon ]
+      core_values: [ :name, :description, :icon ],
+      markets: []
     )
   end
 end
