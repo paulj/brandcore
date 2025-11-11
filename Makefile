@@ -17,6 +17,10 @@ pre-commit: rubocop spec brakeman
 	@echo "✅ All checks passed!"
 	@echo "--------------------"
 
+cache-google-fonts:
+	@GOOGLE_FONTS_API_KEY="op://Private/Google Fonts API Key/credential" op run -- \
+		bundle exec rails r 'GoogleFontsService.build_static_source'
+
 docker-build:
 	docker build -t brandcore .
 

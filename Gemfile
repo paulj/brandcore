@@ -20,7 +20,16 @@ gem "tailwindcss-rails"
 gem "jbuilder"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
-# gem "bcrypt", "~> 3.1.7"
+gem "bcrypt", "~> 3.1.7"
+
+# Track changes and versions for all models [https://github.com/paper-trail-gem/paper_trail]
+gem "paper_trail"
+
+# Structured JSONB attributes with validations [https://github.com/DmitryTsepelev/store_model]
+gem "store_model"
+
+# HTTP client library [https://github.com/lostisland/faraday]
+gem "faraday"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
@@ -59,7 +68,7 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 
   # RSpec testing framework
-  gem "rspec-rails", "~> 7.1"
+  gem "rspec-rails", "~> 8.0"
 end
 
 group :development do
