@@ -1,0 +1,15 @@
+<span id="save_indicator">
+  <% if local_assigns[:saved] %>
+    <span class="text-sm text-green-600 flex items-center">
+      <i class="fa-solid fa-check mr-1"></i>
+      Saved
+    </span>
+  <% elsif local_assigns[:saved] == false %>
+    <span class="text-sm text-red-600 flex items-center">
+      <i class="fa-solid fa-exclamation-circle mr-1"></i>
+      Error saving
+    </span>
+  <% else %>
+    <span class="text-sm text-gray-500">Draft saved automatically</span>
+  <% end %>
+</span>

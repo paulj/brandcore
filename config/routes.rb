@@ -1,4 +1,32 @@
 Rails.application.routes.draw do
+  resource :session
+  resources :passwords, param: :token
+
+  resources :brands do
+    scope module: :brand do
+      resource :vision, only: [ :show, :update ], controller: :vision do
+        collection do
+          post :add_core_value
+          delete :remove_core_value
+        end
+      end
+      resource :logo, only: [ :show, :update ], controller: :logo
+      resource :language, only: [ :show, :update ], controller: :language
+      resource :colour_scheme, only: [ :show, :update ], controller: :colour_scheme
+      resource :typography, only: [ :show, :update ], controller: :typography do
+        collection do
+          get :search_fonts
+          get :suggest_fonts
+          get :fonts_by_category
+          patch :update_typeface
+          post :add_type_scale_item
+          delete :remove_type_scale_item
+        end
+      end
+      resource :ui, only: [ :show, :update ], controller: :ui
+    end
+  end
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -10,5 +38,5 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
-  # root "posts#index"
+  root "brands#index"
 end
