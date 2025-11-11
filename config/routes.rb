@@ -4,7 +4,12 @@ Rails.application.routes.draw do
 
   resources :brands do
     scope module: :brand do
-      resource :vision, only: [ :show, :update ], controller: :vision
+      resource :vision, only: [ :show, :update ], controller: :vision do
+        collection do
+          post :add_core_value
+          delete :remove_core_value
+        end
+      end
       resource :logo, only: [ :show, :update ], controller: :logo
       resource :language, only: [ :show, :update ], controller: :language
       resource :colour_scheme, only: [ :show, :update ], controller: :colour_scheme

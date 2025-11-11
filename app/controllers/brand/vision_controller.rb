@@ -25,7 +25,8 @@ class Brand::VisionController < Brand::BaseController
         format.turbo_stream do
           render turbo_stream: [
             turbo_stream.replace("save_indicator", partial: "shared/save_indicator", locals: { saved: true }),
-            turbo_stream.replace("section_progress", partial: "shared/section_progress", locals: { presenter: @vision_presenter })
+            turbo_stream.replace("section_progress", partial: "shared/section_progress", locals: { presenter: @vision_presenter }),
+            turbo_stream.replace("core_values_section", partial: "brand/vision/core_values", locals: { brand_vision: @brand_vision, brand: @brand })
           ]
         end
         format.html { redirect_to brand_vision_path(@brand), notice: "Brand vision updated successfully." }
@@ -33,9 +34,96 @@ class Brand::VisionController < Brand::BaseController
       end
     else
       respond_to do |format|
-        format.turbo_stream { render turbo_stream: turbo_stream.replace("save_indicator", partial: "shared/save_indicator", locals: { saved: false, errors: @brand_vision.errors }) }
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.replace("save_indicator", partial: "shared/save_indicator", locals: { saved: false, errors: @brand_vision.errors }),
+            turbo_stream.replace("core_values_section", partial: "brand/vision/core_values", locals: { brand_vision: @brand_vision, brand: @brand })
+          ]
+        end
         format.html { render :show, status: :unprocessable_entity }
         format.json { render json: @brand_vision.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def add_core_value
+    @brand_vision = @brand.brand_vision || @brand.create_brand_vision!
+    @vision_presenter = BrandVisionPresenter.new(@brand_vision)
+
+    new_value = CoreValue.new(
+      name: params[:name],
+      description: params[:description],
+      icon: params[:icon] || "fa-solid fa-heart"
+    )
+
+    if new_value.valid?
+      current_values = @brand_vision.core_values || []
+      @brand_vision.core_values = current_values + [new_value]
+
+      if @brand_vision.save
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: [
+              turbo_stream.replace("save_indicator", partial: "shared/save_indicator", locals: { saved: true }),
+              turbo_stream.replace("section_progress", partial: "shared/section_progress", locals: { presenter: @vision_presenter }),
+              turbo_stream.replace("core_values_section", partial: "brand/vision/core_values", locals: { brand_vision: @brand_vision, brand: @brand })
+            ]
+          end
+          format.html { redirect_to brand_vision_path(@brand) }
+        end
+      else
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.replace("core_values_section", partial: "brand/vision/core_values", locals: { brand_vision: @brand_vision, brand: @brand, errors: @brand_vision.errors })
+          end
+          format.html { redirect_to brand_vision_path(@brand), alert: "Failed to add core value." }
+        end
+      end
+    else
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace("core_values_section", partial: "brand/vision/core_values", locals: { brand_vision: @brand_vision, brand: @brand, errors: new_value.errors })
+        end
+        format.html { redirect_to brand_vision_path(@brand), alert: "Invalid core value." }
+      end
+    end
+  end
+
+  def remove_core_value
+    @brand_vision = @brand.brand_vision || @brand.create_brand_vision!
+    @vision_presenter = BrandVisionPresenter.new(@brand_vision)
+
+    index = params[:index].to_i
+    current_values = @brand_vision.core_values || []
+
+    if index >= 0 && index < current_values.length
+      @brand_vision.core_values = current_values.reject.with_index { |_, i| i == index }
+
+      if @brand_vision.save
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: [
+              turbo_stream.replace("save_indicator", partial: "shared/save_indicator", locals: { saved: true }),
+              turbo_stream.replace("section_progress", partial: "shared/section_progress", locals: { presenter: @vision_presenter }),
+              turbo_stream.replace("core_values_section", partial: "brand/vision/core_values", locals: { brand_vision: @brand_vision, brand: @brand })
+            ]
+          end
+          format.html { redirect_to brand_vision_path(@brand) }
+        end
+      else
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.replace("core_values_section", partial: "brand/vision/core_values", locals: { brand_vision: @brand_vision, brand: @brand, errors: @brand_vision.errors })
+          end
+          format.html { redirect_to brand_vision_path(@brand), alert: "Failed to remove core value." }
+        end
+      end
+    else
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace("core_values_section", partial: "brand/vision/core_values", locals: { brand_vision: @brand_vision, brand: @brand })
+        end
+        format.html { redirect_to brand_vision_path(@brand), alert: "Invalid index." }
       end
     end
   end
