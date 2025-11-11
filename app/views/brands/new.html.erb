@@ -1,0 +1,197 @@
+<% content_for :title, "Onboarding - Brand Builder" %>
+
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-white">
+  <div class="w-full max-w-2xl mx-auto p-8">
+
+    <div class="text-center mb-12">
+      <div class="w-16 h-16 bg-black rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <i class="fa-solid fa-cube text-white text-2xl"></i>
+      </div>
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">Brand Builder</h1>
+      <p class="text-gray-600">Let's create something amazing together</p>
+    </div>
+
+    <div class="bg-white border border-gray-200 rounded-2xl p-8 shadow-lg">
+
+      <div class="text-center mb-8">
+        <h2 class="text-2xl font-semibold text-gray-900 mb-2">Welcome to your brand journey</h2>
+        <p class="text-gray-600">We'll start with the basics and build your brand step by step</p>
+      </div>
+
+      <%= form_with model: @brand, url: brands_path, class: "space-y-6" do |form| %>
+
+        <% unless authenticated? %>
+          <%= fields_for :user, @user do |user_form| %>
+            <% if @user&.errors&.any? %>
+              <div class="p-4 bg-red-50 border border-red-200 rounded-lg mb-6">
+                <h3 class="font-semibold text-red-800 mb-2"><%= pluralize(@user.errors.count, "error") %> prohibited this account from being created:</h3>
+                <ul class="list-disc list-inside text-red-700">
+                  <% @user.errors.full_messages.each do |message| %>
+                    <li><%= message %></li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
+
+            <div class="space-y-6">
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <%= user_form.label :name, "First Name", class: "block text-sm font-medium text-gray-700 mb-2" %>
+                  <%= user_form.text_field :name, required: true, autofocus: true, autocomplete: "name",
+                                          placeholder: "Enter your first name",
+                                          class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black outline-none transition-colors" %>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                  <input type="text" placeholder="Enter your last name"
+                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black outline-none transition-colors">
+                </div>
+              </div>
+
+              <div>
+                <%= user_form.label :email_address, "Email Address", class: "block text-sm font-medium text-gray-700 mb-2" %>
+                <%= user_form.email_field :email_address, required: true, autocomplete: "email",
+                                         placeholder: "Enter your email address",
+                                         class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black outline-none transition-colors" %>
+              </div>
+
+              <div>
+                <%= user_form.label :password, "Password", class: "block text-sm font-medium text-gray-700 mb-2" %>
+                <%= user_form.password_field :password, required: true, autocomplete: "new-password",
+                                            placeholder: "Choose a password", minlength: 8,
+                                            class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black outline-none transition-colors" %>
+              </div>
+
+              <div>
+                <%= user_form.label :password_confirmation, "Confirm Password", class: "block text-sm font-medium text-gray-700 mb-2" %>
+                <%= user_form.password_field :password_confirmation, required: true, autocomplete: "new-password",
+                                            placeholder: "Confirm your password",
+                                            class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black outline-none transition-colors" %>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+
+        <% if @brand&.errors&.any? %>
+          <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+            <h3 class="font-semibold text-red-800 mb-2"><%= pluralize(@brand.errors.count, "error") %> prohibited this brand from being created:</h3>
+            <ul class="list-disc list-inside text-red-700">
+              <% @brand.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div class="relative my-8">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-200"></div>
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="bg-white px-4 text-gray-500">Brand Name</span>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-3">Choose your brand name approach</label>
+            <div class="space-y-3">
+              <label class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors" id="ai-option">
+                <input type="radio" name="brandOption" value="suggested" class="sr-only" checked>
+                <div class="radio-custom w-5 h-5 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                  <div class="w-3 h-3 bg-black rounded-full opacity-100"></div>
+                </div>
+                <div class="flex-1">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-sm font-medium text-gray-900">Use AI suggestion</p>
+                      <p class="text-xs text-gray-500">We'll generate a working name to get started</p>
+                    </div>
+                  </div>
+                </div>
+              </label>
+
+              <label class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors" id="custom-option">
+                <input type="radio" name="brandOption" value="custom" class="sr-only">
+                <div class="radio-custom w-5 h-5 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                  <div class="w-3 h-3 bg-black rounded-full opacity-0"></div>
+                </div>
+                <div class="flex-1">
+                  <p class="text-sm font-medium text-gray-900">Enter my own name</p>
+                  <p class="text-xs text-gray-500">I already have a brand name in mind</p>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div id="custom-brand-input" class="hidden">
+            <%= form.label :name, "Brand Name", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_field :name, placeholder: "Enter your brand name",
+                               class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black outline-none transition-colors" %>
+          </div>
+        </div>
+
+        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+          <div class="flex items-start space-x-3">
+            <div class="w-8 h-8 bg-black rounded-full flex items-center justify-center mt-0.5">
+              <i class="fa-solid fa-magic-wand-sparkles text-white text-sm"></i>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-gray-900 mb-1">AI-Powered Brand Building</p>
+              <p class="text-xs text-gray-600">Our AI will help you develop your brand strategy, visual identity, and design system. You can always refine and customize everything as we go.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between pt-6">
+          <div class="flex items-center space-x-2 text-xs text-gray-500">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>Your information is secure and private</span>
+          </div>
+          <%= form.submit "Start Building",
+                         class: "bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-lg font-medium transition-colors focus:ring-2 focus:ring-black focus:ring-offset-2" %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="text-center mt-8">
+      <p class="text-xs text-gray-500">
+        By continuing, you agree to our
+        <a href="#" class="text-black hover:underline">Terms of Service</a> and
+        <a href="#" class="text-black hover:underline">Privacy Policy</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const radioButtons = document.querySelectorAll('input[name="brandOption"]');
+  const customBrandInput = document.getElementById('custom-brand-input');
+
+  radioButtons.forEach(radio => {
+    radio.addEventListener('change', function() {
+      radioButtons.forEach(r => {
+        const customDiv = r.closest('label').querySelector('.radio-custom div');
+        if (r.checked) {
+          customDiv.style.opacity = '1';
+          r.closest('label').classList.add('border-black', 'bg-gray-50');
+        } else {
+          customDiv.style.opacity = '0';
+          r.closest('label').classList.remove('border-black', 'bg-gray-50');
+        }
+      });
+
+      if (this.value === 'custom') {
+        customBrandInput.classList.remove('hidden');
+      } else {
+        customBrandInput.classList.add('hidden');
+      }
+    });
+  });
+
+  // Initialize the first radio button as checked
+  radioButtons[0].dispatchEvent(new Event('change'));
+});
+</script>
+
