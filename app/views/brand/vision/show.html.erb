@@ -1,0 +1,126 @@
+<% content_for :title, "Brand Vision - #{@brand.name}" %>
+
+<header class="bg-white border-b border-gray-200 px-8 py-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-semibold text-gray-900">Brand Strategy & Messaging</h1>
+      <p class="text-gray-600 mt-1">Define your brand's core purpose, values, and messaging framework</p>
+    </div>
+    <div class="flex items-center space-x-4">
+      <%= render "shared/save_indicator" %>
+      <button class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+        <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
+        AI Assistant
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="p-8">
+  <%= render "shared/section_progress", presenter: @vision_presenter %>
+
+  <div class="space-y-8">
+    <div class="bg-white border border-gray-200 rounded-xl p-8">
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-check text-green-600"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold text-gray-900">Brand Name</h3>
+            <p class="text-gray-600 text-sm">Your brand's identity starts here</p>
+          </div>
+        </div>
+      </div>
+      <div class="bg-gray-50 rounded-lg p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h4 class="text-2xl font-bold text-gray-900"><%= @brand.name %></h4>
+            <% if @brand.is_working_name? %>
+              <p class="text-gray-600 mt-1">AI-generated working name</p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%= form_with model: @brand_vision, url: brand_vision_path(@brand), method: :patch, data: { turbo: true, controller: "autosave", autosave_target: "form" } do |f| %>
+      <div class="bg-white border border-gray-200 rounded-xl p-8">
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+              <i class="fa-solid fa-bullseye text-gray-400"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold text-gray-900">Mission Statement</h3>
+              <p class="text-gray-600 text-sm">Why your brand exists and what it aims to accomplish</p>
+            </div>
+          </div>
+          <button type="button" class="bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors">
+            <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
+            AI Help
+          </button>
+        </div>
+        <div class="space-y-4">
+          <%= f.text_area :mission_statement,
+                          class: "w-full h-32 p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-black focus:border-transparent",
+                          placeholder: "Describe your brand's purpose and what it aims to achieve in the world...",
+                          data: { action: "input->autosave#save" } %>
+          <div class="flex items-center justify-between">
+            <%= render "shared/save_indicator" %>
+            <button type="button" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm">
+              Get Examples
+            </button>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <%= form_with model: @brand_vision, url: brand_vision_path(@brand), method: :patch, data: { turbo: true, controller: "autosave", autosave_target: "form" } do |f| %>
+      <div class="bg-white border border-gray-200 rounded-xl p-8">
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+              <i class="fa-solid fa-eye text-gray-400"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold text-gray-900">Vision Statement</h3>
+              <p class="text-gray-600 text-sm">Your brand's aspirational future and long-term goals</p>
+            </div>
+          </div>
+          <button type="button" class="bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors">
+            <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
+            AI Help
+          </button>
+        </div>
+        <div class="space-y-4">
+          <%= f.text_area :vision_statement,
+                          class: "w-full h-32 p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-black focus:border-transparent",
+                          placeholder: "Paint a picture of the future your brand is working towards...",
+                          data: { action: "input->autosave#save" } %>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="bg-white border border-gray-200 rounded-xl p-8">
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-heart text-gray-400"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold text-gray-900">Core Values</h3>
+            <p class="text-gray-600 text-sm">The fundamental beliefs that guide your brand</p>
+          </div>
+        </div>
+        <button type="button" class="bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors">
+          <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
+          AI Help
+        </button>
+      </div>
+      <div class="space-y-4" id="core_values_section">
+        <%= render "core_values", brand_vision: @brand_vision, brand: @brand %>
+      </div>
+    </div>
+  </div>
+</div>

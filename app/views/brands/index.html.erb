@@ -1,0 +1,35 @@
+<div class="mx-auto md:w-full w-full">
+  <% if alert = flash[:alert] %>
+    <p class="py-2 px-3 bg-red-50 mb-5 text-red-500 font-medium rounded-lg inline-block" id="alert"><%= alert %></p>
+  <% end %>
+
+  <% if notice = flash[:notice] %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="font-bold text-4xl">Your brands</h1>
+    <%= link_to "Create new brand", new_brand_path, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium" %>
+  </div>
+
+  <% if @brands.any? %>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% @brands.each do |brand| %>
+        <%= link_to brand_path(brand), class: "block p-6 border border-gray-300 rounded-lg hover:border-blue-500 hover:shadow-md transition-all" do %>
+          <h2 class="font-bold text-2xl mb-2"><%= brand.name %></h2>
+          <% if brand.is_working_name? %>
+            <span class="inline-block px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded mb-2">Working name</span>
+          <% end %>
+          <p class="text-sm text-gray-600 mb-2">Created <%= time_ago_in_words(brand.created_at) %> ago</p>
+          <p class="text-sm text-gray-500 capitalize">Status: <%= brand.status %></p>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="text-center py-12">
+      <p class="text-gray-600 text-lg mb-4">You haven't created any brands yet.</p>
+      <%= link_to "Create your first brand", new_brand_path, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium" %>
+    </div>
+  <% end %>
+</div>
+

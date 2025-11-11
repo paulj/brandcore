@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Brand Builder" %></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <style>
+      ::-webkit-scrollbar { display: none;}
+      body { font-family: 'Inter', sans-serif; }
+    </style>
+  </head>
+
+  <body class="bg-white text-gray-900 font-inter">
+    <div class="flex min-h-screen">
+      <%= render "shared/sidebar" %>
+
+      <main class="flex-1">
+        <%= yield %>
+      </main>
+    </div>
+  </body>
+</html>

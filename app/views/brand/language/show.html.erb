@@ -1,0 +1,107 @@
+<% content_for :title, "Voice & Tone - #{@brand.name}" %>
+
+<header class="bg-white border-b border-gray-200 px-8 py-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-semibold text-gray-900">Voice and Tone</h1>
+      <p class="text-gray-600 mt-1">Define your brand's communication style and personality</p>
+    </div>
+    <div class="flex items-center space-x-4">
+      <%= render "shared/save_indicator" %>
+      <button class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+        <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
+        AI Generate
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="p-8">
+  <%= render "shared/section_progress", presenter: @language_presenter %>
+
+  <div class="bg-gray-50 border border-gray-200 rounded-xl p-6 mb-8">
+    <div class="flex items-start space-x-4">
+      <div class="w-12 h-12 bg-black rounded-lg flex items-center justify-center">
+        <i class="fa-solid fa-microphone text-white"></i>
+      </div>
+      <div class="flex-1">
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">Brand Voice & Tone Definition</h3>
+        <p class="text-gray-600 text-sm mb-4">Your brand voice is the personality and emotion infused into your company's communications.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 gap-8">
+    <div class="space-y-6">
+      <%= form_with model: @brand_language, url: brand_language_path(@brand), method: :patch, data: { turbo: true, controller: "autosave", autosave_target: "form" } do |f| %>
+        <div class="bg-white border border-gray-200 rounded-xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-gray-900">Tagline</h3>
+            <i class="fa-solid fa-circle <%= @brand_language.tagline.present? ? 'text-green-400' : 'text-gray-300' %> text-xs"></i>
+          </div>
+          <p class="text-gray-600 text-sm mb-6">Your brand's memorable catchphrase or tagline</p>
+          <%= f.text_field :tagline,
+                          class: "w-full px-4 py-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-black focus:border-transparent",
+                          placeholder: "e.g., Just Do It, Think Different...",
+                          data: { action: "input->autosave#save" } %>
+          <div class="mt-4">
+            <%= render "shared/save_indicator" %>
+          </div>
+        </div>
+      <% end %>
+
+      <%= form_with model: @brand_language, url: brand_language_path(@brand), method: :patch, data: { turbo: true, controller: "autosave", autosave_target: "form" } do |f| %>
+        <div class="bg-white border border-gray-200 rounded-xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-gray-900">Language Guidelines</h3>
+            <i class="fa-solid fa-circle <%= (@brand_language.vocabulary_guidelines&.dig('use') || @brand_language.vocabulary_guidelines&.dig(:use)).present? ? 'text-green-400' : 'text-gray-300' %> text-xs"></i>
+          </div>
+
+          <div class="space-y-4">
+            <div>
+              <label class="text-sm font-medium text-gray-900 mb-2 block">Words We Use</label>
+              <%= f.text_area :vocabulary_guidelines,
+                              value: (@brand_language.vocabulary_guidelines&.dig('use') || @brand_language.vocabulary_guidelines&.dig(:use) || []).join(', '),
+                              class: "w-full h-20 border border-gray-200 rounded-lg p-3 text-sm resize-none focus:ring-2 focus:ring-black focus:border-transparent",
+                              placeholder: "e.g., innovative, solutions, cutting-edge, reliable, transform...",
+                              data: { action: "input->autosave#save" },
+                              name: "brand_language[vocabulary_guidelines][use]" %>
+            </div>
+
+            <div>
+              <label class="text-sm font-medium text-gray-900 mb-2 block">Words We Avoid</label>
+              <%= f.text_area :vocabulary_guidelines,
+                              value: (@brand_language.vocabulary_guidelines&.dig('avoid') || @brand_language.vocabulary_guidelines&.dig(:avoid) || []).join(', '),
+                              class: "w-full h-20 border border-gray-200 rounded-lg p-3 text-sm resize-none focus:ring-2 focus:ring-black focus:border-transparent",
+                              placeholder: "e.g., cheap, basic, ordinary, outdated, complicated...",
+                              data: { action: "input->autosave#save" },
+                              name: "brand_language[vocabulary_guidelines][avoid]" %>
+            </div>
+            <div class="mt-4">
+              <%= render "shared/save_indicator" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="space-y-6">
+      <%= form_with model: @brand_language, url: brand_language_path(@brand), method: :patch, data: { turbo: true, controller: "autosave", autosave_target: "form" } do |f| %>
+        <div class="bg-white border border-gray-200 rounded-xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-gray-900">Writing Style Notes</h3>
+            <i class="fa-solid fa-circle <%= @brand_language.writing_style_notes.present? ? 'text-green-400' : 'text-gray-300' %> text-xs"></i>
+          </div>
+          <p class="text-gray-600 text-sm mb-6">Document your brand's writing style and tone preferences</p>
+          <%= f.text_area :writing_style_notes,
+                          class: "w-full h-32 border border-gray-200 rounded-lg p-3 text-sm resize-none focus:ring-2 focus:ring-black focus:border-transparent",
+                          placeholder: "Describe your brand's writing style, tone, and communication approach...",
+                          data: { action: "input->autosave#save" } %>
+          <div class="mt-4">
+            <%= render "shared/save_indicator" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
