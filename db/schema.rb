@@ -145,11 +145,11 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_11_084153) do
     t.datetime "completed_at"
     t.jsonb "core_values", default: []
     t.datetime "created_at", null: false
-    t.jsonb "markets", default: []
+    t.string "markets", default: [], array: true
     t.text "mission_statement"
     t.text "target_audience"
-    t.jsonb "tone", default: []
-    t.jsonb "traits", default: []
+    t.string "tone", default: [], array: true
+    t.string "traits", default: [], array: true
     t.datetime "updated_at", null: false
     t.text "vision_statement"
     t.index ["brand_id"], name: "index_brand_visions_on_brand_id", unique: true

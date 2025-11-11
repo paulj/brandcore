@@ -2,6 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = ["input", "container", "hiddenField"]
+  static values = { fieldName: String }
 
   addTag(event) {
     event.preventDefault()
@@ -20,7 +21,7 @@ export default class extends Controller {
     // Create hidden input for form submission
     const hiddenInput = document.createElement("input")
     hiddenInput.type = "hidden"
-    hiddenInput.name = this.inputTarget.closest("form").querySelector("input[type='hidden']").name
+    hiddenInput.name = this.fieldNameValue
     hiddenInput.value = value
     hiddenInput.dataset.tagInputTarget = "hiddenField"
 

@@ -144,7 +144,7 @@
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Traits</label>
             <p class="text-sm text-gray-500 mb-3">Enter personality traits (e.g., innovative, approachable, professional)</p>
-            <div class="space-y-2" data-controller="tag-input">
+            <div class="space-y-2" data-controller="tag-input" data-tag-input-field-name-value="brand_vision[traits][]">
               <input type="text"
                      data-tag-input-target="input"
                      data-action="keydown.enter->tag-input#addTag:prevent"
@@ -167,7 +167,7 @@
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Tone</label>
             <p class="text-sm text-gray-500 mb-3">Enter tone descriptors (e.g., confident, friendly, authoritative)</p>
-            <div class="space-y-2" data-controller="tag-input">
+            <div class="space-y-2" data-controller="tag-input" data-tag-input-field-name-value="brand_vision[tone][]">
               <input type="text"
                      data-tag-input-target="input"
                      data-action="keydown.enter->tag-input#addTag:prevent"
@@ -241,7 +241,7 @@
           </div>
         </div>
         <div class="space-y-4">
-          <div class="space-y-2" data-controller="tag-input">
+          <div class="space-y-2" data-controller="tag-input" data-tag-input-field-name-value="brand_vision[markets][]">
             <input type="text"
                    data-tag-input-target="input"
                    data-action="keydown.enter->tag-input#addTag:prevent"
