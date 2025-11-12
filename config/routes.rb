@@ -8,6 +8,7 @@ Rails.application.routes.draw do
         collection do
           post :add_core_value
           delete :remove_core_value
+          post :generate_core_values
         end
       end
       resource :logo, only: [ :show, :update ], controller: :logo
