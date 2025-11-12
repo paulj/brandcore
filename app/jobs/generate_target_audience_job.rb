@@ -26,6 +26,9 @@ class GenerateTargetAudienceJob < ApplicationJob
   private
 
   def broadcast_suggestions(brand, audiences)
+    # Reload brand with brand_vision to ensure fresh data in the partial
+    brand.reload
+
     Turbo::StreamsChannel.broadcast_replace_to(
       "brand_vision_#{brand.id}",
       target: "target_audience_suggestions",

@@ -26,6 +26,9 @@ class GenerateKeywordsJob < ApplicationJob
   private
 
   def broadcast_suggestions(brand, keywords)
+    # Reload brand with brand_vision to ensure fresh data in the partial
+    brand.reload
+
     Turbo::StreamsChannel.broadcast_replace_to(
       "brand_vision_#{brand.id}",
       target: "keywords_suggestions",
