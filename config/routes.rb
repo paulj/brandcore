@@ -4,6 +4,7 @@ Rails.application.routes.draw do
 
   resources :brands do
     scope module: :brand do
+      resource :concept, only: [ :show, :update ], controller: :concept
       resource :vision, only: [ :show, :update ], controller: :vision do
         collection do
           post :add_core_value

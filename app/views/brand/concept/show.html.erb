@@ -1,0 +1,77 @@
+<% content_for :title, "Brand Concept - #{@brand.name}" %>
+
+<header class="bg-white border-b border-gray-200 px-8 py-6">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-semibold text-gray-900">Brand Concept</h1>
+      <p class="text-gray-600 mt-1">Capture your initial brand concept and product idea</p>
+    </div>
+    <div class="flex items-center space-x-4">
+      <%= render "shared/save_indicator" %>
+    </div>
+  </div>
+</header>
+
+<div class="p-8">
+  <div class="space-y-8">
+    <%= form_with model: @brand_concept, url: brand_concept_path(@brand), method: :patch, data: { turbo: true, controller: "autosave", autosave_target: "form" } do |f| %>
+      <div class="bg-white border border-gray-200 rounded-xl p-8">
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+              <i class="fa-solid fa-lightbulb text-gray-400"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold text-gray-900">Your Brand Concept</h3>
+              <p class="text-gray-600 text-sm">Describe your initial brand concept, product idea, or business vision</p>
+            </div>
+          </div>
+        </div>
+        <div class="space-y-4">
+          <%= f.text_area :concept,
+                          class: "w-full h-64 p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-black focus:border-transparent font-mono text-sm",
+                          placeholder: "Enter your brand concept here...\n\nDon't worry about making it perfect - this is just a starting point to capture your raw ideas. Use the checklist below to guide your thinking.",
+                          data: { action: "input->autosave#save" } %>
+
+          <div class="bg-gray-50 border border-gray-200 rounded-lg p-6">
+            <h4 class="text-sm font-semibold text-gray-900 mb-3">Consider these points when describing your concept:</h4>
+            <ul class="space-y-2 text-sm text-gray-700">
+              <li class="flex items-start space-x-2">
+                <i class="fa-solid fa-circle-check text-gray-400 text-xs mt-1"></i>
+                <span><strong>Problem:</strong> What problem does this solve? What pain point are you addressing?</span>
+              </li>
+              <li class="flex items-start space-x-2">
+                <i class="fa-solid fa-circle-check text-gray-400 text-xs mt-1"></i>
+                <span><strong>Target Audience:</strong> Who is this for? Who will benefit from this?</span>
+              </li>
+              <li class="flex items-start space-x-2">
+                <i class="fa-solid fa-circle-check text-gray-400 text-xs mt-1"></i>
+                <span><strong>Solution:</strong> What are you offering? What's the core product or service?</span>
+              </li>
+              <li class="flex items-start space-x-2">
+                <i class="fa-solid fa-circle-check text-gray-400 text-xs mt-1"></i>
+                <span><strong>Unique Value:</strong> What makes this unique? How is it different from alternatives?</span>
+              </li>
+              <li class="flex items-start space-x-2">
+                <i class="fa-solid fa-circle-check text-gray-400 text-xs mt-1"></i>
+                <span><strong>Core Value Proposition:</strong> Why should people choose you? What's the main benefit?</span>
+              </li>
+              <li class="flex items-start space-x-2">
+                <i class="fa-solid fa-circle-check text-gray-400 text-xs mt-1"></i>
+                <span><strong>Market Context:</strong> Where does this fit in the market? What category or space?</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="flex items-center justify-between pt-4">
+            <%= render "shared/save_indicator" %>
+            <p class="text-sm text-gray-500">
+              <i class="fa-solid fa-info-circle mr-1"></i>
+              This concept will help inform your brand strategy in the next steps
+            </p>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

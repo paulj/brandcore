@@ -39,6 +39,7 @@ class BrandsController < ApplicationController
         @brand.brand_memberships.create!(user: Current.user, role: "owner")
 
         # Initialize all component models (they'll be in skeleton state)
+        @brand.create_brand_concept!
         @brand.create_brand_name!(name: @brand.name)
         @brand.create_brand_vision!
         @brand.create_brand_logo!
