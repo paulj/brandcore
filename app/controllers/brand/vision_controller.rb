@@ -141,7 +141,9 @@ class Brand::VisionController < Brand::BaseController
       core_values: [ :name, :description, :icon ],
       traits: [],
       tone: [],
-      markets: []
+      markets: [],
+      audiences: [],
+      keywords: []
     )
   end
 end

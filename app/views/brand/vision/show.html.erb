@@ -196,6 +196,43 @@
         <div class="flex items-center justify-between mb-6">
           <div class="flex items-center space-x-3">
             <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+              <i class="fa-solid fa-user-group text-gray-400"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold text-gray-900">Target Audiences</h3>
+              <p class="text-gray-600 text-sm">Specific audience segments your brand serves</p>
+            </div>
+          </div>
+        </div>
+        <div class="space-y-4">
+          <div class="space-y-2" data-controller="tag-input" data-tag-input-field-name-value="brand_vision[audiences][]">
+            <input type="text"
+                   data-tag-input-target="input"
+                   data-action="keydown.enter->tag-input#addTag:prevent"
+                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                   placeholder="Type an audience segment (e.g., small business owners, millennials) and press Enter...">
+            <div id="audiences-container" class="flex flex-wrap gap-2" data-tag-input-target="container">
+              <% audiences = @brand_vision.audiences || [] %>
+              <% audiences.each do |audience| %>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-800">
+                  <%= audience %>
+                  <button type="button" class="ml-2 text-gray-500 hover:text-gray-700" data-action="click->tag-input#removeTag">×</button>
+                </span>
+              <% end %>
+            </div>
+            <% audiences.each_with_index do |audience, index| %>
+              <%= f.hidden_field "audiences[]", value: audience, data: { tag_input_target: "hiddenField" } %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <%= form_with model: @brand_vision, url: brand_vision_path(@brand), method: :patch, data: { turbo: true, controller: "autosave", autosave_target: "form" } do |f| %>
+      <div class="bg-white border border-gray-200 rounded-xl p-8">
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
               <i class="fa-solid fa-tag text-gray-400"></i>
             </div>
             <div>
@@ -258,6 +295,43 @@
             </div>
             <% markets.each_with_index do |market, index| %>
               <%= f.hidden_field "markets[]", value: market, data: { tag_input_target: "hiddenField" } %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <%= form_with model: @brand_vision, url: brand_vision_path(@brand), method: :patch, data: { turbo: true, controller: "autosave", autosave_target: "form" } do |f| %>
+      <div class="bg-white border border-gray-200 rounded-xl p-8">
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+              <i class="fa-solid fa-key text-gray-400"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold text-gray-900">Keywords</h3>
+              <p class="text-gray-600 text-sm">Key terms and concepts that define your brand</p>
+            </div>
+          </div>
+        </div>
+        <div class="space-y-4">
+          <div class="space-y-2" data-controller="tag-input" data-tag-input-field-name-value="brand_vision[keywords][]">
+            <input type="text"
+                   data-tag-input-target="input"
+                   data-action="keydown.enter->tag-input#addTag:prevent"
+                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                   placeholder="Type a keyword and press Enter...">
+            <div id="keywords-container" class="flex flex-wrap gap-2" data-tag-input-target="container">
+              <% keywords = @brand_vision.keywords || [] %>
+              <% keywords.each do |keyword| %>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-800">
+                  <%= keyword %>
+                  <button type="button" class="ml-2 text-gray-500 hover:text-gray-700" data-action="click->tag-input#removeTag">×</button>
+                </span>
+              <% end %>
+            </div>
+            <% keywords.each_with_index do |keyword, index| %>
+              <%= f.hidden_field "keywords[]", value: keyword, data: { tag_input_target: "hiddenField" } %>
             <% end %>
           </div>
         </div>
