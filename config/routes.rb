@@ -11,6 +11,7 @@ Rails.application.routes.draw do
           delete :remove_core_value
           post :generate_core_values
           post :generate_mission_statements
+          post :ai_generate
         end
       end
       resource :logo, only: [ :show, :update ], controller: :logo

@@ -68,31 +68,27 @@
       <%= render "mission_statement_field", brand_vision: @brand_vision, brand: @brand %>
     </div>
 
-    <%= form_with model: @brand_vision, url: brand_vision_path(@brand), method: :patch, data: { turbo: true, controller: "autosave", autosave_target: "form" } do |f| %>
-      <div class="bg-white border border-gray-200 rounded-xl p-8">
-        <div class="flex items-center justify-between mb-6">
-          <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
-              <i class="fa-solid fa-eye text-gray-400"></i>
-            </div>
-            <div>
-              <h3 class="text-xl font-semibold text-gray-900">Vision Statement</h3>
-              <p class="text-gray-600 text-sm">Your brand's aspirational future and long-term goals</p>
-            </div>
+    <div class="bg-white border border-gray-200 rounded-xl p-8">
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-eye text-gray-400"></i>
           </div>
-          <button type="button" class="bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors">
-            <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
-            AI Help
-          </button>
+          <div>
+            <h3 class="text-xl font-semibold text-gray-900">Vision Statement</h3>
+            <p class="text-gray-600 text-sm">Your brand's aspirational future and long-term goals</p>
+          </div>
         </div>
-        <div class="space-y-4">
-          <%= f.text_area :vision_statement,
-                          class: "w-full h-32 p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-black focus:border-transparent",
-                          placeholder: "Paint a picture of the future your brand is working towards...",
-                          data: { action: "input->autosave#save" } %>
-        </div>
+        <%= button_to ai_generate_brand_vision_path(@brand, field: "vision_statement"),
+                      method: :post,
+                      data: { turbo: true },
+                      class: "bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors" do %>
+          <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
+          AI Help
+        <% end %>
       </div>
-    <% end %>
+      <%= render "vision_statement_field", brand_vision: @brand_vision, brand: @brand %>
+    </div>
 
     <div class="bg-white border border-gray-200 rounded-xl p-8">
       <div class="flex items-center justify-between mb-6">
@@ -118,220 +114,115 @@
       </div>
     </div>
 
-    <%= form_with model: @brand_vision, url: brand_vision_path(@brand), method: :patch, data: { turbo: true, controller: "autosave", autosave_target: "form" } do |f| %>
-      <div class="bg-white border border-gray-200 rounded-xl p-8">
-        <div class="flex items-center justify-between mb-6">
-          <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
-              <i class="fa-solid fa-users text-gray-400"></i>
-            </div>
-            <div>
-              <h3 class="text-xl font-semibold text-gray-900">Brand Personality</h3>
-              <p class="text-gray-600 text-sm">Traits and tone that define your brand's character</p>
-            </div>
-          </div>
-          <button type="button" class="bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors">
-            <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
-            AI Help
-          </button>
-        </div>
-        <div class="space-y-6">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Traits</label>
-            <p class="text-sm text-gray-500 mb-3">Enter personality traits (e.g., innovative, approachable, professional)</p>
-            <div class="space-y-2" data-controller="tag-input" data-tag-input-field-name-value="brand_vision[traits][]">
-              <input type="text"
-                     data-tag-input-target="input"
-                     data-action="keydown.enter->tag-input#addTag:prevent"
-                     class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-                     placeholder="Type a trait and press Enter...">
-              <div id="traits-container" class="flex flex-wrap gap-2" data-tag-input-target="container">
-                <% traits = @brand_vision.traits || [] %>
-                <% traits.each do |trait| %>
-                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-800">
-                    <%= trait %>
-                    <button type="button" class="ml-2 text-gray-500 hover:text-gray-700" data-action="click->tag-input#removeTag">×</button>
-                  </span>
-                <% end %>
-              </div>
-              <% traits.each_with_index do |trait, index| %>
-                <%= f.hidden_field "traits[]", value: trait, data: { tag_input_target: "hiddenField" } %>
-              <% end %>
-            </div>
+    <div class="bg-white border border-gray-200 rounded-xl p-8">
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-users text-gray-400"></i>
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Tone</label>
-            <p class="text-sm text-gray-500 mb-3">Enter tone descriptors (e.g., confident, friendly, authoritative)</p>
-            <div class="space-y-2" data-controller="tag-input" data-tag-input-field-name-value="brand_vision[tone][]">
-              <input type="text"
-                     data-tag-input-target="input"
-                     data-action="keydown.enter->tag-input#addTag:prevent"
-                     class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-                     placeholder="Type a tone and press Enter...">
-              <div id="tone-container" class="flex flex-wrap gap-2" data-tag-input-target="container">
-                <% tone = @brand_vision.tone || [] %>
-                <% tone.each do |tone_item| %>
-                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-800">
-                    <%= tone_item %>
-                    <button type="button" class="ml-2 text-gray-500 hover:text-gray-700" data-action="click->tag-input#removeTag">×</button>
-                  </span>
-                <% end %>
-              </div>
-              <% tone.each_with_index do |tone_item, index| %>
-                <%= f.hidden_field "tone[]", value: tone_item, data: { tag_input_target: "hiddenField" } %>
-              <% end %>
-            </div>
+            <h3 class="text-xl font-semibold text-gray-900">Brand Personality</h3>
+            <p class="text-gray-600 text-sm">Traits and tone that define your brand's character</p>
           </div>
         </div>
+        <%= button_to ai_generate_brand_vision_path(@brand, field: "brand_personality"),
+                      method: :post,
+                      data: { turbo: true },
+                      class: "bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors" do %>
+          <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
+          AI Help
+        <% end %>
       </div>
-    <% end %>
+      <%= render "brand_personality_field", brand_vision: @brand_vision, brand: @brand %>
+    </div>
 
-    <%= form_with model: @brand_vision, url: brand_vision_path(@brand), method: :patch, data: { turbo: true, controller: "autosave", autosave_target: "form" } do |f| %>
-      <div class="bg-white border border-gray-200 rounded-xl p-8">
-        <div class="flex items-center justify-between mb-6">
-          <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
-              <i class="fa-solid fa-user-group text-gray-400"></i>
-            </div>
-            <div>
-              <h3 class="text-xl font-semibold text-gray-900">Target Audiences</h3>
-              <p class="text-gray-600 text-sm">Specific audience segments your brand serves</p>
-            </div>
+    <div class="bg-white border border-gray-200 rounded-xl p-8">
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-user-group text-gray-400"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold text-gray-900">Target Audiences</h3>
+            <p class="text-gray-600 text-sm">Specific audience segments your brand serves</p>
           </div>
         </div>
-        <div class="space-y-4">
-          <div class="space-y-2" data-controller="tag-input" data-tag-input-field-name-value="brand_vision[audiences][]">
-            <input type="text"
-                   data-tag-input-target="input"
-                   data-action="keydown.enter->tag-input#addTag:prevent"
-                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-                   placeholder="Type an audience segment (e.g., small business owners, millennials) and press Enter...">
-            <div id="audiences-container" class="flex flex-wrap gap-2" data-tag-input-target="container">
-              <% audiences = @brand_vision.audiences || [] %>
-              <% audiences.each do |audience| %>
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-800">
-                  <%= audience %>
-                  <button type="button" class="ml-2 text-gray-500 hover:text-gray-700" data-action="click->tag-input#removeTag">×</button>
-                </span>
-              <% end %>
-            </div>
-            <% audiences.each_with_index do |audience, index| %>
-              <%= f.hidden_field "audiences[]", value: audience, data: { tag_input_target: "hiddenField" } %>
-            <% end %>
-          </div>
-        </div>
+        <%= button_to ai_generate_brand_vision_path(@brand, field: "target_audience"),
+                      method: :post,
+                      data: { turbo: true },
+                      class: "bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors" do %>
+          <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
+          AI Help
+        <% end %>
       </div>
-    <% end %>
+      <%= render "target_audience_field", brand_vision: @brand_vision, brand: @brand %>
+    </div>
 
-    <%= form_with model: @brand_vision, url: brand_vision_path(@brand), method: :patch, data: { turbo: true, controller: "autosave", autosave_target: "form" } do |f| %>
-      <div class="bg-white border border-gray-200 rounded-xl p-8">
-        <div class="flex items-center justify-between mb-6">
-          <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
-              <i class="fa-solid fa-tag text-gray-400"></i>
-            </div>
-            <div>
-              <h3 class="text-xl font-semibold text-gray-900">Category</h3>
-              <p class="text-gray-600 text-sm">Your brand's industry or business category</p>
-            </div>
+    <div class="bg-white border border-gray-200 rounded-xl p-8">
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-tag text-gray-400"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold text-gray-900">Category</h3>
+            <p class="text-gray-600 text-sm">Your brand's industry or business category</p>
           </div>
         </div>
-        <div class="space-y-4">
-          <%= f.select :category,
-                       options_for_select([
-                         ["Select a category...", ""],
-                         ["SaaS", "SaaS"],
-                         ["E-commerce", "E-commerce"],
-                         ["Fintech", "Fintech"],
-                         ["Healthcare", "Healthcare"],
-                         ["Education", "Education"],
-                         ["Food & Beverage", "Food & Beverage"],
-                         ["Fashion & Apparel", "Fashion & Apparel"],
-                         ["Technology", "Technology"],
-                         ["Consulting", "Consulting"],
-                         ["Non-profit", "Non-profit"],
-                         ["Other", "Other"]
-                       ], @brand_vision.category),
-                       {},
-                       class: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent",
-                       data: { action: "change->autosave#save" } %>
-        </div>
+        <%= button_to ai_generate_brand_vision_path(@brand, field: "category"),
+                      method: :post,
+                      data: { turbo: true },
+                      class: "bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors" do %>
+          <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
+          AI Help
+        <% end %>
       </div>
-    <% end %>
+      <%= render "category_field", brand_vision: @brand_vision, brand: @brand %>
+    </div>
 
-    <%= form_with model: @brand_vision, url: brand_vision_path(@brand), method: :patch, data: { turbo: true, controller: "autosave", autosave_target: "form" } do |f| %>
-      <div class="bg-white border border-gray-200 rounded-xl p-8">
-        <div class="flex items-center justify-between mb-6">
-          <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
-              <i class="fa-solid fa-globe text-gray-400"></i>
-            </div>
-            <div>
-              <h3 class="text-xl font-semibold text-gray-900">Target Markets</h3>
-              <p class="text-gray-600 text-sm">Geographic markets where your brand operates</p>
-            </div>
+    <div class="bg-white border border-gray-200 rounded-xl p-8">
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-globe text-gray-400"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold text-gray-900">Target Markets</h3>
+            <p class="text-gray-600 text-sm">Geographic markets where your brand operates</p>
           </div>
         </div>
-        <div class="space-y-4">
-          <div class="space-y-2" data-controller="tag-input" data-tag-input-field-name-value="brand_vision[markets][]">
-            <input type="text"
-                   data-tag-input-target="input"
-                   data-action="keydown.enter->tag-input#addTag:prevent"
-                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-                   placeholder="Type a market (e.g., US, UK, EU) and press Enter...">
-            <div id="markets-container" class="flex flex-wrap gap-2" data-tag-input-target="container">
-              <% markets = @brand_vision.markets || [] %>
-              <% markets.each do |market| %>
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-800">
-                  <%= market %>
-                  <button type="button" class="ml-2 text-gray-500 hover:text-gray-700" data-action="click->tag-input#removeTag">×</button>
-                </span>
-              <% end %>
-            </div>
-            <% markets.each_with_index do |market, index| %>
-              <%= f.hidden_field "markets[]", value: market, data: { tag_input_target: "hiddenField" } %>
-            <% end %>
-          </div>
-        </div>
+        <%= button_to ai_generate_brand_vision_path(@brand, field: "target_markets"),
+                      method: :post,
+                      data: { turbo: true },
+                      class: "bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors" do %>
+          <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
+          AI Help
+        <% end %>
       </div>
-    <% end %>
+      <%= render "target_markets_field", brand_vision: @brand_vision, brand: @brand %>
+    </div>
 
-    <%= form_with model: @brand_vision, url: brand_vision_path(@brand), method: :patch, data: { turbo: true, controller: "autosave", autosave_target: "form" } do |f| %>
-      <div class="bg-white border border-gray-200 rounded-xl p-8">
-        <div class="flex items-center justify-between mb-6">
-          <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
-              <i class="fa-solid fa-key text-gray-400"></i>
-            </div>
-            <div>
-              <h3 class="text-xl font-semibold text-gray-900">Keywords</h3>
-              <p class="text-gray-600 text-sm">Key terms and concepts that define your brand</p>
-            </div>
+    <div class="bg-white border border-gray-200 rounded-xl p-8">
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-key text-gray-400"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold text-gray-900">Keywords</h3>
+            <p class="text-gray-600 text-sm">Key terms and concepts that define your brand</p>
           </div>
         </div>
-        <div class="space-y-4">
-          <div class="space-y-2" data-controller="tag-input" data-tag-input-field-name-value="brand_vision[keywords][]">
-            <input type="text"
-                   data-tag-input-target="input"
-                   data-action="keydown.enter->tag-input#addTag:prevent"
-                   class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-                   placeholder="Type a keyword and press Enter...">
-            <div id="keywords-container" class="flex flex-wrap gap-2" data-tag-input-target="container">
-              <% keywords = @brand_vision.keywords || [] %>
-              <% keywords.each do |keyword| %>
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-800">
-                  <%= keyword %>
-                  <button type="button" class="ml-2 text-gray-500 hover:text-gray-700" data-action="click->tag-input#removeTag">×</button>
-                </span>
-              <% end %>
-            </div>
-            <% keywords.each_with_index do |keyword, index| %>
-              <%= f.hidden_field "keywords[]", value: keyword, data: { tag_input_target: "hiddenField" } %>
-            <% end %>
-          </div>
-        </div>
+        <%= button_to ai_generate_brand_vision_path(@brand, field: "keywords"),
+                      method: :post,
+                      data: { turbo: true },
+                      class: "bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors" do %>
+          <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
+          AI Help
+        <% end %>
       </div>
-    <% end %>
+      <%= render "keywords_field", brand_vision: @brand_vision, brand: @brand %>
+    </div>
   </div>
 
   <!-- Mission Statement Examples Dialog -->
