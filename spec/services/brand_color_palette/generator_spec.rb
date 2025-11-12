@@ -1,15 +1,6 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-require_relative "../../../app/services/brand_color_palette/types"
-require_relative "../../../app/services/brand_color_palette/color_space"
-require_relative "../../../app/services/brand_color_palette/emotion_color_map"
-require_relative "../../../app/services/brand_color_palette/trait_mapper"
-require_relative "../../../app/services/brand_color_palette/nlp_normalizer"
-require_relative "../../../app/services/brand_color_palette/wcag_checker"
-require_relative "../../../app/services/brand_color_palette/palette_generator"
-require_relative "../../../app/services/brand_color_palette/constraint_layer"
-require_relative "../../../app/services/brand_color_palette/generator"
 
 RSpec.describe BrandColorPalette::Generator do
   let(:brand) do
