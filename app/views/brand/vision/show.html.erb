@@ -16,7 +16,7 @@
   </div>
 </header>
 
-<div class="p-8">
+<div class="p-8" data-controller="examples-dialog">
   <%= render "shared/section_progress", presenter: @vision_presenter %>
 
   <div class="space-y-8">
@@ -68,7 +68,9 @@
                           data: { action: "input->autosave#save" } %>
           <div class="flex items-center justify-between">
             <%= render "shared/save_indicator" %>
-            <button type="button" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm">
+            <button type="button"
+                    class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm"
+                    data-action="click->examples-dialog#openModal">
               Get Examples
             </button>
           </div>
@@ -337,5 +339,139 @@
         </div>
       </div>
     <% end %>
+  </div>
+
+  <!-- Mission Statement Examples Dialog -->
+  <div class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+       data-examples-dialog-target="modal"
+       data-action="click->examples-dialog#closeModal">
+    <div class="bg-white rounded-xl shadow-xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col"
+         onclick="event.stopPropagation()">
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between p-6 border-b border-gray-200">
+        <div>
+          <h3 class="text-xl font-semibold text-gray-900">Mission Statement Examples</h3>
+          <p class="text-sm text-gray-600 mt-1">Inspiration from well-known brands</p>
+        </div>
+        <button type="button"
+                class="text-gray-400 hover:text-gray-600"
+                data-action="click->examples-dialog#closeModal">
+          <i class="fa-solid fa-times text-xl"></i>
+        </button>
+      </div>
+
+      <!-- Modal Content -->
+      <div class="overflow-y-auto p-6">
+        <div class="space-y-6">
+          <div class="border border-gray-200 rounded-lg p-5 hover:border-gray-300 transition-colors">
+            <div class="flex items-start space-x-3">
+              <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-quote-left text-gray-400"></i>
+              </div>
+              <div class="flex-1">
+                <h4 class="font-semibold text-gray-900 mb-2">Tesla</h4>
+                <p class="text-gray-700 leading-relaxed">To accelerate the world's transition to sustainable energy.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="border border-gray-200 rounded-lg p-5 hover:border-gray-300 transition-colors">
+            <div class="flex items-start space-x-3">
+              <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-quote-left text-gray-400"></i>
+              </div>
+              <div class="flex-1">
+                <h4 class="font-semibold text-gray-900 mb-2">Patagonia</h4>
+                <p class="text-gray-700 leading-relaxed">We're in business to save our home planet.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="border border-gray-200 rounded-lg p-5 hover:border-gray-300 transition-colors">
+            <div class="flex items-start space-x-3">
+              <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-quote-left text-gray-400"></i>
+              </div>
+              <div class="flex-1">
+                <h4 class="font-semibold text-gray-900 mb-2">LinkedIn</h4>
+                <p class="text-gray-700 leading-relaxed">To connect the world's professionals to make them more productive and successful.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="border border-gray-200 rounded-lg p-5 hover:border-gray-300 transition-colors">
+            <div class="flex items-start space-x-3">
+              <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-quote-left text-gray-400"></i>
+              </div>
+              <div class="flex-1">
+                <h4 class="font-semibold text-gray-900 mb-2">Spotify</h4>
+                <p class="text-gray-700 leading-relaxed">To unlock the potential of human creativity by giving a million creative artists the opportunity to live off their art and billions of fans the opportunity to enjoy and be inspired by it.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="border border-gray-200 rounded-lg p-5 hover:border-gray-300 transition-colors">
+            <div class="flex items-start space-x-3">
+              <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-quote-left text-gray-400"></i>
+              </div>
+              <div class="flex-1">
+                <h4 class="font-semibold text-gray-900 mb-2">Airbnb</h4>
+                <p class="text-gray-700 leading-relaxed">To create a world where anyone can belong anywhere, providing healthy travel that is local, authentic, diverse, inclusive and sustainable.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="border border-gray-200 rounded-lg p-5 hover:border-gray-300 transition-colors">
+            <div class="flex items-start space-x-3">
+              <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-quote-left text-gray-400"></i>
+              </div>
+              <div class="flex-1">
+                <h4 class="font-semibold text-gray-900 mb-2">Nike</h4>
+                <p class="text-gray-700 leading-relaxed">To bring inspiration and innovation to every athlete in the world. (If you have a body, you are an athlete.)</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="border border-gray-200 rounded-lg p-5 hover:border-gray-300 transition-colors">
+            <div class="flex items-start space-x-3">
+              <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-quote-left text-gray-400"></i>
+              </div>
+              <div class="flex-1">
+                <h4 class="font-semibold text-gray-900 mb-2">Google</h4>
+                <p class="text-gray-700 leading-relaxed">To organise the world's information and make it universally accessible and useful.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="border border-gray-200 rounded-lg p-5 hover:border-gray-300 transition-colors">
+            <div class="flex items-start space-x-3">
+              <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-quote-left text-gray-400"></i>
+              </div>
+              <div class="flex-1">
+                <h4 class="font-semibold text-gray-900 mb-2">Stripe</h4>
+                <p class="text-gray-700 leading-relaxed">To increase the GDP of the internet.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="border-t border-gray-200 p-6 bg-gray-50">
+        <div class="flex items-center justify-between">
+          <p class="text-sm text-gray-600">Use these as inspiration to craft your unique mission statement</p>
+          <button type="button"
+                  class="bg-black text-white px-6 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors"
+                  data-action="click->examples-dialog#closeModal">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
