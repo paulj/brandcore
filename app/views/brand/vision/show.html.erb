@@ -113,10 +113,13 @@
             <p class="text-gray-600 text-sm">The fundamental beliefs that guide your brand</p>
           </div>
         </div>
-        <button type="button" class="bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors">
+        <%= button_to generate_core_values_brand_vision_path(@brand),
+            method: :post,
+            data: { turbo: true },
+            class: "bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors" do %>
           <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
           AI Help
-        </button>
+        <% end %>
       </div>
       <div class="space-y-4" id="core_values_section">
         <%= render "core_values", brand_vision: @brand_vision, brand: @brand %>

@@ -128,6 +128,51 @@ class Brand::VisionController < Brand::BaseController
     end
   end
 
+  def generate_core_values
+    @brand_vision = @brand.brand_vision || @brand.create_brand_vision!
+    @vision_presenter = BrandVisionPresenter.new(@brand_vision)
+
+    generator = CoreValuesGeneratorService.new(
+      mission_statement: @brand_vision.mission_statement,
+      vision_statement: @brand_vision.vision_statement
+    )
+
+    generated_values = generator.generate
+
+    if generated_values.any?
+      # Append generated values to existing values
+      current_values = @brand_vision.core_values || []
+      @brand_vision.core_values = current_values + generated_values
+
+      if @brand_vision.save
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: [
+              turbo_stream.replace("save_indicator", partial: "shared/save_indicator", locals: { saved: true }),
+              turbo_stream.replace("section_progress", partial: "shared/section_progress", locals: { presenter: @vision_presenter }),
+              turbo_stream.replace("core_values_section", partial: "brand/vision/core_values", locals: { brand_vision: @brand_vision, brand: @brand })
+            ]
+          end
+          format.html { redirect_to brand_vision_path(@brand), notice: "Generated #{generated_values.count} core values." }
+        end
+      else
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.replace("core_values_section", partial: "brand/vision/core_values", locals: { brand_vision: @brand_vision, brand: @brand, errors: @brand_vision.errors })
+          end
+          format.html { redirect_to brand_vision_path(@brand), alert: "Failed to save generated core values." }
+        end
+      end
+    else
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace("core_values_section", partial: "brand/vision/core_values", locals: { brand_vision: @brand_vision, brand: @brand, error: "Unable to generate core values. Please ensure mission or vision statement is filled in." })
+        end
+        format.html { redirect_to brand_vision_path(@brand), alert: "Unable to generate core values. Please ensure mission or vision statement is filled in." }
+      end
+    end
+  end
+
   private
 
   def brand_vision_params
