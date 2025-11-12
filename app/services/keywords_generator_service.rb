@@ -64,7 +64,7 @@ class KeywordsGeneratorService
 
       Based on the brand information provided, generate 8-12 keywords that:
       1. Capture the brand's core themes and values
-      2. Are concise (1-2 words each)
+      2. Are concise (1-2 words each) - prefer single words even over two word keywords, even if they are more general.
       3. Are specific and memorable (not generic terms like "quality" or "excellence")
       4. Cover different aspects: what the brand does, how it does it, who it serves, and what it stands for
       5. Can be used for brand messaging, SEO, and content strategy
