@@ -1,8 +1,6 @@
 <% content_for :title, "Colour Scheme - #{@brand.name}" %>
 
-<div data-controller="palette-generator"
-     data-palette-generator-generate-url-value="<%= generate_brand_colour_scheme_path(@brand) %>"
-     data-palette-generator-apply-url-value="<%= apply_brand_colour_scheme_path(@brand) %>">
+<%= turbo_stream_from "brand_colour_scheme_#{@brand.id}" %>
 
 <header class="bg-white border-b border-gray-200 px-8 py-6">
   <div class="flex items-center justify-between">
@@ -21,12 +19,12 @@
         <i class="fa-solid fa-upload mr-2"></i>
         Upload Colours
       </button>
-      <button class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-              data-palette-generator-target="generateBtn"
-              data-action="click->palette-generator#generate">
-        <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
-        AI Generate
-      </button>
+      <%= form_with url: generate_brand_colour_scheme_path(@brand), method: :post, data: { turbo: true } do %>
+        <button type="submit" class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+          <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
+          AI Generate
+        </button>
+      <% end %>
     </div>
   </div>
 </header>
@@ -42,19 +40,8 @@
   <div class="mb-8">
     <h2 class="text-lg font-semibold text-gray-900 mb-4">Generated Palettes</h2>
 
-    <!-- Loading state -->
-    <div data-palette-generator-target="loadingState" class="hidden">
-      <div class="bg-white border border-gray-200 rounded-xl p-12">
-        <div class="text-center">
-          <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mb-4"></div>
-          <p class="text-gray-600">Analyzing your brand vision and generating colour palettes...</p>
-          <p class="text-sm text-gray-500 mt-2">This may take a few moments</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Empty state -->
-    <div data-palette-generator-target="emptyState">
+    <!-- Palette suggestions container (updated via Turbo Stream) -->
+    <div id="palette_suggestions">
       <div class="bg-white border border-gray-200 rounded-xl p-12">
         <div class="text-center">
           <div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4">
@@ -65,9 +52,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Palettes container (populated by Stimulus controller) -->
-    <div data-palette-generator-target="palettesContainer" class="grid grid-cols-2 gap-6"></div>
   </div>
 
   <%= form_with model: @brand_colour_scheme, url: brand_colour_scheme_path(@brand), method: :patch, data: { turbo: true, controller: "autosave", autosave_target: "form" } do |f| %>
@@ -95,5 +79,3 @@
     </div>
   <% end %>
 </div>
-
-</div> <!-- Close palette-generator controller -->

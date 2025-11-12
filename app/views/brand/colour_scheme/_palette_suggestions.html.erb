@@ -1,0 +1,46 @@
+<div id="palette_suggestions">
+  <% if palettes.any? %>
+    <div class="grid grid-cols-2 gap-6">
+      <% palettes.each_with_index do |palette, index| %>
+        <% primary_color = palette[:colors].find { |c| c[:role] == "primary" } %>
+        <% primary_hex = primary_color&.dig(:hex) || "#666666" %>
+
+        <%= form_with url: apply_brand_colour_scheme_path(brand), method: :post, data: { turbo: true } do |f| %>
+          <%= hidden_field_tag "palette_data", palette.to_json %>
+
+          <button type="submit" class="w-full bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all hover:border-gray-400 text-left">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h3 class="text-lg font-medium text-gray-900"><%= palette[:scheme].to_s.split("-").map(&:capitalize).join(" ") %></h3>
+                <p class="text-sm text-gray-500"><%= palette.dig(:metadata, :description) || palette.dig(:metadata, :vibe) || "" %></p>
+              </div>
+              <div class="w-6 h-6 rounded-full border-2 border-white shadow-lg" style="background-color: <%= primary_hex %>"></div>
+            </div>
+
+            <div class="flex space-x-1 mb-4">
+              <% palette[:colors].first(5).each do |color| %>
+                <div class="flex-1 h-12 rounded" style="background-color: <%= color[:hex] %>"></div>
+              <% end %>
+            </div>
+
+            <div class="flex items-center justify-between text-xs text-gray-500">
+              <span><%= palette[:colors].length %> colours</span>
+              <% if palette[:accessible] %>
+                <span class="text-green-600"><i class="fa-solid fa-check-circle mr-1"></i>Accessible</span>
+              <% else %>
+                <span class="text-amber-600"><i class="fa-solid fa-exclamation-circle mr-1"></i>Review needed</span>
+              <% end %>
+            </div>
+          </button>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-12">
+      <div class="flex flex-col items-center space-y-3 text-center">
+        <i class="fa-solid fa-info-circle text-yellow-600 text-2xl"></i>
+        <p class="text-yellow-700">No palettes could be generated. Please ensure your Brand Vision is complete.</p>
+      </div>
+    </div>
+  <% end %>
+</div>

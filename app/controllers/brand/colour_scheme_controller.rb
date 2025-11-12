@@ -29,55 +29,23 @@ class Brand::ColourSchemeController < Brand::BaseController
   end
 
   def generate
-    brand_vision = @brand.brand_vision
+    # Enqueue the background job
+    GeneratePalettesJob.perform_later(@brand.id)
 
-    unless brand_vision
-      render json: { error: "Please complete your Brand Vision first to generate colour palettes." }, status: :unprocessable_entity
-      return
-    end
-
-    begin
-      generator = BrandColorPalette::Generator.new(brand_vision)
-      result = generator.generate
-
-      # Convert result to JSON-friendly format
-      palettes_data = result.palettes.map do |palette|
-        {
-          scheme: palette.scheme,
-          score: palette.score,
-          accessible: palette.accessible?,
-          colors: palette.colors.map do |color|
-            {
-              role: color.role,
-              name: color.role.to_s.titleize,
-              hex: color.hex,
-              oklch: color.oklch.to_h,
-              rgb: color.rgb.to_h
-            }
-          end,
-          metadata: {
-            description: palette.metadata&.description,
-            vibe: palette.metadata&.vibe
-          },
-          accessibility: palette.accessibility&.to_h
-        }
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "palette_suggestions",
+          partial: "brand/colour_scheme/palette_loading"
+        )
       end
-
-      render json: {
-        palettes: palettes_data,
-        metadata: {
-          design_vector: result.metadata.design_vector.to_h,
-          primary_traits: result.metadata.primary_traits
-        }
-      }
-    rescue StandardError => e
-      Rails.logger.error("Palette generation error: #{e.message}\n#{e.backtrace.join("\n")}")
-      render json: { error: "Failed to generate palettes: #{e.message}" }, status: :internal_server_error
+      format.html { redirect_to brand_colour_scheme_path(@brand), notice: "Generating colour palettes..." }
     end
   end
 
   def apply
-    palette_data = params.require(:palette)
+    # Parse the palette data from JSON string
+    palette_data = JSON.parse(params.require(:palette_data)).with_indifferent_access
     @brand_colour_scheme = @brand.brand_colour_scheme || @brand.create_brand_colour_scheme!
 
     ActiveRecord::Base.transaction do
@@ -111,13 +79,13 @@ class Brand::ColourSchemeController < Brand::BaseController
           turbo_stream.replace("section_progress", partial: "shared/section_progress", locals: { presenter: @colour_scheme_presenter })
         ]
       end
-      format.json { head :ok }
+      format.html { redirect_to brand_colour_scheme_path(@brand), notice: "Palette applied successfully." }
     end
   rescue StandardError => e
     Rails.logger.error("Palette application error: #{e.message}\n#{e.backtrace.join("\n")}")
     respond_to do |format|
       format.turbo_stream { render turbo_stream: turbo_stream.replace("save_indicator", partial: "shared/save_indicator", locals: { saved: false, errors: [ e.message ] }) }
-      format.json { render json: { error: e.message }, status: :unprocessable_entity }
+      format.html { redirect_to brand_colour_scheme_path(@brand), alert: "Failed to apply palette: #{e.message}" }
     end
   end
 
