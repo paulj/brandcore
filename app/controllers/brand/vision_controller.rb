@@ -173,6 +173,28 @@ class Brand::VisionController < Brand::BaseController
     end
   end
 
+  def generate_mission_statements
+    @brand_vision = @brand.brand_vision || @brand.create_brand_vision!
+    brand_concept = @brand.brand_concept&.concept
+
+    generator = MissionStatementGeneratorService.new(
+      brand_concept: brand_concept,
+      brand_vision: @brand_vision
+    )
+
+    candidates = generator.generate
+
+    if candidates.any?
+      respond_to do |format|
+        format.json { render json: { mission_statements: candidates } }
+      end
+    else
+      respond_to do |format|
+        format.json { render json: { error: "Unable to generate mission statements. Please ensure you have a brand concept or category filled in." }, status: :unprocessable_entity }
+      end
+    end
+  end
+
   private
 
   def brand_vision_params

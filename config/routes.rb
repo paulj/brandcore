@@ -10,6 +10,7 @@ Rails.application.routes.draw do
           post :add_core_value
           delete :remove_core_value
           post :generate_core_values
+          post :generate_mission_statements
         end
       end
       resource :logo, only: [ :show, :update ], controller: :logo
