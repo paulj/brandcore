@@ -5,6 +5,7 @@ class Brand < ApplicationRecord
   has_many :brand_memberships, dependent: :destroy
   has_many :users, through: :brand_memberships
 
+  has_one :brand_concept, dependent: :destroy
   has_one :brand_name, dependent: :destroy
   has_one :brand_vision, dependent: :destroy
   has_one :brand_logo, dependent: :destroy
