@@ -192,7 +192,83 @@ class Brand::VisionController < Brand::BaseController
     end
   end
 
+  def ai_generate
+    @brand_vision = @brand.brand_vision || @brand.create_brand_vision!
+
+    field = params[:field]
+    config = ai_generation_config[field]
+
+    unless config
+      respond_to do |format|
+        format.turbo_stream { head :bad_request }
+        format.html { redirect_to brand_vision_path(@brand), alert: "Invalid field for AI generation" }
+      end
+      return
+    end
+
+    # Enqueue the appropriate background job
+    config[:job_class].perform_later(@brand.id)
+
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          config[:target_id],
+          partial: config[:loading_partial],
+          locals: { target_id: config[:target_id], message: config[:loading_message] }
+        )
+      end
+      format.html { redirect_to brand_vision_path(@brand), notice: config[:notice] }
+    end
+  end
+
   private
+
+  def ai_generation_config
+    {
+      "vision_statement" => {
+        job_class: GenerateVisionStatementJob,
+        target_id: "vision_statement_suggestions",
+        loading_partial: "brand/vision/ai_suggestion_loading",
+        loading_message: "Generating vision statement candidates...",
+        notice: "Generating vision statement..."
+      },
+      "brand_personality" => {
+        job_class: GenerateBrandPersonalityJob,
+        target_id: "brand_personality_suggestions",
+        loading_partial: "brand/vision/ai_suggestion_loading",
+        loading_message: "Generating brand personality suggestions...",
+        notice: "Generating brand personality..."
+      },
+      "target_audience" => {
+        job_class: GenerateTargetAudienceJob,
+        target_id: "target_audience_suggestions",
+        loading_partial: "brand/vision/ai_suggestion_loading",
+        loading_message: "Generating target audience suggestions...",
+        notice: "Generating target audience..."
+      },
+      "category" => {
+        job_class: GenerateCategorySuggestionJob,
+        target_id: "category_suggestions",
+        loading_partial: "brand/vision/ai_suggestion_loading",
+        loading_message: "Generating category suggestion...",
+        notice: "Generating category suggestion..."
+      },
+      "target_markets" => {
+        job_class: GenerateTargetMarketsJob,
+        target_id: "target_markets_suggestions",
+        loading_partial: "brand/vision/ai_suggestion_loading",
+        loading_message: "Generating target markets suggestions...",
+        notice: "Generating target markets..."
+      },
+      "keywords" => {
+        job_class: GenerateKeywordsJob,
+        target_id: "keywords_suggestions",
+        loading_partial: "brand/vision/ai_suggestion_loading",
+        loading_message: "Generating keywords suggestions...",
+        notice: "Generating keywords..."
+      }
+    }
+  end
 
   def brand_vision_params
     params.require(:brand_vision).permit(
