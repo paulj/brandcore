@@ -1,0 +1,32 @@
+<% if candidates.any? %>
+  <div class="space-y-3">
+    <p class="text-sm font-medium text-gray-700">
+      <i class="fa-solid fa-sparkles mr-1"></i>
+      Click a candidate to use it:
+    </p>
+
+    <% candidates.each_with_index do |statement, index| %>
+      <%= form_with model: brand.brand_vision,
+                    url: brand_vision_path(brand),
+                    method: :patch,
+                    data: { turbo: true } do |f| %>
+        <%= f.hidden_field :mission_statement, value: statement %>
+        <button type="submit" class="w-full text-left border border-gray-200 rounded-lg p-4 hover:border-gray-400 hover:bg-gray-50 cursor-pointer transition-all group">
+          <div class="flex items-start space-x-3">
+            <div class="w-8 h-8 bg-gray-100 group-hover:bg-black group-hover:text-white rounded-lg flex items-center justify-center flex-shrink-0 transition-colors">
+              <span class="text-sm font-semibold"><%= index + 1 %></span>
+            </div>
+            <p class="text-gray-700 group-hover:text-gray-900 leading-relaxed flex-1"><%= statement %></p>
+          </div>
+        </button>
+      <% end %>
+    <% end %>
+  </div>
+<% else %>
+  <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+    <div class="flex items-center space-x-3">
+      <i class="fa-solid fa-info-circle text-yellow-600"></i>
+      <p class="text-yellow-700 text-sm">No mission statements could be generated. Please ensure you have a brand concept or category filled in.</p>
+    </div>
+  </div>
+<% end %>
