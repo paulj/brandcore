@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_11_231819) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_12_023125) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -54,6 +54,16 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_11_231819) do
     t.datetime "updated_at", null: false
     t.text "usage_guidelines"
     t.index ["brand_id"], name: "index_brand_colour_schemes_on_brand_id", unique: true
+  end
+
+  create_table "brand_concepts", force: :cascade do |t|
+    t.bigint "brand_id", null: false
+    t.boolean "completed", default: false, null: false
+    t.datetime "completed_at"
+    t.text "concept"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["brand_id"], name: "index_brand_concepts_on_brand_id", unique: true
   end
 
   create_table "brand_languages", force: :cascade do |t|
@@ -260,6 +270,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_11_231819) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "brand_colour_schemes", "brands"
+  add_foreign_key "brand_concepts", "brands"
   add_foreign_key "brand_languages", "brands"
   add_foreign_key "brand_logos", "brands"
   add_foreign_key "brand_memberships", "brands"

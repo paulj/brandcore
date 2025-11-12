@@ -46,6 +46,17 @@
         <h4 class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">Brand</h4>
         <ul class="space-y-2">
           <li>
+            <%= link_to brand_concept_path(@brand), class: "flex items-center space-x-3 text-sm text-gray-700 hover:text-black hover:bg-gray-100 p-2 rounded-lg transition-colors" do %>
+              <i class="fa-solid fa-lightbulb w-4"></i>
+              <span>Brand Concept</span>
+              <% if @brand.brand_concept&.completed? %>
+                <i class="fa-solid fa-circle text-green-400 text-xs ml-auto"></i>
+              <% else %>
+                <i class="fa-solid fa-circle text-orange-400 text-xs ml-auto"></i>
+              <% end %>
+            <% end %>
+          </li>
+          <li>
             <%= link_to brand_vision_path(@brand), class: "flex items-center space-x-3 text-sm text-gray-700 hover:text-black hover:bg-gray-100 p-2 rounded-lg transition-colors" do %>
               <i class="fa-solid fa-bullseye w-4"></i>
               <span>Brand Strategy & Messaging</span>
