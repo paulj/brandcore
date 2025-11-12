@@ -26,6 +26,7 @@ class Brand::VisionController < Brand::BaseController
           render turbo_stream: [
             turbo_stream.replace("save_indicator", partial: "shared/save_indicator", locals: { saved: true }),
             turbo_stream.replace("section_progress", partial: "shared/section_progress", locals: { presenter: @vision_presenter }),
+            turbo_stream.replace("mission_statement_field", partial: "brand/vision/mission_statement_field", locals: { brand_vision: @brand_vision, brand: @brand }),
             turbo_stream.replace("core_values_section", partial: "brand/vision/core_values", locals: { brand_vision: @brand_vision, brand: @brand })
           ]
         end
@@ -37,6 +38,7 @@ class Brand::VisionController < Brand::BaseController
         format.turbo_stream do
           render turbo_stream: [
             turbo_stream.replace("save_indicator", partial: "shared/save_indicator", locals: { saved: false, errors: @brand_vision.errors }),
+            turbo_stream.replace("mission_statement_field", partial: "brand/vision/mission_statement_field", locals: { brand_vision: @brand_vision, brand: @brand }),
             turbo_stream.replace("core_values_section", partial: "brand/vision/core_values", locals: { brand_vision: @brand_vision, brand: @brand })
           ]
         end
@@ -170,6 +172,23 @@ class Brand::VisionController < Brand::BaseController
         end
         format.html { redirect_to brand_vision_path(@brand), alert: "Unable to generate core values. Please ensure mission or vision statement is filled in." }
       end
+    end
+  end
+
+  def generate_mission_statements
+    @brand_vision = @brand.brand_vision || @brand.create_brand_vision!
+
+    # Enqueue the background job
+    GenerateMissionStatementsJob.perform_later(@brand.id)
+
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "mission_statement_suggestions",
+          partial: "brand/vision/mission_statement_loading"
+        )
+      end
+      format.html { redirect_to brand_vision_path(@brand), notice: "Generating mission statements..." }
     end
   end
 
