@@ -27,7 +27,13 @@ class Brand::VisionController < Brand::BaseController
             turbo_stream.replace("save_indicator", partial: "shared/save_indicator", locals: { saved: true }),
             turbo_stream.replace("section_progress", partial: "shared/section_progress", locals: { presenter: @vision_presenter }),
             turbo_stream.replace("mission_statement_field", partial: "brand/vision/mission_statement_field", locals: { brand_vision: @brand_vision, brand: @brand }),
-            turbo_stream.replace("core_values_section", partial: "brand/vision/core_values", locals: { brand_vision: @brand_vision, brand: @brand })
+            turbo_stream.replace("vision_statement_field", partial: "brand/vision/vision_statement_field", locals: { brand_vision: @brand_vision, brand: @brand }),
+            turbo_stream.replace("core_values_section", partial: "brand/vision/core_values", locals: { brand_vision: @brand_vision, brand: @brand }),
+            turbo_stream.replace("brand_personality_field", partial: "brand/vision/brand_personality_field", locals: { brand_vision: @brand_vision, brand: @brand }),
+            turbo_stream.replace("target_audience_field", partial: "brand/vision/target_audience_field", locals: { brand_vision: @brand_vision, brand: @brand }),
+            turbo_stream.replace("category_field", partial: "brand/vision/category_field", locals: { brand_vision: @brand_vision, brand: @brand }),
+            turbo_stream.replace("target_markets_field", partial: "brand/vision/target_markets_field", locals: { brand_vision: @brand_vision, brand: @brand }),
+            turbo_stream.replace("keywords_field", partial: "brand/vision/keywords_field", locals: { brand_vision: @brand_vision, brand: @brand })
           ]
         end
         format.html { redirect_to brand_vision_path(@brand), notice: "Brand vision updated successfully." }
@@ -39,7 +45,13 @@ class Brand::VisionController < Brand::BaseController
           render turbo_stream: [
             turbo_stream.replace("save_indicator", partial: "shared/save_indicator", locals: { saved: false, errors: @brand_vision.errors }),
             turbo_stream.replace("mission_statement_field", partial: "brand/vision/mission_statement_field", locals: { brand_vision: @brand_vision, brand: @brand }),
-            turbo_stream.replace("core_values_section", partial: "brand/vision/core_values", locals: { brand_vision: @brand_vision, brand: @brand })
+            turbo_stream.replace("vision_statement_field", partial: "brand/vision/vision_statement_field", locals: { brand_vision: @brand_vision, brand: @brand }),
+            turbo_stream.replace("core_values_section", partial: "brand/vision/core_values", locals: { brand_vision: @brand_vision, brand: @brand }),
+            turbo_stream.replace("brand_personality_field", partial: "brand/vision/brand_personality_field", locals: { brand_vision: @brand_vision, brand: @brand }),
+            turbo_stream.replace("target_audience_field", partial: "brand/vision/target_audience_field", locals: { brand_vision: @brand_vision, brand: @brand }),
+            turbo_stream.replace("category_field", partial: "brand/vision/category_field", locals: { brand_vision: @brand_vision, brand: @brand }),
+            turbo_stream.replace("target_markets_field", partial: "brand/vision/target_markets_field", locals: { brand_vision: @brand_vision, brand: @brand }),
+            turbo_stream.replace("keywords_field", partial: "brand/vision/keywords_field", locals: { brand_vision: @brand_vision, brand: @brand })
           ]
         end
         format.html { render :show, status: :unprocessable_entity }
