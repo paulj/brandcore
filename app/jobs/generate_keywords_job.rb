@@ -16,8 +16,11 @@ class GenerateKeywordsJob < ApplicationJob
 
     keywords = generator.generate
 
+    # Persist suggestions to database
+    suggestion = persist_suggestion(brand_vision, keywords)
+
     # Broadcast the results via Action Cable
-    broadcast_suggestions(brand, keywords)
+    broadcast_suggestions(brand, suggestion)
   rescue StandardError => e
     Rails.logger.error("GenerateKeywordsJob failed for brand #{brand_id}: #{e.message}")
     broadcast_error(Brand.find(brand_id), e.message)
@@ -25,7 +28,16 @@ class GenerateKeywordsJob < ApplicationJob
 
   private
 
-  def broadcast_suggestions(brand, keywords)
+  def persist_suggestion(brand_vision, keywords)
+    # Store keywords as an array in the content
+    brand_vision.suggestions.create!(
+      field_name: "keywords",
+      content: { keywords: keywords },
+      status: :pending
+    )
+  end
+
+  def broadcast_suggestions(brand, suggestion)
     # Reload brand with brand_vision to ensure fresh data in the partial
     brand.reload
 
@@ -33,7 +45,7 @@ class GenerateKeywordsJob < ApplicationJob
       "brand_vision_#{brand.id}",
       target: "keywords_suggestions",
       partial: "brand/vision/keywords_suggestions",
-      locals: { keywords: keywords, brand: brand }
+      locals: { suggestion: suggestion, brand: brand }
     )
   end
 

@@ -22,7 +22,11 @@
       </div>
 
       <!-- Suggestions container (replaced via Turbo Streams) -->
-      <div id="keywords_suggestions"></div>
+      <div id="keywords_suggestions">
+        <%= render "brand/vision/keywords_suggestions",
+                   suggestion: brand_vision.suggestions.pending.for_field("keywords").recent_first.first,
+                   brand: brand %>
+      </div>
     </div>
   <% end %>
 </div>

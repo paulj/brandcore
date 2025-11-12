@@ -2,6 +2,12 @@ Rails.application.routes.draw do
   resource :session
   resources :passwords, param: :token
 
+  resources :suggestions, only: [] do
+    member do
+      patch :archive
+    end
+  end
+
   resources :brands do
     scope module: :brand do
       resource :concept, only: [ :show, :update ], controller: :concept

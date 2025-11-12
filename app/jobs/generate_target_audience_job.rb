@@ -16,8 +16,11 @@ class GenerateTargetAudienceJob < ApplicationJob
 
     audiences = generator.generate
 
+    # Persist suggestions to database
+    suggestion = persist_suggestion(brand_vision, audiences)
+
     # Broadcast the results via Action Cable
-    broadcast_suggestions(brand, audiences)
+    broadcast_suggestions(brand, suggestion)
   rescue StandardError => e
     Rails.logger.error("GenerateTargetAudienceJob failed for brand #{brand_id}: #{e.message}")
     broadcast_error(Brand.find(brand_id), e.message)
@@ -25,7 +28,15 @@ class GenerateTargetAudienceJob < ApplicationJob
 
   private
 
-  def broadcast_suggestions(brand, audiences)
+  def persist_suggestion(brand_vision, audiences)
+    brand_vision.suggestions.create!(
+      field_name: "target_audience",
+      content: { audiences: audiences },
+      status: :pending
+    )
+  end
+
+  def broadcast_suggestions(brand, suggestion)
     # Reload brand with brand_vision to ensure fresh data in the partial
     brand.reload
 
@@ -33,7 +44,7 @@ class GenerateTargetAudienceJob < ApplicationJob
       "brand_vision_#{brand.id}",
       target: "target_audience_suggestions",
       partial: "brand/vision/target_audience_suggestions",
-      locals: { audiences: audiences, brand: brand }
+      locals: { suggestion: suggestion, brand: brand }
     )
   end
 

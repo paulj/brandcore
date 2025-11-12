@@ -16,8 +16,11 @@ class GenerateBrandPersonalityJob < ApplicationJob
 
     personality = generator.generate
 
+    # Persist suggestions to database
+    suggestion = persist_suggestion(brand_vision, personality)
+
     # Broadcast the results via Action Cable
-    broadcast_suggestions(brand, personality)
+    broadcast_suggestions(brand, suggestion)
   rescue StandardError => e
     Rails.logger.error("GenerateBrandPersonalityJob failed for brand #{brand_id}: #{e.message}")
     broadcast_error(Brand.find(brand_id), e.message)
@@ -25,7 +28,15 @@ class GenerateBrandPersonalityJob < ApplicationJob
 
   private
 
-  def broadcast_suggestions(brand, personality)
+  def persist_suggestion(brand_vision, personality)
+    brand_vision.suggestions.create!(
+      field_name: "brand_personality",
+      content: { traits: personality[:traits], tone: personality[:tone] },
+      status: :pending
+    )
+  end
+
+  def broadcast_suggestions(brand, suggestion)
     # Reload brand with brand_vision to ensure fresh data in the partial
     brand.reload
 
@@ -33,7 +44,7 @@ class GenerateBrandPersonalityJob < ApplicationJob
       "brand_vision_#{brand.id}",
       target: "brand_personality_suggestions",
       partial: "brand/vision/brand_personality_suggestions",
-      locals: { traits: personality[:traits], tone: personality[:tone], brand: brand }
+      locals: { suggestion: suggestion, brand: brand }
     )
   end
 

@@ -8,6 +8,10 @@
     <% end %>
 
     <!-- Suggestions container (replaced via Turbo Streams) -->
-    <div id="vision_statement_suggestions"></div>
+    <div id="vision_statement_suggestions">
+      <%= render "brand/vision/vision_statement_suggestions",
+                 suggestions: brand_vision.suggestions.pending.for_field("vision_statement").recent_first,
+                 brand: brand %>
+    </div>
   </div>
 </div>

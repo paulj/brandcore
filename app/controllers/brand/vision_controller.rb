@@ -8,6 +8,12 @@ class Brand::VisionController < Brand::BaseController
     @brand_vision = @brand.brand_vision || @brand.create_brand_vision!
     @vision_presenter = BrandVisionPresenter.new(@brand_vision)
 
+    # Handle suggestion selection
+    if params[:suggestion_id].present?
+      suggestion = @brand_vision.suggestions.find(params[:suggestion_id])
+      suggestion.choose!
+    end
+
     # Parse core_values if they come as JSON strings from JavaScript
     parsed_params = brand_vision_params
     if parsed_params[:core_values].present?

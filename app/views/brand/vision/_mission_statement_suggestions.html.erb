@@ -1,25 +1,34 @@
 <div id="mission_statement_suggestions">
-  <% if candidates.any? %>
+  <% if suggestions.any? %>
     <div class="space-y-3">
       <p class="text-sm font-medium text-gray-700">
         <i class="fa-solid fa-sparkles mr-1"></i>
         Click a candidate to use it:
       </p>
 
-      <% candidates.each_with_index do |statement, index| %>
+      <% suggestions.each_with_index do |suggestion, index| %>
         <%= form_with model: brand.brand_vision,
                       url: brand_vision_path(brand),
                       method: :patch,
                       data: { turbo: true } do |f| %>
-          <%= f.hidden_field :mission_statement, value: statement %>
-          <button type="submit" class="w-full text-left border border-gray-200 rounded-lg p-4 hover:border-gray-400 hover:bg-gray-50 cursor-pointer transition-all group">
-            <div class="flex items-start space-x-3">
-              <div class="w-8 h-8 bg-gray-100 group-hover:bg-black group-hover:text-white rounded-lg flex items-center justify-center flex-shrink-0 transition-colors">
-                <span class="text-sm font-semibold"><%= index + 1 %></span>
+          <%= f.hidden_field :mission_statement, value: suggestion.text_content %>
+          <%= hidden_field_tag :suggestion_id, suggestion.id %>
+          <div class="relative group">
+            <button type="submit" class="w-full text-left border border-gray-200 rounded-lg p-4 hover:border-gray-400 hover:bg-gray-50 cursor-pointer transition-all">
+              <div class="flex items-start space-x-3">
+                <div class="w-8 h-8 bg-gray-100 group-hover:bg-black group-hover:text-white rounded-lg flex items-center justify-center flex-shrink-0 transition-colors">
+                  <span class="text-sm font-semibold"><%= index + 1 %></span>
+                </div>
+                <p class="text-gray-700 group-hover:text-gray-900 leading-relaxed flex-1 pr-8"><%= suggestion.text_content %></p>
               </div>
-              <p class="text-gray-700 group-hover:text-gray-900 leading-relaxed flex-1"><%= statement %></p>
-            </div>
-          </button>
+            </button>
+            <%= button_to archive_suggestion_path(suggestion),
+                          method: :patch,
+                          data: { turbo: true, turbo_confirm: "Archive this suggestion?" },
+                          class: "absolute top-2 right-2 w-8 h-8 flex items-center justify-center rounded-lg bg-white border border-gray-200 hover:border-red-400 hover:bg-red-50 hover:text-red-600 transition-all opacity-0 group-hover:opacity-100" do %>
+              <i class="fa-solid fa-times text-sm"></i>
+            <% end %>
+          </div>
         <% end %>
       <% end %>
     </div>

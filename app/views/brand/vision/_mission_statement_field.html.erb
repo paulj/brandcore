@@ -8,7 +8,11 @@
     <% end %>
 
     <!-- Suggestions container (replaced via Turbo Streams) -->
-    <div id="mission_statement_suggestions"></div>
+    <div id="mission_statement_suggestions">
+      <%= render "brand/vision/mission_statement_suggestions",
+                 suggestions: brand_vision.suggestions.pending.for_field("mission_statement").recent_first,
+                 brand: brand %>
+    </div>
 
     <div class="flex items-center justify-between">
       <%= render "shared/save_indicator" %>

@@ -16,8 +16,11 @@ class GenerateVisionStatementJob < ApplicationJob
 
     candidates = generator.generate
 
+    # Persist suggestions to database
+    suggestions = persist_suggestions(brand_vision, candidates)
+
     # Broadcast the results via Action Cable
-    broadcast_candidates(brand, candidates)
+    broadcast_suggestions(brand, suggestions)
   rescue StandardError => e
     Rails.logger.error("GenerateVisionStatementJob failed for brand #{brand_id}: #{e.message}")
     broadcast_error(Brand.find(brand_id), e.message)
@@ -25,12 +28,22 @@ class GenerateVisionStatementJob < ApplicationJob
 
   private
 
-  def broadcast_candidates(brand, candidates)
+  def persist_suggestions(brand_vision, candidates)
+    candidates.map do |candidate|
+      brand_vision.suggestions.create!(
+        field_name: "vision_statement",
+        content: { text: candidate },
+        status: :pending
+      )
+    end
+  end
+
+  def broadcast_suggestions(brand, suggestions)
     Turbo::StreamsChannel.broadcast_replace_to(
       "brand_vision_#{brand.id}",
       target: "vision_statement_suggestions",
       partial: "brand/vision/vision_statement_suggestions",
-      locals: { candidates: candidates, brand: brand }
+      locals: { suggestions: suggestions, brand: brand }
     )
   end
 

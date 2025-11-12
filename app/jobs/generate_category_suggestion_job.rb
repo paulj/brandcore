@@ -16,8 +16,11 @@ class GenerateCategorySuggestionJob < ApplicationJob
 
     category = generator.generate
 
+    # Persist suggestions to database
+    suggestion = persist_suggestion(brand_vision, category)
+
     # Broadcast the result via Action Cable
-    broadcast_suggestion(brand, category)
+    broadcast_suggestion(brand, suggestion)
   rescue StandardError => e
     Rails.logger.error("GenerateCategorySuggestionJob failed for brand #{brand_id}: #{e.message}")
     broadcast_error(Brand.find(brand_id), e.message)
@@ -25,12 +28,20 @@ class GenerateCategorySuggestionJob < ApplicationJob
 
   private
 
-  def broadcast_suggestion(brand, category)
+  def persist_suggestion(brand_vision, category)
+    brand_vision.suggestions.create!(
+      field_name: "category",
+      content: { text: category },
+      status: :pending
+    )
+  end
+
+  def broadcast_suggestion(brand, suggestion)
     Turbo::StreamsChannel.broadcast_replace_to(
       "brand_vision_#{brand.id}",
       target: "category_suggestions",
       partial: "brand/vision/category_suggestions",
-      locals: { category: category, brand: brand }
+      locals: { suggestion: suggestion, brand: brand }
     )
   end
 
