@@ -1,5 +1,9 @@
 <% content_for :title, "Colour Scheme - #{@brand.name}" %>
 
+<div data-controller="palette-generator"
+     data-palette-generator-generate-url-value="<%= generate_brand_colour_scheme_path(@brand) %>"
+     data-palette-generator-apply-url-value="<%= apply_brand_colour_scheme_path(@brand) %>">
+
 <header class="bg-white border-b border-gray-200 px-8 py-6">
   <div class="flex items-center justify-between">
     <div class="flex items-center space-x-4">
@@ -17,7 +21,9 @@
         <i class="fa-solid fa-upload mr-2"></i>
         Upload Colours
       </button>
-      <button class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+      <button class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              data-palette-generator-target="generateBtn"
+              data-action="click->palette-generator#generate">
         <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
         AI Generate
       </button>
@@ -30,118 +36,38 @@
 
   <div class="mb-8">
     <h2 class="text-lg font-semibold text-gray-900 mb-4">Current Palette</h2>
-    <% if @brand_colour_scheme.palette_colours.any? %>
-      <div class="bg-white border border-gray-200 rounded-xl p-6">
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <h3 class="text-lg font-medium text-gray-900">Your Colour Palette</h3>
-            <p class="text-sm text-gray-500"><%= pluralize(@brand_colour_scheme.palette_colours.count, 'colour') %> defined</p>
-          </div>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          <% @brand_colour_scheme.palette_colours.order(:position).each do |palette_colour| %>
-            <div class="space-y-2">
-              <div class="h-16 rounded-lg flex items-end justify-center pb-2" style="background-color: <%= palette_colour.base_hex %>">
-                <span class="<%= palette_colour.base_hex.match?(/#[0-9A-F]{6}/i) && palette_colour.base_hex[1..2].to_i(16) + palette_colour.base_hex[3..4].to_i(16) + palette_colour.base_hex[5..6].to_i(16) < 382 ? 'text-white' : 'text-gray-800' %> text-xs font-medium"><%= palette_colour.base_hex %></span>
-              </div>
-              <div class="text-center">
-                <p class="text-sm font-medium text-gray-900"><%= palette_colour.name %></p>
-                <p class="text-xs text-gray-500"><%= palette_colour.category.humanize %></p>
-              </div>
-            </div>
-          <% end %>
-        </div>
-      </div>
-    <% else %>
-      <div class="bg-white border border-gray-200 rounded-xl p-6">
-        <div class="text-center py-8">
-          <div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-            <i class="fa-solid fa-palette text-gray-400 text-2xl"></i>
-          </div>
-          <p class="text-gray-500">No colours defined yet. Add colours below to get started.</p>
-        </div>
-      </div>
-    <% end %>
+    <%= render "brand/colour_scheme/current_palette", brand_colour_scheme: @brand_colour_scheme %>
   </div>
 
   <div class="mb-8">
-    <div class="flex space-x-4 mb-6">
-      <button class="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium">All Palettes</button>
-      <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">Professional</button>
-      <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">Creative</button>
-      <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">Minimal</button>
-      <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">Bold</button>
-    </div>
-  </div>
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">Generated Palettes</h2>
 
-  <div class="grid grid-cols-2 gap-6 mb-12">
-    <div class="bg-white border-2 border-blue-200 rounded-xl p-6 cursor-pointer hover:shadow-lg transition-all">
-      <div class="flex items-center justify-between mb-4">
-        <div>
-          <h3 class="text-lg font-medium text-gray-900">Tech Blue</h3>
-          <p class="text-sm text-gray-500">Modern and professional</p>
+    <!-- Loading state -->
+    <div data-palette-generator-target="loadingState" class="hidden">
+      <div class="bg-white border border-gray-200 rounded-xl p-12">
+        <div class="text-center">
+          <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mb-4"></div>
+          <p class="text-gray-600">Analyzing your brand vision and generating colour palettes...</p>
+          <p class="text-sm text-gray-500 mt-2">This may take a few moments</p>
         </div>
-        <div class="w-6 h-6 bg-blue-600 rounded-full border-2 border-white shadow-lg"></div>
-      </div>
-      <div class="flex space-x-1 mb-4">
-        <div class="flex-1 h-12 bg-blue-600 rounded"></div>
-        <div class="flex-1 h-12 bg-blue-500 rounded"></div>
-        <div class="flex-1 h-12 bg-blue-400 rounded"></div>
-        <div class="flex-1 h-12 bg-blue-300 rounded"></div>
-        <div class="flex-1 h-12 bg-blue-100 rounded"></div>
       </div>
     </div>
 
-    <div class="bg-white border border-gray-200 rounded-xl p-6 cursor-pointer hover:shadow-lg transition-all hover:border-green-200">
-      <div class="flex items-center justify-between mb-4">
-        <div>
-          <h3 class="text-lg font-medium text-gray-900">Forest Green</h3>
-          <p class="text-sm text-gray-500">Natural and sustainable</p>
+    <!-- Empty state -->
+    <div data-palette-generator-target="emptyState">
+      <div class="bg-white border border-gray-200 rounded-xl p-12">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+            <i class="fa-solid fa-wand-magic-sparkles text-gray-400 text-2xl"></i>
+          </div>
+          <p class="text-gray-600 mb-2">Click "AI Generate" to create colour palettes based on your brand vision</p>
+          <p class="text-sm text-gray-500">We'll generate multiple options for you to choose from</p>
         </div>
-        <div class="w-6 h-6 bg-green-600 rounded-full"></div>
-      </div>
-      <div class="flex space-x-1 mb-4">
-        <div class="flex-1 h-12 bg-green-700 rounded"></div>
-        <div class="flex-1 h-12 bg-green-600 rounded"></div>
-        <div class="flex-1 h-12 bg-green-500 rounded"></div>
-        <div class="flex-1 h-12 bg-green-300 rounded"></div>
-        <div class="flex-1 h-12 bg-green-100 rounded"></div>
       </div>
     </div>
 
-    <div class="bg-white border border-gray-200 rounded-xl p-6 cursor-pointer hover:shadow-lg transition-all hover:border-orange-200">
-      <div class="flex items-center justify-between mb-4">
-        <div>
-          <h3 class="text-lg font-medium text-gray-900">Sunset Orange</h3>
-          <p class="text-sm text-gray-500">Energetic and warm</p>
-        </div>
-        <div class="w-6 h-6 bg-orange-500 rounded-full"></div>
-      </div>
-      <div class="flex space-x-1 mb-4">
-        <div class="flex-1 h-12 bg-orange-600 rounded"></div>
-        <div class="flex-1 h-12 bg-orange-500 rounded"></div>
-        <div class="flex-1 h-12 bg-orange-400 rounded"></div>
-        <div class="flex-1 h-12 bg-orange-300 rounded"></div>
-        <div class="flex-1 h-12 bg-orange-100 rounded"></div>
-      </div>
-    </div>
-
-    <div class="bg-white border border-gray-200 rounded-xl p-6 cursor-pointer hover:shadow-lg transition-all hover:border-purple-200">
-      <div class="flex items-center justify-between mb-4">
-        <div>
-          <h3 class="text-lg font-medium text-gray-900">Royal Purple</h3>
-          <p class="text-sm text-gray-500">Luxurious and creative</p>
-        </div>
-        <div class="w-6 h-6 bg-purple-600 rounded-full"></div>
-      </div>
-      <div class="flex space-x-1 mb-4">
-        <div class="flex-1 h-12 bg-purple-700 rounded"></div>
-        <div class="flex-1 h-12 bg-purple-600 rounded"></div>
-        <div class="flex-1 h-12 bg-purple-500 rounded"></div>
-        <div class="flex-1 h-12 bg-purple-300 rounded"></div>
-        <div class="flex-1 h-12 bg-purple-100 rounded"></div>
-      </div>
-    </div>
+    <!-- Palettes container (populated by Stimulus controller) -->
+    <div data-palette-generator-target="palettesContainer" class="grid grid-cols-2 gap-6"></div>
   </div>
 
   <%= form_with model: @brand_colour_scheme, url: brand_colour_scheme_path(@brand), method: :patch, data: { turbo: true, controller: "autosave", autosave_target: "form" } do |f| %>
@@ -169,3 +95,5 @@
     </div>
   <% end %>
 </div>
+
+</div> <!-- Close palette-generator controller -->

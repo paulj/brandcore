@@ -12,7 +12,12 @@ Rails.application.routes.draw do
       end
       resource :logo, only: [ :show, :update ], controller: :logo
       resource :language, only: [ :show, :update ], controller: :language
-      resource :colour_scheme, only: [ :show, :update ], controller: :colour_scheme
+      resource :colour_scheme, only: [ :show, :update ], controller: :colour_scheme do
+        collection do
+          post :generate
+          post :apply
+        end
+      end
       resource :typography, only: [ :show, :update ], controller: :typography do
         collection do
           get :search_fonts
