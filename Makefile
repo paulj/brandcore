@@ -21,6 +21,10 @@ cache-google-fonts:
 	@GOOGLE_FONTS_API_KEY="op://Private/Google Fonts API Key/credential" op run -- \
 		bundle exec rails r 'GoogleFontsService.build_static_source'
 	
+dev:
+	@OPENAI_API_KEY="op://Employee/Brand Core OpenAI Developer Key/credential" op run --account nivoventures -- \
+		bin/dev
+
 update-trait-embeddings:
 	@OPENAI_API_KEY="op://Employee/Brand Core OpenAI Developer Key/credential" op run --account nivoventures -- \
 		bundle exec rake brand_color_palette:generate_trait_embeddings
