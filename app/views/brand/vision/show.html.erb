@@ -46,46 +46,46 @@
       </div>
     </div>
 
-    <%= form_with model: @brand_vision, url: brand_vision_path(@brand), method: :patch, data: { turbo: true, controller: "autosave", autosave_target: "form" } do |f| %>
-      <div class="bg-white border border-gray-200 rounded-xl p-8">
-        <div class="flex items-center justify-between mb-6">
-          <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
-              <i class="fa-solid fa-bullseye text-gray-400"></i>
-            </div>
-            <div>
-              <h3 class="text-xl font-semibold text-gray-900">Mission Statement</h3>
-              <p class="text-gray-600 text-sm">Why your brand exists and what it aims to accomplish</p>
-            </div>
+    <div class="bg-white border border-gray-200 rounded-xl p-8">
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-bullseye text-gray-400"></i>
           </div>
-          <%= button_to generate_mission_statements_brand_vision_path(@brand),
-                        method: :post,
-                        data: { turbo: true },
-                        class: "bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors" do %>
-            <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
-            AI Help
-          <% end %>
+          <div>
+            <h3 class="text-xl font-semibold text-gray-900">Mission Statement</h3>
+            <p class="text-gray-600 text-sm">Why your brand exists and what it aims to accomplish</p>
+          </div>
         </div>
-        <div class="space-y-4">
+        <%= button_to generate_mission_statements_brand_vision_path(@brand),
+                      method: :post,
+                      data: { turbo: true },
+                      class: "bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors" do %>
+          <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
+          AI Help
+        <% end %>
+      </div>
+      <div class="space-y-4">
+        <%= form_with model: @brand_vision, url: brand_vision_path(@brand), method: :patch, data: { turbo: true, controller: "autosave", autosave_target: "form" } do |f| %>
           <%= f.text_area :mission_statement,
                           class: "w-full h-32 p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-black focus:border-transparent",
                           placeholder: "Describe your brand's purpose and what it aims to achieve in the world...",
                           data: { action: "input->autosave#save" } %>
+        <% end %>
 
-          <!-- Suggestions container (replaced via Turbo Streams) -->
-          <div id="mission_statement_suggestions"></div>
+        <!-- Suggestions container (replaced via Turbo Streams) -->
+        <div id="mission_statement_suggestions"></div>
 
-          <div class="flex items-center justify-between">
-            <%= render "shared/save_indicator" %>
-            <button type="button"
-                    class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm"
-                    data-action="click->examples-dialog#openModal">
-              Get Examples
-            </button>
-          </div>
+        <div class="flex items-center justify-between">
+          <%= render "shared/save_indicator" %>
+          <button type="button"
+                  class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm"
+                  data-action="click->examples-dialog#openModal">
+            Get Examples
+          </button>
         </div>
       </div>
-    <% end %>
+    </div>
 
     <%= form_with model: @brand_vision, url: brand_vision_path(@brand), method: :patch, data: { turbo: true, controller: "autosave", autosave_target: "form" } do |f| %>
       <div class="bg-white border border-gray-200 rounded-xl p-8">
