@@ -16,7 +16,11 @@
     url: brand_properties_path(brand),
     method: :post,
     scope: :brand_property,
-    data: { turbo: true },
+    data: {
+      controller: "blur-on-submit",
+      action: "submit->blur-on-submit#submit",
+      turbo: true
+    },
     class: "flex gap-2"
   ) do |f| %>
     <%= f.hidden_field :property_name, value: property_name %>
