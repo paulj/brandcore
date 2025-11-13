@@ -11,15 +11,60 @@ RSpec.describe BrandColorPalette::Generator do
   end
 
   let(:brand_input) do
-    BrandVision.create!(
-      brand: brand,
-      traits: [ "innovative", "approachable", "premium" ],
-      tone: [ "confident", "friendly" ],
-      audiences: [ "prosumer", "SMB" ],
-      category: "SaaS",
-      markets: [ "US", "AU" ],
-      keywords: [ "automation", "reliability", "speed" ]
+    # Create brand properties as current values
+    [ "innovative", "approachable", "premium" ].each do |trait|
+      brand.properties.create!(
+        property_name: "trait",
+        value: { text: trait },
+        status: :current,
+        accepted_at: Time.current
+      )
+    end
+
+    [ "confident", "friendly" ].each do |tone_value|
+      brand.properties.create!(
+        property_name: "tone",
+        value: { text: tone_value },
+        status: :current,
+        accepted_at: Time.current
+      )
+    end
+
+    [ "prosumer", "SMB" ].each do |audience|
+      brand.properties.create!(
+        property_name: "audience",
+        value: { text: audience },
+        status: :current,
+        accepted_at: Time.current
+      )
+    end
+
+    brand.properties.create!(
+      property_name: "category",
+      value: { text: "SaaS" },
+      status: :current,
+      accepted_at: Time.current
     )
+
+    [ "US", "AU" ].each do |market|
+      brand.properties.create!(
+        property_name: "market",
+        value: { text: market },
+        status: :current,
+        accepted_at: Time.current
+      )
+    end
+
+    [ "automation", "reliability", "speed" ].each do |keyword|
+      brand.properties.create!(
+        property_name: "keyword",
+        value: { text: keyword },
+        status: :current,
+        accepted_at: Time.current
+      )
+    end
+
+    brand
   end
 
   describe "#generate" do
