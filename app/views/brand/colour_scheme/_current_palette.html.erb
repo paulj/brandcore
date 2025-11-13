@@ -1,0 +1,34 @@
+<div id="current_palette">
+  <% if brand_colour_scheme.palette_colours.any? %>
+    <div class="bg-white border border-gray-200 rounded-xl p-6">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h3 class="text-lg font-medium text-gray-900">Your Colour Palette</h3>
+          <p class="text-sm text-gray-500"><%= pluralize(brand_colour_scheme.palette_colours.count, 'colour') %> defined</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <% brand_colour_scheme.palette_colours.order(:position).each do |palette_colour| %>
+          <div class="space-y-2">
+            <div class="h-16 rounded-lg flex items-end justify-center pb-2" style="background-color: <%= palette_colour.base_hex %>">
+              <span class="<%= palette_colour.base_hex.match?(/#[0-9A-F]{6}/i) && palette_colour.base_hex[1..2].to_i(16) + palette_colour.base_hex[3..4].to_i(16) + palette_colour.base_hex[5..6].to_i(16) < 382 ? 'text-white' : 'text-gray-800' %> text-xs font-medium"><%= palette_colour.base_hex %></span>
+            </div>
+            <div class="text-center">
+              <p class="text-sm font-medium text-gray-900"><%= palette_colour.name %></p>
+              <p class="text-xs text-gray-500"><%= palette_colour.category.humanize %></p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% else %>
+    <div class="bg-white border border-gray-200 rounded-xl p-6">
+      <div class="text-center py-8">
+        <div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+          <i class="fa-solid fa-palette text-gray-400 text-2xl"></i>
+        </div>
+        <p class="text-gray-500">No colours defined yet. Generate palettes using AI or upload your own.</p>
+      </div>
+    </div>
+  <% end %>
+</div>
