@@ -4,16 +4,8 @@
 class GeneratePalettesJob < ApplicationJob
   queue_as :default
 
-  def perform(brand_id)
-    brand = Brand.find(brand_id)
-    brand_vision = brand.brand_vision
-
-    unless brand_vision
-      broadcast_error(brand, "Please complete your Brand Vision first to generate colour palettes.")
-      return
-    end
-
-    generator = BrandColorPalette::Generator.new(brand_vision)
+  def perform(brand)
+    generator = BrandColorPalette::Generator.new(brand)
     result = generator.generate
 
     # Convert result to JSON-friendly format for the view
@@ -32,8 +24,8 @@ class GeneratePalettesJob < ApplicationJob
           }
         end,
         metadata: {
-          description: palette.metadata&.description,
-          vibe: palette.metadata&.vibe
+          # description: palette.metadata&.description,
+          # vibe: palette.metadata&.vibe
         },
         accessibility: palette.accessibility&.to_h
       }
@@ -42,8 +34,8 @@ class GeneratePalettesJob < ApplicationJob
     # Broadcast the results via Action Cable
     broadcast_palettes(brand, palettes_data)
   rescue StandardError => e
-    Rails.logger.error("GeneratePalettesJob failed for brand #{brand_id}: #{e.message}\n#{e.backtrace.join("\n")}")
-    broadcast_error(Brand.find(brand_id), e.message)
+    Rails.logger.error("GeneratePalettesJob failed for brand #{brand.id}: #{e.message}\n#{e.backtrace.join("\n")}")
+    broadcast_error(brand, e.message)
   end
 
   private

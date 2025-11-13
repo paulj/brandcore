@@ -30,7 +30,7 @@ class Brand::ColourSchemeController < Brand::BaseController
 
   def generate
     # Enqueue the background job
-    GeneratePalettesJob.perform_later(@brand.id)
+    GeneratePalettesJob.perform_later(@brand)
 
     respond_to do |format|
       format.turbo_stream do
