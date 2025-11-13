@@ -5,15 +5,19 @@ Rails.application.routes.draw do
   resources :brands do
     scope module: :brand do
       resource :concept, only: [ :show, :update ], controller: :concept
-      resource :vision, only: [ :show, :update ], controller: :vision do
+
+      # Properties - unified property management system
+      resources :properties, only: [ :create, :update, :destroy ] do
+        member do
+          post :accept
+          post :reject
+        end
         collection do
-          post :add_core_value
-          delete :remove_core_value
-          post :generate_core_values
-          post :generate_mission_statements
-          post :ai_generate
+          post :generate
         end
       end
+
+      resource :vision, only: [ :show ], controller: :vision
       resource :logo, only: [ :show, :update ], controller: :logo
       resource :language, only: [ :show, :update ], controller: :language
       resource :colour_scheme, only: [ :show, :update ], controller: :colour_scheme

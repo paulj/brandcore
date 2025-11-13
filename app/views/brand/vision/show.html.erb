@@ -1,6 +1,6 @@
 <% content_for :title, "Brand Vision - #{@brand.name}" %>
 
-<%= turbo_stream_from "brand_vision_#{@brand.id}" %>
+<%= turbo_stream_from "brand_properties_#{@brand.id}" %>
 
 <header class="bg-white border-b border-gray-200 px-8 py-6">
   <div class="flex items-center justify-between">
@@ -10,18 +10,13 @@
     </div>
     <div class="flex items-center space-x-4">
       <%= render "shared/save_indicator" %>
-      <button class="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-        <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
-        AI Assistant
-      </button>
     </div>
   </div>
 </header>
 
-<div class="p-8" data-controller="examples-dialog">
-  <%= render "shared/section_progress", presenter: @vision_presenter %>
-
+<div class="p-8">
   <div class="space-y-8">
+    <%# Brand Name Display (Read-only) %>
     <div class="bg-white border border-gray-200 rounded-xl p-8">
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center space-x-3">
@@ -46,316 +41,28 @@
       </div>
     </div>
 
-    <div class="bg-white border border-gray-200 rounded-xl p-8">
-      <div class="flex items-center justify-between mb-6">
-        <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
-            <i class="fa-solid fa-bullseye text-gray-400"></i>
-          </div>
-          <div>
-            <h3 class="text-xl font-semibold text-gray-900">Mission Statement</h3>
-            <p class="text-gray-600 text-sm">Why your brand exists and what it aims to accomplish</p>
-          </div>
-        </div>
-        <%= button_to generate_mission_statements_brand_vision_path(@brand),
-                      method: :post,
-                      data: { turbo: true },
-                      class: "bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors" do %>
-          <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
-          AI Help
-        <% end %>
-      </div>
-      <%= render "mission_statement_field", brand_vision: @brand_vision, brand: @brand %>
-    </div>
+    <%# Category %>
+    <%= render "brand/properties/property_card", brand: @brand, property_name: "category" %>
 
-    <div class="bg-white border border-gray-200 rounded-xl p-8">
-      <div class="flex items-center justify-between mb-6">
-        <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
-            <i class="fa-solid fa-eye text-gray-400"></i>
-          </div>
-          <div>
-            <h3 class="text-xl font-semibold text-gray-900">Vision Statement</h3>
-            <p class="text-gray-600 text-sm">Your brand's aspirational future and long-term goals</p>
-          </div>
-        </div>
-        <%= button_to ai_generate_brand_vision_path(@brand, field: "vision_statement"),
-                      method: :post,
-                      data: { turbo: true },
-                      class: "bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors" do %>
-          <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
-          AI Help
-        <% end %>
-      </div>
-      <%= render "vision_statement_field", brand_vision: @brand_vision, brand: @brand %>
-    </div>
+    <%# Mission Statement %>
+    <%= render "brand/properties/property_card", brand: @brand, property_name: "mission" %>
 
-    <div class="bg-white border border-gray-200 rounded-xl p-8">
-      <div class="flex items-center justify-between mb-6">
-        <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
-            <i class="fa-solid fa-heart text-gray-400"></i>
-          </div>
-          <div>
-            <h3 class="text-xl font-semibold text-gray-900">Core Values</h3>
-            <p class="text-gray-600 text-sm">The fundamental beliefs that guide your brand</p>
-          </div>
-        </div>
-        <%= button_to generate_core_values_brand_vision_path(@brand),
-            method: :post,
-            data: { turbo: true },
-            class: "bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors" do %>
-          <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
-          AI Help
-        <% end %>
-      </div>
-      <div class="space-y-4" id="core_values_section">
-        <%= render "core_values", brand_vision: @brand_vision, brand: @brand %>
-      </div>
-    </div>
+    <%# Vision Statement %>
+    <%= render "brand/properties/property_card", brand: @brand, property_name: "vision" %>
 
-    <div class="bg-white border border-gray-200 rounded-xl p-8">
-      <div class="flex items-center justify-between mb-6">
-        <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
-            <i class="fa-solid fa-users text-gray-400"></i>
-          </div>
-          <div>
-            <h3 class="text-xl font-semibold text-gray-900">Brand Personality</h3>
-            <p class="text-gray-600 text-sm">Traits and tone that define your brand's character</p>
-          </div>
-        </div>
-        <%= button_to ai_generate_brand_vision_path(@brand, field: "brand_personality"),
-                      method: :post,
-                      data: { turbo: true },
-                      class: "bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors" do %>
-          <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
-          AI Help
-        <% end %>
-      </div>
-      <%= render "brand_personality_field", brand_vision: @brand_vision, brand: @brand %>
-    </div>
+    <%# Target Markets %>
+    <%= render "brand/properties/property_card", brand: @brand, property_name: "market" %>
 
-    <div class="bg-white border border-gray-200 rounded-xl p-8">
-      <div class="flex items-center justify-between mb-6">
-        <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
-            <i class="fa-solid fa-user-group text-gray-400"></i>
-          </div>
-          <div>
-            <h3 class="text-xl font-semibold text-gray-900">Target Audiences</h3>
-            <p class="text-gray-600 text-sm">Specific audience segments your brand serves</p>
-          </div>
-        </div>
-        <%= button_to ai_generate_brand_vision_path(@brand, field: "target_audience"),
-                      method: :post,
-                      data: { turbo: true },
-                      class: "bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors" do %>
-          <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
-          AI Help
-        <% end %>
-      </div>
-      <%= render "target_audience_field", brand_vision: @brand_vision, brand: @brand %>
-    </div>
+    <%# Target Audiences %>
+    <%= render "brand/properties/property_card", brand: @brand, property_name: "audience" %>
 
-    <div class="bg-white border border-gray-200 rounded-xl p-8">
-      <div class="flex items-center justify-between mb-6">
-        <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
-            <i class="fa-solid fa-tag text-gray-400"></i>
-          </div>
-          <div>
-            <h3 class="text-xl font-semibold text-gray-900">Category</h3>
-            <p class="text-gray-600 text-sm">Your brand's industry or business category</p>
-          </div>
-        </div>
-        <%= button_to ai_generate_brand_vision_path(@brand, field: "category"),
-                      method: :post,
-                      data: { turbo: true },
-                      class: "bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors" do %>
-          <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
-          AI Help
-        <% end %>
-      </div>
-      <%= render "category_field", brand_vision: @brand_vision, brand: @brand %>
-    </div>
+    <%# Brand Traits %>
+    <%= render "brand/properties/property_card", brand: @brand, property_name: "trait" %>
 
-    <div class="bg-white border border-gray-200 rounded-xl p-8">
-      <div class="flex items-center justify-between mb-6">
-        <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
-            <i class="fa-solid fa-globe text-gray-400"></i>
-          </div>
-          <div>
-            <h3 class="text-xl font-semibold text-gray-900">Target Markets</h3>
-            <p class="text-gray-600 text-sm">Geographic markets where your brand operates</p>
-          </div>
-        </div>
-        <%= button_to ai_generate_brand_vision_path(@brand, field: "target_markets"),
-                      method: :post,
-                      data: { turbo: true },
-                      class: "bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors" do %>
-          <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
-          AI Help
-        <% end %>
-      </div>
-      <%= render "target_markets_field", brand_vision: @brand_vision, brand: @brand %>
-    </div>
+    <%# Brand Tone %>
+    <%= render "brand/properties/property_card", brand: @brand, property_name: "tone" %>
 
-    <div class="bg-white border border-gray-200 rounded-xl p-8">
-      <div class="flex items-center justify-between mb-6">
-        <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
-            <i class="fa-solid fa-key text-gray-400"></i>
-          </div>
-          <div>
-            <h3 class="text-xl font-semibold text-gray-900">Keywords</h3>
-            <p class="text-gray-600 text-sm">Key terms and concepts that define your brand</p>
-          </div>
-        </div>
-        <%= button_to ai_generate_brand_vision_path(@brand, field: "keywords"),
-                      method: :post,
-                      data: { turbo: true },
-                      class: "bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors" do %>
-          <i class="fa-solid fa-magic-wand-sparkles mr-2"></i>
-          AI Help
-        <% end %>
-      </div>
-      <%= render "keywords_field", brand_vision: @brand_vision, brand: @brand %>
-    </div>
-  </div>
-
-  <!-- Mission Statement Examples Dialog -->
-  <div class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
-       data-examples-dialog-target="modal"
-       data-action="click->examples-dialog#closeModal">
-    <div class="bg-white rounded-xl shadow-xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col"
-         onclick="event.stopPropagation()">
-      <!-- Modal Header -->
-      <div class="flex items-center justify-between p-6 border-b border-gray-200">
-        <div>
-          <h3 class="text-xl font-semibold text-gray-900">Mission Statement Examples</h3>
-          <p class="text-sm text-gray-600 mt-1">Inspiration from well-known brands</p>
-        </div>
-        <button type="button"
-                class="text-gray-400 hover:text-gray-600"
-                data-action="click->examples-dialog#closeModal">
-          <i class="fa-solid fa-times text-xl"></i>
-        </button>
-      </div>
-
-      <!-- Modal Content -->
-      <div class="overflow-y-auto p-6">
-        <div class="space-y-6">
-          <div class="border border-gray-200 rounded-lg p-5 hover:border-gray-300 transition-colors">
-            <div class="flex items-start space-x-3">
-              <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <i class="fa-solid fa-quote-left text-gray-400"></i>
-              </div>
-              <div class="flex-1">
-                <h4 class="font-semibold text-gray-900 mb-2">Tesla</h4>
-                <p class="text-gray-700 leading-relaxed">To accelerate the world's transition to sustainable energy.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="border border-gray-200 rounded-lg p-5 hover:border-gray-300 transition-colors">
-            <div class="flex items-start space-x-3">
-              <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <i class="fa-solid fa-quote-left text-gray-400"></i>
-              </div>
-              <div class="flex-1">
-                <h4 class="font-semibold text-gray-900 mb-2">Patagonia</h4>
-                <p class="text-gray-700 leading-relaxed">We're in business to save our home planet.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="border border-gray-200 rounded-lg p-5 hover:border-gray-300 transition-colors">
-            <div class="flex items-start space-x-3">
-              <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <i class="fa-solid fa-quote-left text-gray-400"></i>
-              </div>
-              <div class="flex-1">
-                <h4 class="font-semibold text-gray-900 mb-2">LinkedIn</h4>
-                <p class="text-gray-700 leading-relaxed">To connect the world's professionals to make them more productive and successful.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="border border-gray-200 rounded-lg p-5 hover:border-gray-300 transition-colors">
-            <div class="flex items-start space-x-3">
-              <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <i class="fa-solid fa-quote-left text-gray-400"></i>
-              </div>
-              <div class="flex-1">
-                <h4 class="font-semibold text-gray-900 mb-2">Spotify</h4>
-                <p class="text-gray-700 leading-relaxed">To unlock the potential of human creativity by giving a million creative artists the opportunity to live off their art and billions of fans the opportunity to enjoy and be inspired by it.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="border border-gray-200 rounded-lg p-5 hover:border-gray-300 transition-colors">
-            <div class="flex items-start space-x-3">
-              <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <i class="fa-solid fa-quote-left text-gray-400"></i>
-              </div>
-              <div class="flex-1">
-                <h4 class="font-semibold text-gray-900 mb-2">Airbnb</h4>
-                <p class="text-gray-700 leading-relaxed">To create a world where anyone can belong anywhere, providing healthy travel that is local, authentic, diverse, inclusive and sustainable.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="border border-gray-200 rounded-lg p-5 hover:border-gray-300 transition-colors">
-            <div class="flex items-start space-x-3">
-              <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <i class="fa-solid fa-quote-left text-gray-400"></i>
-              </div>
-              <div class="flex-1">
-                <h4 class="font-semibold text-gray-900 mb-2">Nike</h4>
-                <p class="text-gray-700 leading-relaxed">To bring inspiration and innovation to every athlete in the world. (If you have a body, you are an athlete.)</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="border border-gray-200 rounded-lg p-5 hover:border-gray-300 transition-colors">
-            <div class="flex items-start space-x-3">
-              <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <i class="fa-solid fa-quote-left text-gray-400"></i>
-              </div>
-              <div class="flex-1">
-                <h4 class="font-semibold text-gray-900 mb-2">Google</h4>
-                <p class="text-gray-700 leading-relaxed">To organise the world's information and make it universally accessible and useful.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="border border-gray-200 rounded-lg p-5 hover:border-gray-300 transition-colors">
-            <div class="flex items-start space-x-3">
-              <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <i class="fa-solid fa-quote-left text-gray-400"></i>
-              </div>
-              <div class="flex-1">
-                <h4 class="font-semibold text-gray-900 mb-2">Stripe</h4>
-                <p class="text-gray-700 leading-relaxed">To increase the GDP of the internet.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Modal Footer -->
-      <div class="border-t border-gray-200 p-6 bg-gray-50">
-        <div class="flex items-center justify-between">
-          <p class="text-sm text-gray-600">Use these as inspiration to craft your unique mission statement</p>
-          <button type="button"
-                  class="bg-black text-white px-6 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors"
-                  data-action="click->examples-dialog#closeModal">
-            Close
-          </button>
-        </div>
-      </div>
-    </div>
+    <%# Keywords %>
+    <%= render "brand/properties/property_card", brand: @brand, property_name: "keyword" %>
   </div>
 </div>

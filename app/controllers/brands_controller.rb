@@ -41,7 +41,7 @@ class BrandsController < ApplicationController
         # Initialize all component models (they'll be in skeleton state)
         @brand.create_brand_concept!
         @brand.create_brand_name!(name: @brand.name)
-        @brand.create_brand_vision!
+        # Note: brand_vision replaced by brand properties system
         @brand.create_brand_logo!
         @brand.create_brand_language!
         @brand.create_brand_colour_scheme!

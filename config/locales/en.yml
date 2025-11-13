@@ -29,3 +29,37 @@
 
 en:
   hello: "Hello world"
+
+  brand_properties:
+    mission:
+      label: "Mission Statement"
+      description: "What your brand does and why it exists"
+      help_text: "A concise statement of your brand's purpose and primary objectives"
+    vision:
+      label: "Vision Statement"
+      description: "Where your brand is heading"
+      help_text: "An aspirational description of what your brand wants to achieve in the future"
+    category:
+      label: "Category"
+      description: "The industry or sector your brand operates in"
+      help_text: "Select the category that best describes your brand"
+    keyword:
+      label: "Keywords"
+      description: "Key terms that capture your brand's essence"
+      help_text: "Words and phrases that represent your brand's core themes and values"
+    market:
+      label: "Target Markets"
+      description: "Geographic regions where your brand operates"
+      help_text: "The countries or regions you serve or plan to serve"
+    trait:
+      label: "Brand Traits"
+      description: "Personality characteristics of your brand"
+      help_text: "Adjectives that describe your brand's character (e.g., innovative, approachable)"
+    tone:
+      label: "Brand Tone"
+      description: "How your brand communicates"
+      help_text: "Descriptors for your brand's communication style (e.g., confident, friendly)"
+    audience:
+      label: "Target Audiences"
+      description: "Specific groups of people your brand serves"
+      help_text: "Detailed descriptions of your target customer segments"
