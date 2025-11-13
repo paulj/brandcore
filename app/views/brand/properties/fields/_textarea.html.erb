@@ -4,8 +4,10 @@
 
 <div id="<%= property_name %>_field" class="space-y-2">
   <%= form_with(
+    model: current_property || BrandProperty.new,
     url: current_property ? brand_property_path(brand, current_property) : brand_properties_path(brand),
     method: current_property ? :patch : :post,
+    scope: :brand_property,
     data: {
       controller: "autosave",
       autosave_target: "form",
@@ -17,7 +19,7 @@
     <div class="relative">
       <%= f.text_area :value,
         value: current_value,
-        class: "w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500",
+        class: "w-full p-3 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500",
         rows: 4,
         placeholder: configuration.help_text,
         data: { autosave_target: "field" }

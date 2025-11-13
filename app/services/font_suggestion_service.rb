@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# FontSuggestionService suggests fonts based on brand vision and personality.
+# FontSuggestionService suggests fonts based on brand properties.
 # Maps brand attributes to appropriate font categories and specific font recommendations.
 class FontSuggestionService
   # Font category mappings based on brand personality traits
@@ -69,10 +69,9 @@ class FontSuggestionService
 
   def initialize(brand)
     @brand = brand
-    @brand_vision = brand.brand_vision
   end
 
-  # Suggest fonts based on brand vision
+  # Suggest fonts based on brand properties
   # @return [Array<Hash>] Array of suggested font metadata
   def suggest_fonts(limit: 6)
     category = determine_category
@@ -99,27 +98,27 @@ class FontSuggestionService
     suggested
   end
 
-  # Determine the most appropriate font category based on brand vision
+  # Determine the most appropriate font category based on brand properties
   # @return [String] Font category name
   def determine_category
-    # Check brand personality first
-    if @brand_vision&.brand_personality.present?
-      traits = extract_traits(@brand_vision.brand_personality)
+    # Check brand traits
+    traits = @brand.properties.for_property("trait").current.map(&:text_value)
+    if traits.any?
       category = find_category_for_traits(traits)
       return category if category
     end
 
-    # Check positioning statement
-    if @brand_vision&.brand_positioning.present?
-      category = analyze_text_for_category(@brand_vision.brand_positioning)
+    # Check brand tone
+    tone = @brand.properties.for_property("tone").current.map(&:text_value)
+    if tone.any?
+      category = find_category_for_traits(tone)
       return category if category
     end
 
     # Check mission/vision statements
-    combined_text = [
-      @brand_vision&.mission_statement,
-      @brand_vision&.vision_statement
-    ].compact.join(" ")
+    mission = @brand.properties.for_property("mission").current.first&.text_value
+    vision = @brand.properties.for_property("vision").current.first&.text_value
+    combined_text = [mission, vision].compact.join(" ")
 
     return analyze_text_for_category(combined_text) if combined_text.present?
 
@@ -129,19 +128,11 @@ class FontSuggestionService
 
   private
 
-  def extract_traits(personality_hash)
-    return [] unless personality_hash.is_a?(Hash)
-
-    traits = []
-    traits += personality_hash["traits"] if personality_hash["traits"].is_a?(Array)
-    traits << personality_hash["voice"] if personality_hash["voice"].present?
-    traits.map(&:downcase)
-  end
-
   def find_category_for_traits(traits)
     traits.each do |trait|
+      trait_lower = trait.downcase
       PERSONALITY_TO_CATEGORY.each do |keyword, category|
-        return category if trait.include?(keyword)
+        return category if trait_lower.include?(keyword)
       end
     end
     nil
