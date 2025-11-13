@@ -7,7 +7,7 @@ Rails.application.routes.draw do
       resource :concept, only: [ :show, :update ], controller: :concept
 
       # Properties - unified property management system
-      resources :properties, only: [ :create, :update ] do
+      resources :properties, only: [ :create, :update, :destroy ] do
         member do
           post :accept
           post :reject

@@ -1,27 +1,25 @@
-<%# Tags field for multiple-value properties like keywords, markets, traits, tone, audiences %>
+<%# Tags field for multiple-value properties like keywords, markets, traits, tone, audiences
+    Each tag is a separate BrandProperty record with status: current %>
 <% current_properties = brand.properties.for_property(property_name).current %>
-<% current_values = current_properties.map { |p| p.value.is_a?(String) ? p.value : p.text_value } %>
 
 <div id="<%= property_name %>_field" class="space-y-2">
   <div
     data-controller="tag-input"
-    data-tag-input-values="<%= current_values.to_json %>"
-    data-tag-input-name="brand_property[value][]"
+    data-tag-input-brand-id="<%= brand.id %>"
+    data-tag-input-property-name="<%= property_name %>"
   >
     <div class="flex flex-wrap gap-2 mb-2" data-tag-input-target="tags">
-      <% current_values.each do |value| %>
+      <% current_properties.each do |property| %>
         <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
-          <%= value %>
-          <button
-            type="button"
-            class="hover:bg-blue-200 rounded-full p-0.5"
-            data-action="click->tag-input#removeTag"
-            data-value="<%= value %>"
-          >
+          <%= property.text_value %>
+          <%= button_to brand_property_path(brand, property),
+              method: :delete,
+              form: { data: { turbo: true } },
+              class: "hover:bg-blue-200 rounded-full p-0.5" do %>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
-          </button>
+          <% end %>
         </span>
       <% end %>
     </div>

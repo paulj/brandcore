@@ -87,15 +87,14 @@ class BrandProperty < ApplicationRecord
   end
 
   # Extract the text value for display
-  # Handles both simple strings and structured JSONB
+  # Each property stores a single value (not arrays)
+  # For multiple-cardinality properties, use multiple BrandProperty records
   def text_value
     case value
     when String
       value
     when Hash
       value["text"] || value["name"] || value.values.first
-    when Array
-      value.first.is_a?(String) ? value.join(", ") : value.map { |v| v["name"] || v["text"] || v.to_s }.join(", ")
     else
       value.to_s
     end

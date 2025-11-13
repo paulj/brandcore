@@ -3,22 +3,30 @@
 # Controller for managing brand properties in a generic, configuration-driven manner.
 # Handles creating, updating, accepting, and generating suggestions for any property type.
 class Brand::PropertiesController < Brand::BaseController
-  before_action :set_property, only: [:update, :accept, :reject]
+  before_action :set_property, only: [:update, :accept, :reject, :destroy]
 
-  # Update a property value (for current properties)
+  # Create a new property value
+  # For single-cardinality: replaces existing current value
+  # For multiple-cardinality: adds a new current value
   # POST /brands/:brand_id/properties
   def create
     property_name = params[:property_name]
     value = property_params[:value]
     configuration = PropertyConfiguration.for(property_name)
 
-    # Check if we should update existing or create new
-    existing = @brand.properties.for_property(property_name).current.first
+    if configuration.single?
+      # For single-cardinality, move existing to previous and create new
+      existing = @brand.properties.for_property(property_name).current.first
+      existing&.update!(status: :previous, accepted_at: Time.current)
 
-    if existing
-      existing.update!(value: value)
-      @property = existing
+      @property = @brand.properties.create!(
+        property_name: property_name,
+        value: value,
+        status: :current,
+        accepted_at: Time.current
+      )
     else
+      # For multiple-cardinality, create a new current property
       @property = @brand.properties.create!(
         property_name: property_name,
         value: value,
@@ -120,6 +128,25 @@ class Brand::PropertiesController < Brand::BaseController
             configuration: configuration,
             suggestions: @brand.properties.for_property(@property.property_name).suggestions
           }
+        )
+      end
+      format.html { redirect_back(fallback_location: brand_vision_path(@brand)) }
+    end
+  end
+
+  # Delete a property (for removing individual tags from multiple-cardinality properties)
+  # DELETE /brands/:brand_id/properties/:id
+  def destroy
+    property_name = @property.property_name
+    configuration = PropertyConfiguration.for(property_name)
+    @property.destroy!
+
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "#{property_name}_field",
+          partial: "brand/properties/fields/#{configuration.input_type}",
+          locals: { brand: @brand, property_name: property_name, configuration: configuration }
         )
       end
       format.html { redirect_back(fallback_location: brand_vision_path(@brand)) }
