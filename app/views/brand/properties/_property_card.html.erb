@@ -23,16 +23,10 @@
     </div>
 
     <%# AI Help Button %>
-    <button
-      type="button"
-      data-turbo-method="post"
-      class="
-        px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white
-        rounded-lg hover:from-purple-700 hover:to-blue-700 text-sm
-        font-medium flex items-center gap-2
-      "
-      onclick="event.preventDefault(); fetch('<%= generate_brand_properties_path(brand, property_name: property_name) %>', { method: 'POST', headers: { 'X-CSRF-Token': document.querySelector('meta[name=csrf-token]').content } })"
-    >
+    <%= button_to generate_brand_properties_path(brand, property_name: property_name),
+        method: :post,
+        form: { data: { turbo: true } },
+        class: "px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 text-sm font-medium flex items-center gap-2" do %>
       <svg
         class="w-4 h-4"
         fill="none"
@@ -46,8 +40,8 @@
           d="M13 10V3L4 14h7v7l9-11h-7z"
         />
       </svg>
-      AI Help
-    </button>
+      <span>AI Help</span>
+    <% end %>
   </div>
 
   <%# Field %>

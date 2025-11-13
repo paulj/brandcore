@@ -3,42 +3,39 @@
 <% current_properties = brand.properties.for_property(property_name).current %>
 
 <div id="<%= property_name %>_field" class="space-y-2">
-  <div
-    data-controller="tag-input"
-    data-tag-input-brand-id="<%= brand.id %>"
-    data-tag-input-property-name="<%= property_name %>"
-  >
-    <div class="flex flex-wrap gap-2 mb-2" data-tag-input-target="tags">
-      <% current_properties.each do |property| %>
-        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
-          <%= property.text_value %>
-          <%= button_to brand_property_path(brand, property),
-              method: :delete,
-              form: { data: { turbo: true } },
-              class: "hover:bg-blue-200 rounded-full p-0.5" do %>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          <% end %>
-        </span>
-      <% end %>
-    </div>
-
-    <div class="flex gap-2">
-      <input
-        type="text"
-        data-tag-input-target="input"
-        data-action="keydown.enter->tag-input#addTag:prevent"
-        class="flex-1 p-3 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-        placeholder="<%= configuration.help_text %>"
-      />
-      <button
-        type="button"
-        data-action="click->tag-input#addTag"
-        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-      >
-        Add
-      </button>
-    </div>
+  <%# Display current tags %>
+  <div class="flex flex-wrap gap-2 mb-2">
+    <% current_properties.each do |property| %>
+      <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
+        <%= property.text_value %>
+        <%= button_to brand_property_path(brand, property),
+            method: :delete,
+            form: { data: { turbo: true } },
+            class: "hover:bg-blue-200 rounded-full p-0.5" do %>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        <% end %>
+      </span>
+    <% end %>
   </div>
+
+  <%# Form to add new tags %>
+  <%= form_with(
+    model: BrandProperty.new,
+    url: brand_properties_path(brand),
+    method: :post,
+    scope: :brand_property,
+    data: { turbo: true },
+    class: "flex gap-2"
+  ) do |f| %>
+    <%= f.hidden_field :property_name, value: property_name %>
+    <%= f.text_field :value,
+      class: "flex-1 p-3 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500",
+      placeholder: configuration.help_text
+    %>
+    <%= f.submit "Add",
+      class: "px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+    %>
+  <% end %>
 </div>
