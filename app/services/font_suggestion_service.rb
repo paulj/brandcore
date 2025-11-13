@@ -118,7 +118,7 @@ class FontSuggestionService
     # Check mission/vision statements
     mission = @brand.properties.for_property("mission").current.first&.text_value
     vision = @brand.properties.for_property("vision").current.first&.text_value
-    combined_text = [mission, vision].compact.join(" ")
+    combined_text = [ mission, vision ].compact.join(" ")
 
     return analyze_text_for_category(combined_text) if combined_text.present?
 

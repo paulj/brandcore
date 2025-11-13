@@ -47,7 +47,7 @@ class Brand::PropertiesController < Brand::BaseController
           # Show save indicator
           turbo_stream.replace(
             "save_indicator",
-            partial: "brand/shared/save_indicator"
+            partial: "shared/save_indicator"
           )
         ]
       end
