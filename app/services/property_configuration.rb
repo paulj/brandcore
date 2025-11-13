@@ -80,7 +80,7 @@ class PropertyConfiguration
       prompt_template = parts[2].strip
 
       # Parse YAML frontmatter
-      frontmatter = YAML.safe_load(frontmatter_yaml, permitted_classes: [Symbol])
+      frontmatter = YAML.safe_load(frontmatter_yaml, permitted_classes: [ Symbol ])
 
       new(
         property_name: property_name,

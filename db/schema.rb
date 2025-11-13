@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_12_023125) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_12_235856) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -120,6 +120,22 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_023125) do
     t.index ["name"], name: "index_brand_names_on_name", unique: true
   end
 
+  create_table "brand_properties", force: :cascade do |t|
+    t.datetime "accepted_at"
+    t.bigint "brand_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "generated_at"
+    t.jsonb "metadata", default: {}
+    t.string "property_name", null: false
+    t.string "status", default: "current", null: false
+    t.datetime "updated_at", null: false
+    t.jsonb "value", default: {}, null: false
+    t.index ["brand_id", "property_name", "status"], name: "index_brand_properties_on_brand_name_status"
+    t.index ["brand_id"], name: "index_brand_properties_on_brand_id"
+    t.index ["property_name", "status"], name: "index_brand_properties_on_name_status"
+    t.index ["status"], name: "index_brand_properties_on_status"
+  end
+
   create_table "brand_typographies", force: :cascade do |t|
     t.bigint "brand_id", null: false
     t.boolean "completed", default: false, null: false
@@ -144,27 +160,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_023125) do
     t.jsonb "spacing_system", default: {}
     t.datetime "updated_at", null: false
     t.index ["brand_id"], name: "index_brand_uis_on_brand_id", unique: true
-  end
-
-  create_table "brand_visions", force: :cascade do |t|
-    t.string "audiences", default: [], array: true
-    t.bigint "brand_id", null: false
-    t.jsonb "brand_personality", default: {}
-    t.text "brand_positioning"
-    t.string "category"
-    t.boolean "completed", default: false, null: false
-    t.datetime "completed_at"
-    t.jsonb "core_values", default: []
-    t.datetime "created_at", null: false
-    t.string "keywords", default: [], array: true
-    t.string "markets", default: [], array: true
-    t.text "mission_statement"
-    t.text "target_audience"
-    t.string "tone", default: [], array: true
-    t.string "traits", default: [], array: true
-    t.datetime "updated_at", null: false
-    t.text "vision_statement"
-    t.index ["brand_id"], name: "index_brand_visions_on_brand_id", unique: true
   end
 
   create_table "brands", force: :cascade do |t|
@@ -277,9 +272,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_12_023125) do
   add_foreign_key "brand_memberships", "users"
   add_foreign_key "brand_memberships", "users", column: "invited_by_user_id"
   add_foreign_key "brand_names", "brands"
+  add_foreign_key "brand_properties", "brands"
   add_foreign_key "brand_typographies", "brands"
   add_foreign_key "brand_uis", "brands"
-  add_foreign_key "brand_visions", "brands"
   add_foreign_key "palette_colours", "brand_colour_schemes"
   add_foreign_key "palette_shades", "palette_colours"
   add_foreign_key "sessions", "users"

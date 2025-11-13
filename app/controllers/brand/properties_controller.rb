@@ -3,7 +3,7 @@
 # Controller for managing brand properties in a generic, configuration-driven manner.
 # Handles creating, updating, accepting, and generating suggestions for any property type.
 class Brand::PropertiesController < Brand::BaseController
-  before_action :set_property, only: [:update, :accept, :reject, :destroy]
+  before_action :set_property, only: [ :update, :accept, :reject, :destroy ]
 
   # Create a new property value
   # For single-cardinality: replaces existing current value

@@ -1,7 +1,10 @@
-<%# Complete property card with field and suggestions
-    Usage: <%= render "brand/properties/property_card", brand: @brand, property_name: "mission" %>
+<%#
+  Complete property card with field and suggestions
+  Usage: <%= render "brand/properties/property_card", brand: @brand, property_name: "mission" % >
 %>
+
 <% configuration = PropertyConfiguration.for(property_name) %>
+
 <% suggestions = brand.properties.for_property(property_name).suggestions %>
 
 <div class="bg-white rounded-lg shadow p-6 space-y-4">
@@ -12,7 +15,9 @@
         <i class="<%= configuration.icon %> text-blue-600"></i>
       </div>
       <div>
-        <h3 class="text-lg font-semibold text-gray-900"><%= configuration.label %></h3>
+        <h3 class="text-lg font-semibold text-gray-900">
+          <%= configuration.label %>
+        </h3>
         <p class="text-sm text-gray-600"><%= configuration.description %></p>
       </div>
     </div>
@@ -21,11 +26,25 @@
     <button
       type="button"
       data-turbo-method="post"
-      class="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 text-sm font-medium flex items-center gap-2"
+      class="
+        px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white
+        rounded-lg hover:from-purple-700 hover:to-blue-700 text-sm
+        font-medium flex items-center gap-2
+      "
       onclick="event.preventDefault(); fetch('<%= generate_brand_properties_path(brand, property_name: property_name) %>', { method: 'POST', headers: { 'X-CSRF-Token': document.querySelector('meta[name=csrf-token]').content } })"
     >
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+      <svg
+        class="w-4 h-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M13 10V3L4 14h7v7l9-11h-7z"
+        />
       </svg>
       AI Help
     </button>

@@ -18,8 +18,8 @@ class ReplaceBrandVisionsWithProperties < ActiveRecord::Migration[8.1]
     end
 
     # Add composite indexes for common queries
-    add_index :brand_properties, [:brand_id, :property_name, :status], name: "index_brand_properties_on_brand_name_status"
-    add_index :brand_properties, [:property_name, :status], name: "index_brand_properties_on_name_status"
+    add_index :brand_properties, [ :brand_id, :property_name, :status ], name: "index_brand_properties_on_brand_name_status"
+    add_index :brand_properties, [ :property_name, :status ], name: "index_brand_properties_on_name_status"
     add_index :brand_properties, :status
 
     # Drop the old brand_visions table
