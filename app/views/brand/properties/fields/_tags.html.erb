@@ -18,7 +18,7 @@
     scope: :brand_property,
     data: {
       controller: "blur-on-submit",
-      action: "submit->blur-on-submit#submit",
+      action: "submit->blur-on-submit#submit turbo:submit-end->blur-on-submit#refocus",
       turbo: true
     },
     class: "flex gap-2"
