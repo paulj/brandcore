@@ -1,0 +1,46 @@
+<%# Tags field for multiple-value properties like keywords, markets, traits, tone, audiences %>
+<% current_properties = brand.properties.for_property(property_name).current %>
+<% current_values = current_properties.map { |p| p.value.is_a?(String) ? p.value : p.text_value } %>
+
+<div id="<%= property_name %>_field" class="space-y-2">
+  <div
+    data-controller="tag-input"
+    data-tag-input-values="<%= current_values.to_json %>"
+    data-tag-input-name="brand_property[value][]"
+  >
+    <div class="flex flex-wrap gap-2 mb-2" data-tag-input-target="tags">
+      <% current_values.each do |value| %>
+        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
+          <%= value %>
+          <button
+            type="button"
+            class="hover:bg-blue-200 rounded-full p-0.5"
+            data-action="click->tag-input#removeTag"
+            data-value="<%= value %>"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </span>
+      <% end %>
+    </div>
+
+    <div class="flex gap-2">
+      <input
+        type="text"
+        data-tag-input-target="input"
+        data-action="keydown.enter->tag-input#addTag:prevent"
+        class="flex-1 rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+        placeholder="<%= configuration.help_text %>"
+      />
+      <button
+        type="button"
+        data-action="click->tag-input#addTag"
+        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+      >
+        Add
+      </button>
+    </div>
+  </div>
+</div>

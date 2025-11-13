@@ -1,0 +1,27 @@
+<%# Textarea field for single-value properties like mission, vision %>
+<% current_property = brand.properties.for_property(property_name).current.first %>
+<% current_value = current_property&.value || "" %>
+
+<div id="<%= property_name %>_field" class="space-y-2">
+  <%= form_with(
+    url: current_property ? brand_property_path(brand, current_property) : brand_properties_path(brand),
+    method: current_property ? :patch : :post,
+    data: {
+      controller: "autosave",
+      autosave_target: "form",
+      action: "input->autosave#save"
+    }
+  ) do |f| %>
+    <%= f.hidden_field :property_name, value: property_name unless current_property %>
+
+    <div class="relative">
+      <%= f.text_area :value,
+        value: current_value,
+        class: "w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500",
+        rows: 4,
+        placeholder: configuration.help_text,
+        data: { autosave_target: "field" }
+      %>
+    </div>
+  <% end %>
+</div>

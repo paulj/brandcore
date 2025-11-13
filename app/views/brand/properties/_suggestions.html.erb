@@ -1,0 +1,58 @@
+<%# Generic suggestions display partial %>
+<div id="<%= property_name %>_suggestions" class="space-y-2">
+  <% if suggestions.any? %>
+    <% if configuration.input_type == :tags %>
+      <%# Tag-style suggestions for multiple properties %>
+      <div class="flex flex-wrap gap-2">
+        <% suggestions.each do |suggestion| %>
+          <button
+            type="button"
+            data-turbo-method="post"
+            data-turbo-action="replace"
+            data-action="click->autosave#accept"
+            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm bg-gray-100 hover:bg-blue-100 hover:text-blue-800 transition-colors cursor-pointer"
+            onclick="event.preventDefault(); fetch('<%= accept_brand_property_path(brand, suggestion) %>', { method: 'POST', headers: { 'X-CSRF-Token': document.querySelector('meta[name=csrf-token]').content } })"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            <%= suggestion.text_value %>
+          </button>
+        <% end %>
+      </div>
+    <% else %>
+      <%# Card-style suggestions for single properties %>
+      <div class="space-y-2">
+        <% suggestions.each do |suggestion| %>
+          <div class="p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors cursor-pointer group">
+            <div class="flex items-start justify-between gap-4">
+              <div class="flex-1" onclick="event.preventDefault(); fetch('<%= accept_brand_property_path(brand, suggestion) %>', { method: 'POST', headers: { 'X-CSRF-Token': document.querySelector('meta[name=csrf-token]').content } })">
+                <p class="text-gray-900"><%= suggestion.text_value %></p>
+              </div>
+              <div class="flex gap-2">
+                <button
+                  type="button"
+                  data-turbo-method="post"
+                  class="opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+                  onclick="event.preventDefault(); fetch('<%= accept_brand_property_path(brand, suggestion) %>', { method: 'POST', headers: { 'X-CSRF-Token': document.querySelector('meta[name=csrf-token]').content } })"
+                >
+                  Accept
+                </button>
+                <button
+                  type="button"
+                  data-turbo-method="post"
+                  class="opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1 text-sm bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+                  onclick="event.preventDefault(); fetch('<%= reject_brand_property_path(brand, suggestion) %>', { method: 'POST', headers: { 'X-CSRF-Token': document.querySelector('meta[name=csrf-token]').content } })"
+                >
+                  Reject
+                </button>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  <% else %>
+    <p class="text-sm text-gray-500 italic">No suggestions available. Click "AI Help" to generate suggestions.</p>
+  <% end %>
+</div>

@@ -7,7 +7,7 @@ class Brand < ApplicationRecord
 
   has_one :brand_concept, dependent: :destroy
   has_one :brand_name, dependent: :destroy
-  has_one :brand_vision, dependent: :destroy
+  has_many :properties, class_name: "BrandProperty", dependent: :destroy
   has_one :brand_logo, dependent: :destroy
   has_one :brand_language, dependent: :destroy
   has_one :brand_colour_scheme, dependent: :destroy
