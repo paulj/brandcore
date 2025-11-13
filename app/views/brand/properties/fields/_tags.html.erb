@@ -2,21 +2,11 @@
     Each tag is a separate BrandProperty record with status: current %>
 <% current_properties = brand.properties.for_property(property_name).current %>
 
-<div id="<%= property_name %>_field" class="space-y-2">
+<div id="<%= property_name %>_field" data-turbo-action="morph" class="space-y-2">
   <%# Display current tags %>
   <div class="flex flex-wrap gap-2 mb-2">
     <% current_properties.each do |property| %>
-      <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
-        <%= property.text_value %>
-        <%= button_to brand_property_path(brand, property),
-            method: :delete,
-            form: { data: { turbo: true, turbo_action: "replace" } },
-            class: "hover:bg-blue-200 rounded-full p-0.5" do %>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        <% end %>
-      </span>
+      <%= render "brand/properties/tag_item", property: property, brand: brand %>
     <% end %>
   </div>
 
@@ -26,7 +16,7 @@
     url: brand_properties_path(brand),
     method: :post,
     scope: :brand_property,
-    data: { turbo: true, turbo_action: "replace" },
+    data: { turbo: true },
     class: "flex gap-2"
   ) do |f| %>
     <%= f.hidden_field :property_name, value: property_name %>

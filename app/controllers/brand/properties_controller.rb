@@ -37,14 +37,14 @@ class Brand::PropertiesController < Brand::BaseController
 
     respond_to do |format|
       format.turbo_stream do
+        # For both single and multiple cardinality, replace the entire field
+        # Morph will intelligently update only what changed for multiple-cardinality
         render turbo_stream: [
-          # Update the field to show the new value
           turbo_stream.replace(
             "#{property_name}_field",
             partial: "brand/properties/fields/#{configuration.input_type}",
             locals: { brand: @brand, property_name: property_name, configuration: configuration }
           ),
-          # Show save indicator
           turbo_stream.replace(
             "save_indicator",
             partial: "shared/save_indicator"
