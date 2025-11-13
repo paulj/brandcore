@@ -10,7 +10,7 @@ class Brand::PropertiesController < Brand::BaseController
   # For multiple-cardinality: adds a new current value
   # POST /brands/:brand_id/properties
   def create
-    property_name = params[:property_name]
+    property_name = property_params[:property_name]
     value = property_params[:value]
     configuration = PropertyConfiguration.for(property_name)
 
@@ -207,6 +207,6 @@ class Brand::PropertiesController < Brand::BaseController
   end
 
   def property_params
-    params.require(:brand_property).permit(:value, value: {})
+    params.require(:brand_property).permit(:property_name, :value, value: {})
   end
 end
