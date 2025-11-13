@@ -28,6 +28,19 @@ class Brand < ApplicationRecord
     slug
   end
 
+  # Convert brand properties to hash format expected by BrandColorPalette::Generator
+  # Returns hash with arrays of current property values grouped by property type
+  def to_h
+    {
+      traits: properties.current.for_property("trait").map(&:text_value),
+      tone: properties.current.for_property("tone").map(&:text_value),
+      audiences: properties.current.for_property("audience").map(&:text_value),
+      keywords: properties.current.for_property("keyword").map(&:text_value),
+      category: properties.current.for_property("category").first&.text_value,
+      markets: properties.current.for_property("market").map(&:text_value)
+    }
+  end
+
   private
 
   def generate_slug

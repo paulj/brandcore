@@ -68,7 +68,7 @@ RSpec.describe BrandColorPalette::Generator do
   end
 
   describe "#generate" do
-    xit "generates color palettes successfully" do
+    it "generates color palettes successfully" do
       generator = described_class.new(brand_input)
       result = generator.generate
 
@@ -78,7 +78,7 @@ RSpec.describe BrandColorPalette::Generator do
       expect(result.metadata).to be_a(BrandColorPalette::GenerationMetadata)
     end
 
-    xit "generates multiple palette candidates" do
+    it "generates multiple palette candidates" do
       generator = described_class.new(brand_input, palette_count: 5)
       result = generator.generate
 
@@ -86,7 +86,7 @@ RSpec.describe BrandColorPalette::Generator do
       expect(result.palettes).not_to be_empty
     end
 
-    xit "includes required color roles in each palette" do
+    it "includes required color roles in each palette" do
       generator = described_class.new(brand_input)
       result = generator.generate
 
@@ -98,7 +98,7 @@ RSpec.describe BrandColorPalette::Generator do
       expect(roles).to include("text")
     end
 
-    xit "ensures colors have all required formats" do
+    it "ensures colors have all required formats" do
       generator = described_class.new(brand_input)
       result = generator.generate
 
@@ -111,7 +111,7 @@ RSpec.describe BrandColorPalette::Generator do
       expect(color.cmyk).to be_a(BrandColorPalette::CmykColor)
     end
 
-    xit "includes accessibility evaluation" do
+    it "includes accessibility evaluation" do
       generator = described_class.new(brand_input)
       result = generator.generate
 
@@ -122,7 +122,7 @@ RSpec.describe BrandColorPalette::Generator do
       expect(palette.accessibility.contrast_ratio).to be_a(Numeric)
     end
 
-    xit "ensures palettes meet WCAG AA standards" do
+    it "ensures palettes meet WCAG AA standards" do
       generator = described_class.new(brand_input)
       result = generator.generate
 
@@ -132,7 +132,7 @@ RSpec.describe BrandColorPalette::Generator do
       expect(accessibility.wcag_aa_normal).to be true
     end
 
-    xit "includes metadata with design vector" do
+    it "includes metadata with design vector" do
       generator = described_class.new(brand_input)
       result = generator.generate
 
@@ -141,7 +141,7 @@ RSpec.describe BrandColorPalette::Generator do
       expect(result.metadata.primary_traits).to be_an(Array)
     end
 
-    xit "generates dark mode variants when requested" do
+    it "generates dark mode variants when requested" do
       generator = described_class.new(brand_input, include_dark_mode: true)
       result = generator.generate
 
@@ -154,7 +154,7 @@ RSpec.describe BrandColorPalette::Generator do
   end
 
   describe "#generate_best" do
-    xit "returns a single best palette" do
+    it "returns a single best palette" do
       generator = described_class.new(brand_input)
       result = generator.generate_best
 
@@ -164,7 +164,7 @@ RSpec.describe BrandColorPalette::Generator do
       expect(result.metadata).to be_a(BrandColorPalette::GenerationMetadata)
     end
 
-    xit "returns the highest-scored palette" do
+    it "returns the highest-scored palette" do
       generator = described_class.new(brand_input)
       full_result = generator.generate
       best_result = generator.generate_best
@@ -174,7 +174,7 @@ RSpec.describe BrandColorPalette::Generator do
   end
 
   describe "palette scoring" do
-    xit "scores palettes based on category fit" do
+    it "scores palettes based on category fit" do
       generator = described_class.new(brand_input)
       result = generator.generate
 
@@ -183,7 +183,7 @@ RSpec.describe BrandColorPalette::Generator do
       expect(palettes.first.score).to be >= 0
     end
 
-    xit "returns palettes sorted by score" do
+    it "returns palettes sorted by score" do
       generator = described_class.new(brand_input)
       result = generator.generate
 
@@ -193,7 +193,7 @@ RSpec.describe BrandColorPalette::Generator do
   end
 
   describe "color format validation" do
-    xit "generates valid RGB values" do
+    it "generates valid RGB values" do
       generator = described_class.new(brand_input)
       result = generator.generate
 
@@ -205,7 +205,7 @@ RSpec.describe BrandColorPalette::Generator do
       end
     end
 
-    xit "generates valid hex codes" do
+    it "generates valid hex codes" do
       generator = described_class.new(brand_input)
       result = generator.generate
 
@@ -215,7 +215,7 @@ RSpec.describe BrandColorPalette::Generator do
       end
     end
 
-    xit "generates valid OKLCH values" do
+    it "generates valid OKLCH values" do
       generator = described_class.new(brand_input)
       result = generator.generate
 
